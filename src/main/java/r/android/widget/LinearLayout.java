@@ -928,6 +928,10 @@ public LayoutParams(int width,int height){
 super(width,height);
 weight=0;
 }
+public LayoutParams(int width,int height,float weight){
+super(width,height);
+this.weight=weight;
+}
 public LayoutParams(ViewGroup.LayoutParams p){
 super(p);
 }

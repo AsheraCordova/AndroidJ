@@ -6,4 +6,8 @@ public class SystemClock {
         return System.currentTimeMillis();
     }
 
+	public static long uptimeMillis() {
+		return System.currentTimeMillis();
+	}
+
 }

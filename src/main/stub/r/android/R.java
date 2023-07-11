@@ -1,7 +1,8 @@
 package r.android;
 
 public class R {
-	public class id {
+	public static class id {
+		public static final int content = 0;
 
 	}
 	public static class attr {

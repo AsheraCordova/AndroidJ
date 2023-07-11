@@ -520,9 +520,6 @@ return TextDirectionHeuristics.FIRSTSTRONG_RTL;
 }
 public final static int UNKNOWN_BORING=0;
 private String mText="";
-public boolean suggestedSizeFitsInSpace(int mAutoSizeTextSizeInPx,RectF availableSpace){
-return false;
-}
 public TextView(com.ashera.widget.IWidget widget){
 super(widget);
 mTextPaint=new TextPaint();
@@ -534,11 +531,6 @@ private int getExtendedPaddingTop(){
 return getCompoundPaddingTop();
 }
 protected void makeNewLayout(int availableWidth,int i,int unknownBoring,int unknownBoring2,int j,boolean b){
-}
-protected void setTextSizeInternal(int unit,float optimalTextSize,boolean b){
-}
-protected float getTextSize(){
-return 0;
 }
 public void setUpAutoSizeTextTypeUniform(int autoSizeMin,int autoSizeMax,int autoSizeGranular){
 float autoSizeMinTextSizeInPx=autoSizeMin == UNSET_AUTO_SIZE_UNIFORM_CONFIGURATION_VALUE ? com.ashera.widget.PluginInvoker.convertSpToPixel(DEFAULT_AUTO_SIZE_MIN_TEXT_SIZE_IN_SP + "sp") : autoSizeMin;
@@ -565,9 +557,6 @@ return 0;
 private com.ashera.widget.WidgetAttribute widgetAttribute;
 private Object handler;
 private Runnable mTickRunnable;
-public void setWidgetInfo(com.ashera.widget.WidgetAttribute widgetAttribute){
-this.widgetAttribute=widgetAttribute;
-}
 public void postDelayed(Runnable mTickRunnable,int delay){
 this.mTickRunnable=mTickRunnable;
 try {
@@ -577,26 +566,14 @@ handler=com.ashera.widget.PluginInvoker.postDelayed(mTickRunnable,delay);
 e.printStackTrace();
 }
 }
-public void removeCallbacks(Runnable mTickRunnable){
+public boolean removeCallbacks(Runnable mTickRunnable){
 if (this.mTickRunnable != null && handler != null) {
 com.ashera.widget.PluginInvoker.removeCallbacks(handler,mTickRunnable);
 }
+return true;
 }
 public boolean isShown(){
 return true;
-}
-private String text;
-public void setText(String text){
-this.text=text;
-try {
-getWidget().setAttribute(widgetAttribute,text,text,null);
-}
- catch (Exception e) {
-e.printStackTrace();
-}
-}
-public String getText(){
-return this.text;
 }
 @Override public int measureWidth(int widthMode,int widthSize,int width){
 if (mMaxWidth != Integer.MAX_VALUE) {
@@ -682,5 +659,29 @@ interface Drawables {
 java.util.List<Drawable> mShowing=null;
 }
 private void invalidateDrawable(Drawable dr){
+}
+protected void setTextSizeInternal(int unit,float optimalTextSize,boolean b){
+}
+public boolean suggestedSizeFitsInSpace(int mAutoSizeTextSizeInPx,RectF availableSpace){
+float width=availableSpace.width();
+float height=availableSpace.height();
+setTextSize(mAutoSizeTextSizeInPx * 1f);
+int y=computeSize(width);
+if (y > height) {
+return false;
+}
+return true;
+}
+protected float getTextSize(){
+return 0;
+}
+public void setText(String text){
+mText=text;
+setMyAttribute("text",text);
+}
+public abstract String getText();
+public abstract int computeSize(float width);
+private void setTextSize(float f){
+setMyAttribute("textSize",f);
 }
 }

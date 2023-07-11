@@ -7,6 +7,8 @@ import r.android.graphics.Insets;
 import r.android.graphics.Rect;
 import r.android.graphics.drawable.Drawable;
 import r.android.os.Build;
+import r.android.os.Handler;
+import r.android.os.IBinder;
 import r.android.util.LayoutDirection;
 import r.android.util.Log;
 import r.android.util.LongSparseLongArray;
@@ -16,6 +18,7 @@ import r.android.view.accessibility.AccessibilityEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 public class View {
   private static final boolean DBG=false;
   public static boolean DEBUG_DRAW=false;
@@ -379,6 +382,7 @@ private static class ForegroundInfo {
   private int mMinHeight;
   private int mMinWidth;
   private int mDrawingCacheBackgroundColor=0;
+  private ViewTreeObserver mFloatingTreeObserver;
   private int mTouchSlop;
   public static final int DRAG_FLAG_GLOBAL=1 << 8;
   public static final int DRAG_FLAG_GLOBAL_URI_READ=Intent.FLAG_GRANT_READ_URI_PERMISSION;
@@ -403,6 +407,36 @@ private static class ForegroundInfo {
     }
     mListenerInfo=new ListenerInfo();
     return mListenerInfo;
+  }
+  public void addOnLayoutChangeListener(  OnLayoutChangeListener listener){
+    ListenerInfo li=getListenerInfo();
+    if (li.mOnLayoutChangeListeners == null) {
+      li.mOnLayoutChangeListeners=new ArrayList<OnLayoutChangeListener>();
+    }
+    if (!li.mOnLayoutChangeListeners.contains(listener)) {
+      li.mOnLayoutChangeListeners.add(listener);
+    }
+  }
+  public void removeOnLayoutChangeListener(  OnLayoutChangeListener listener){
+    ListenerInfo li=mListenerInfo;
+    if (li == null || li.mOnLayoutChangeListeners == null) {
+      return;
+    }
+    li.mOnLayoutChangeListeners.remove(listener);
+  }
+  public void addOnAttachStateChangeListener(  OnAttachStateChangeListener listener){
+    ListenerInfo li=getListenerInfo();
+    if (li.mOnAttachStateChangeListeners == null) {
+      li.mOnAttachStateChangeListeners=new CopyOnWriteArrayList<OnAttachStateChangeListener>();
+    }
+    li.mOnAttachStateChangeListeners.add(listener);
+  }
+  public void removeOnAttachStateChangeListener(  OnAttachStateChangeListener listener){
+    ListenerInfo li=mListenerInfo;
+    if (li == null || li.mOnAttachStateChangeListeners == null) {
+      return;
+    }
+    li.mOnAttachStateChangeListeners.remove(listener);
   }
   public void setOnKeyListener(  OnKeyListener l){
     getListenerInfo().mOnKeyListener=l;
@@ -479,6 +513,9 @@ private static class ForegroundInfo {
   public boolean isLayoutRtl(){
     return (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
   }
+  public boolean isAttachedToWindow(){
+    return mAttachInfo != null;
+  }
   public boolean isLaidOut(){
     return (mPrivateFlags3 & PFLAG3_IS_LAID_OUT) == PFLAG3_IS_LAID_OUT;
   }
@@ -533,6 +570,8 @@ private static class ForegroundInfo {
       ((View)mParent).clearParentsWantFocus();
     }
   }
+  protected void onVisibilityChanged(  View changedView,  int visibility){
+  }
   public int getWindowVisibility(){
     return mAttachInfo != null ? mAttachInfo.mWindowVisibility : GONE;
   }
@@ -565,6 +604,9 @@ private static class ForegroundInfo {
   }
 public interface OnScrollChangeListener {
     void onScrollChange(    View v,    int scrollX,    int scrollY,    int oldScrollX,    int oldScrollY);
+  }
+public interface OnLayoutChangeListener {
+    void onLayoutChange(    View v,    int left,    int top,    int right,    int bottom,    int oldLeft,    int oldTop,    int oldRight,    int oldBottom);
   }
   protected void onSizeChanged(  int w,  int h,  int oldw,  int oldh){
   }
@@ -815,6 +857,25 @@ public interface OnScrollChangeListener {
   public boolean isOpaque(){
     return (mPrivateFlags & PFLAG_OPAQUE_MASK) == PFLAG_OPAQUE_MASK && getFinalAlpha() >= 1.0f;
   }
+  public boolean post(  Runnable action){
+    final AttachInfo attachInfo=mAttachInfo;
+    if (attachInfo != null) {
+      return attachInfo.mHandler.post(action);
+    }
+    getRunQueue().post(action);
+    return true;
+  }
+  public boolean removeCallbacks(  Runnable action){
+    if (action != null) {
+      final AttachInfo attachInfo=mAttachInfo;
+      if (attachInfo != null) {
+        attachInfo.mHandler.removeCallbacks(action);
+        //attachInfo.mViewRootImpl.mChoreographer.removeCallbacks(Choreographer.CALLBACK_ANIMATION,action,null);
+      }
+      getRunQueue().removeCallbacks(action);
+    }
+    return true;
+  }
   protected int computeHorizontalScrollRange(){
     return getWidth();
   }
@@ -1016,7 +1077,89 @@ resetResolvedPaddingInternal();
 void resetResolvedPaddingInternal(){
 mPrivateFlags2&=~PFLAG2_PADDING_RESOLVED;
 }
+protected void onDetachedFromWindow(){
+}
 void invalidateInheritedLayoutMode(int layoutModeOfRoot){
+}
+int combineVisibility(int vis1,int vis2){
+return Math.max(vis1,vis2);
+}
+void dispatchAttachedToWindow(AttachInfo info,int visibility){
+mAttachInfo=info;
+if (false) {
+//mOverlay.  getOverlayView().dispatchAttachedToWindow(info,visibility);
+}
+mWindowAttachCount++;
+mPrivateFlags|=PFLAG_DRAWABLE_STATE_DIRTY;
+if (mFloatingTreeObserver != null) {
+info.mTreeObserver.merge(mFloatingTreeObserver);
+mFloatingTreeObserver=null;
+}
+registerPendingFrameMetricsObservers();
+if ((mPrivateFlags & PFLAG_SCROLL_CONTAINER) != 0) {
+mAttachInfo.mScrollContainers.add(this);
+mPrivateFlags|=PFLAG_SCROLL_CONTAINER_ADDED;
+}
+if (false) {
+//mRunQueue.executeActions(info.mHandler);
+//mRunQueue=null;
+}
+performCollectViewAttributes(mAttachInfo,visibility);
+onAttachedToWindow();
+ListenerInfo li=mListenerInfo;
+final CopyOnWriteArrayList<OnAttachStateChangeListener> listeners=li != null ? li.mOnAttachStateChangeListeners : null;
+if (listeners != null && listeners.size() > 0) {
+for (OnAttachStateChangeListener listener : listeners) {
+listener.onViewAttachedToWindow(this);
+}
+}
+int vis=info.mWindowVisibility;
+if (vis != GONE) {
+onWindowVisibilityChanged(vis);
+if (isShown()) {
+onVisibilityAggregated(vis == VISIBLE);
+}
+}
+onVisibilityChanged(this,visibility);
+if ((mPrivateFlags & PFLAG_DRAWABLE_STATE_DIRTY) != 0) {
+refreshDrawableState();
+}
+needGlobalAttributesUpdate(false);
+notifyEnterOrExitForAutoFillIfNeeded(true);
+}
+void dispatchDetachedFromWindow(){
+AttachInfo info=mAttachInfo;
+if (info != null) {
+int vis=info.mWindowVisibility;
+if (vis != GONE) {
+onWindowVisibilityChanged(GONE);
+if (isShown()) {
+onVisibilityAggregated(false);
+}
+}
+}
+onDetachedFromWindow();
+onDetachedFromWindowInternal();
+//InputMethodManager imm=InputMethodManager.peekInstance();
+if (false) {
+//imm.onViewDetachedFromWindow(this);
+}
+ListenerInfo li=mListenerInfo;
+final CopyOnWriteArrayList<OnAttachStateChangeListener> listeners=li != null ? li.mOnAttachStateChangeListeners : null;
+if (listeners != null && listeners.size() > 0) {
+for (OnAttachStateChangeListener listener : listeners) {
+listener.onViewDetachedFromWindow(this);
+}
+}
+if ((mPrivateFlags & PFLAG_SCROLL_CONTAINER_ADDED) != 0) {
+mAttachInfo.mScrollContainers.remove(this);
+mPrivateFlags&=~PFLAG_SCROLL_CONTAINER_ADDED;
+}
+mAttachInfo=null;
+if (false) {
+//mOverlay.  getOverlayView().dispatchDetachedFromWindow();
+}
+notifyEnterOrExitForAutoFillIfNeeded(false);
 }
 public void setDuplicateParentStateEnabled(boolean enabled){
 setFlags(enabled ? DUPLICATE_PARENT_STATE : 0,DUPLICATE_PARENT_STATE);
@@ -1480,6 +1623,15 @@ protected void dispatchSetActivated(boolean activated){
 }
 public boolean isActivated(){
 return (mPrivateFlags & PFLAG_ACTIVATED) != 0;
+}
+public ViewTreeObserver getViewTreeObserver(){
+if (mAttachInfo != null) {
+return mAttachInfo.mTreeObserver;
+}
+if (mFloatingTreeObserver == null) {
+mFloatingTreeObserver=new ViewTreeObserver(mContext);
+}
+return mFloatingTreeObserver;
 }
 public View getRootView(){
 if (mAttachInfo != null) {
@@ -1953,6 +2105,10 @@ void onClick(View v);
 public interface OnContextClickListener {
 boolean onContextClick(View v);
 }
+public interface OnAttachStateChangeListener {
+public void onViewAttachedToWindow(View v);
+public void onViewDetachedFromWindow(View v);
+}
 private Object mCurrentAnimation;
 private View mGhostView=null;
 protected RenderNode mRenderNode=new RenderNode();
@@ -1961,6 +2117,37 @@ private int horizontalScrollbarHeight;
 public View(){
 mViewFlags=SOUND_EFFECTS_ENABLED | HAPTIC_FEEDBACK_ENABLED;
 mPrivateFlags2=(LAYOUT_DIRECTION_DEFAULT << PFLAG2_LAYOUT_DIRECTION_MASK_SHIFT) | (TEXT_DIRECTION_DEFAULT << PFLAG2_TEXT_DIRECTION_MASK_SHIFT) | (PFLAG2_TEXT_DIRECTION_RESOLVED_DEFAULT)| (TEXT_ALIGNMENT_DEFAULT << PFLAG2_TEXT_ALIGNMENT_MASK_SHIFT)| (PFLAG2_TEXT_ALIGNMENT_RESOLVED_DEFAULT)| (IMPORTANT_FOR_ACCESSIBILITY_DEFAULT << PFLAG2_IMPORTANT_FOR_ACCESSIBILITY_SHIFT);
+}
+public void remeasure(){
+throw new RuntimeException("Implemented by subclass. ");
+}
+public void removeFromParent(){
+throw new RuntimeException("Implemented by subclass. ");
+}
+public void initAttachInfo(){
+mAttachInfo=new AttachInfo();
+mAttachInfo.mTreeObserver=new ViewTreeObserver(mContext);
+}
+public IBinder getApplicationWindowToken(){
+return null;
+}
+public int getAccessibilityViewId(){
+return 0;
+}
+public void getLocationOnScreen(int[] appScreenLocation){
+}
+public int getScrollX(){
+return 0;
+}
+public int getScrollY(){
+return 0;
+}
+public void getWindowVisibleDisplayFrame(Rect displayFrame){
+}
+public void getWindowDisplayFrame(Rect displayFrame){
+}
+public boolean requestRectangleOnScreen(Rect r,boolean b){
+return false;
 }
 protected void onDraw(r.android.graphics.Canvas canvas){
 }
@@ -2112,11 +2299,14 @@ public static boolean isAvailable(){
 return false;
 }
 }
-class AttachInfo {
+public static class AttachInfo {
+public Handler mHandler=new Handler();
+public java.util.List<View> mScrollContainers;
+public ViewTreeObserver mTreeObserver;
 public View mRootView;
 public boolean mHardwareAccelerationRequested;
 public int mWindowVisibility=View.VISIBLE;
-Rect mTmpInvalRect;
+Rect mTmpInvalRect=new Rect();
 Object mViewRequestingLayout;
 public boolean mKeepScreenOn;
 }
@@ -2150,14 +2340,11 @@ return null;
 }
 ListenerInfo mListenerInfo;
 class ListenerInfo {
+public CopyOnWriteArrayList<OnAttachStateChangeListener> mOnAttachStateChangeListeners;
 ArrayList<OnLayoutChangeListener> mOnLayoutChangeListeners;
 OnKeyListener mOnKeyListener;
 public Object clone(){
 return null;
-}
-}
-class OnLayoutChangeListener {
-public void onLayoutChange(View v,int l,int t,int r,int b,int oldL,int oldT,int oldR,int oldB){
 }
 }
 public int getId(){
@@ -2177,7 +2364,15 @@ return null;
 }
 public void unFocus(Object obj){
 }
-public void dispatchAttachedToWindow(AttachInfo mAttachInfo2,int i){
+public void registerPendingFrameMetricsObservers(){
+}
+public void needGlobalAttributesUpdate(boolean b){
+}
+protected void onWindowVisibilityChanged(int visibility){
+}
+public void onVisibilityAggregated(boolean isVisible){
+}
+private void performCollectViewAttributes(AttachInfo mAttachInfo2,int visibility){
 }
 public boolean hasTransientState(){
 return false;
@@ -2187,7 +2382,7 @@ public void clearAccessibilityFocus(){
 public Object getAnimation(){
 return null;
 }
-public void dispatchDetachedFromWindow(){
+protected void onDetachedFromWindowInternal(){
 }
 public void setBackground(Drawable background){
 mBackground=background;
@@ -2232,9 +2427,6 @@ public class AccessibilityNodeProvider {
 public void performAction(int virtualViewId,int actionAccessibilityFocus,Object object){
 }
 }
-public boolean isAttachedToWindow(){
-return false;
-}
 public AccessibilityNodeProvider getAccessibilityNodeProvider(){
 return null;
 }
@@ -2242,7 +2434,7 @@ public void requestAccessibilityFocus(){
 }
 public void onFinishTemporaryDetach(){
 }
-public Object getWindowToken(){
+public IBinder getWindowToken(){
 return null;
 }
 public boolean isDrawingCacheEnabled(){
@@ -2456,5 +2648,14 @@ private void resetPressedState(){
 public void sendAccessibilityEvent(int eventType){
 }
 public void notifyViewAccessibilityStateChangedIfNeeded(int changeType){
+}
+private Handler getRunQueue(){
+return new Handler();
+}
+public View inflateView(String layout){
+throw new RuntimeException("Implemented by subclass.");
+}
+public void setMyAttribute(String name,Object value){
+throw new RuntimeException("Implemented by subclass.");
 }
 }

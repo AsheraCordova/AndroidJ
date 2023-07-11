@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.IllegalFormatException;
 import java.util.Locale;
-public class Chronometer extends TextView {
+public abstract class Chronometer extends TextView {
   private static final String TAG="Chronometer";
 public interface OnChronometerTickListener {
     void onChronometerTick(    Chronometer chronometer);
@@ -143,11 +143,5 @@ public interface OnChronometerTickListener {
   private final Runnable mTickRunnable=new TickableRunnable();
   public Chronometer(  com.ashera.widget.IWidget widget){
     super(widget);
-  }
-  @Override public int nativeMeasureWidth(  Object uiView){
-    return 0;
-  }
-  @Override public int nativeMeasureHeight(  Object uiView,  int width){
-    return 0;
   }
 }

@@ -141,4 +141,27 @@ public final class Rect {
         right += dx;
         bottom += dy;
     }
+    
+	public boolean contains(Rect r) {
+		// check for empty first
+		return this.left < this.right && this.top < this.bottom
+		// now check for containment
+				&& left <= r.left && top <= r.top && right >= r.right && bottom >= r.bottom;
+	}
+	
+    public String toShortString() {
+        return toShortString(new StringBuilder(32));
+    }
+    
+    /**
+     * Return a string representation of the rectangle in a compact form.
+     * @hide
+     */
+    public String toShortString(StringBuilder sb) {
+        sb.setLength(0);
+        sb.append('['); sb.append(left); sb.append(',');
+        sb.append(top); sb.append("]["); sb.append(right);
+        sb.append(','); sb.append(bottom); sb.append(']');
+        return sb.toString();
+    }
 }

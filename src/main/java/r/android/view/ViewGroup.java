@@ -70,7 +70,24 @@ public abstract class ViewGroup extends View implements ViewParent {
   private int mChildCountWithTransientState=0;
   private int mNestedScrollAxes;
   private List<Integer> mTransientIndices=null;
+  private List<View> mTransientViews=null;
   int mChildUnhandledKeyListeners=0;
+  void dispatchAttachedToWindow(  AttachInfo info,  int visibility){
+    mGroupFlags|=FLAG_PREVENT_DISPATCH_ATTACHED_TO_WINDOW;
+    super.dispatchAttachedToWindow(info,visibility);
+    mGroupFlags&=~FLAG_PREVENT_DISPATCH_ATTACHED_TO_WINDOW;
+    final int count=mChildrenCount;
+    final View[] children=mChildren;
+    for (int i=0; i < count; i++) {
+      final View child=children[i];
+      child.dispatchAttachedToWindow(info,combineVisibility(visibility,child.getVisibility()));
+    }
+    final int transientCount=mTransientIndices == null ? 0 : mTransientIndices.size();
+    for (int i=0; i < transientCount; ++i) {
+      View view=mTransientViews.get(i);
+      view.dispatchAttachedToWindow(info,combineVisibility(visibility,view.getVisibility()));
+    }
+  }
   boolean isLayoutModeOptical(){
     return mLayoutMode == LAYOUT_MODE_OPTICAL_BOUNDS;
   }
@@ -192,7 +209,7 @@ public interface OnHierarchyChangeListener {
       mTransition.cancel(LayoutTransition.DISAPPEARING);
     }
     if (child.getParent() != null) {
-      throw new IllegalStateException("The specified child already has a parent. " + "You must call removeView() on the child's parent first.");
+      if(child.getParent() == this) {return;}throw new IllegalStateException("The specified child already has a parent. " + "You must call removeView() on the child's parent first.");
     }
     if (mTransition != null) {
       mTransition.addChild(this,child);
@@ -942,8 +959,6 @@ return p;
 }
 private void requestChildFocus(View child,Object findFocus){
 }
-private void needGlobalAttributesUpdate(boolean b){
-}
 private void childHasTransientStateChanged(View child,boolean b){
 }
 private void notifyGlobalFocusCleared(Object viewGroup){
@@ -986,5 +1001,18 @@ public void cancel(int disappearing2){
 }
 public void removeChild(ViewGroup viewGroup,View view){
 }
+}
+public int measureHeightOfChildren(int widthMeasureSpec,int startPosition,int endPosition,int maxHeight,int disallowPartialChildPosition){
+int height=0;
+final int size=mChildrenCount;
+final View[] children=mChildren;
+for (int i=0; i < size; ++i) {
+final View child=children[i];
+if ((child.mViewFlags & VISIBILITY_MASK) != GONE) {
+measureChild(child,widthMeasureSpec,-2);
+}
+height+=child.getMeasuredHeight();
+}
+return height;
 }
 }

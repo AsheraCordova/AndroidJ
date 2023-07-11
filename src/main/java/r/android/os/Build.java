@@ -18,6 +18,9 @@ public class Build {
 		public static final int JELLY_BEAN = 0;
 		public static final int ICE_CREAM_SANDWICH = 0;
 		public static final int ICE_CREAM_SANDWICH_MR1 = 1;
+		public static final int LOLLIPOP_MR1 = 0;
+		public static final int O = 0;
+		public static final int Q = 0;
 	}
 
 	public static final String MANUFACTURER = null;

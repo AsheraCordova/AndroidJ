@@ -10,6 +10,7 @@ import r.android.graphics.drawable.Drawable;
 public class Context {
 	public static final int MODE_PRIVATE = 0;
 	public static final Class ACTIVITY_SERVICE = r.android.app.ActivityManager.class;
+	public static final Class WINDOW_SERVICE = r.android.view.WindowManager.class;
 	public r.android.content.pm.ApplicationInfo getApplicationInfo() {
 		return new r.android.content.pm.ApplicationInfo();
 	}

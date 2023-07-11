@@ -4,6 +4,11 @@ import java.util.HashMap;
 
 public class Bundle {
 	private HashMap<String, Object> mExtras;
+	public Bundle(Bundle data) {
+	}
+	public Bundle() {
+	}
+
 	public void putSerializable(String name, Object value) {
         putObject(name, value);
     }
@@ -64,5 +69,8 @@ public class Bundle {
 		return object == null ? 0 : (int) object;
 	}
 
+	public Object clone() {
+		return null;
+	}
 
 }

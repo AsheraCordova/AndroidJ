@@ -2118,6 +2118,12 @@ public View(){
 mViewFlags=SOUND_EFFECTS_ENABLED | HAPTIC_FEEDBACK_ENABLED;
 mPrivateFlags2=(LAYOUT_DIRECTION_DEFAULT << PFLAG2_LAYOUT_DIRECTION_MASK_SHIFT) | (TEXT_DIRECTION_DEFAULT << PFLAG2_TEXT_DIRECTION_MASK_SHIFT) | (PFLAG2_TEXT_DIRECTION_RESOLVED_DEFAULT)| (TEXT_ALIGNMENT_DEFAULT << PFLAG2_TEXT_ALIGNMENT_MASK_SHIFT)| (PFLAG2_TEXT_ALIGNMENT_RESOLVED_DEFAULT)| (IMPORTANT_FOR_ACCESSIBILITY_DEFAULT << PFLAG2_IMPORTANT_FOR_ACCESSIBILITY_SHIFT);
 }
+public int getX(){
+return mLeft;
+}
+public int getY(){
+return mTop;
+}
 public void remeasure(){
 throw new RuntimeException("Implemented by subclass. ");
 }
@@ -2135,6 +2141,8 @@ public int getAccessibilityViewId(){
 return 0;
 }
 public void getLocationOnScreen(int[] appScreenLocation){
+}
+public void getHitRect(Rect outRect){
 }
 public int getScrollX(){
 return 0;
@@ -2158,7 +2166,7 @@ public boolean isInEditMode(){
 return false;
 }
 public float getAlpha(){
-return 0;
+return 1;
 }
 public float getRotation(){
 return 0;
@@ -2170,10 +2178,10 @@ public float getRotationY(){
 return 0;
 }
 public float getScaleX(){
-return 0;
+return 1;
 }
 public float getScaleY(){
-return 0;
+return 1;
 }
 public float getPivotX(){
 return 0;
@@ -2194,28 +2202,40 @@ public float getElevation(){
 return 0;
 }
 public void setAlpha(float alpha){
+setMyAttribute("alpha",alpha);
 }
 public void setRotation(float rotation){
+setMyAttribute("rotation",rotation);
 }
 public void setRotationX(float rotationX){
+setMyAttribute("rotationX",rotationX);
 }
 public void setRotationY(float rotationY){
+setMyAttribute("rotationY",rotationY);
 }
 public void setScaleX(float scaleX){
+setMyAttribute("scaleX",scaleX);
 }
 public void setScaleY(float scaleY){
+setMyAttribute("scaleY",scaleY);
 }
 public void setPivotX(float transformPivotX){
+setMyAttribute("transformPivotX",transformPivotX);
 }
 public void setPivotY(float transformPivotY){
+setMyAttribute("transformPivotY",transformPivotY);
 }
 public void setTranslationX(float translationX){
+setMyAttribute("translationX",translationX);
 }
 public void setTranslationY(float translationY){
+setMyAttribute("translationY",translationY);
 }
 public void setTranslationZ(float translationZ){
+setMyAttribute("translationZ",translationZ);
 }
 public void setElevation(float elevation){
+setMyAttribute("elevation",elevation);
 }
 public boolean hasUnhandledKeyListener(){
 return false;
@@ -2448,51 +2468,6 @@ class RoundScrollbarRenderer {
 public RoundScrollbarRenderer(View view){
 }
 }
-public static class MotionEvent {
-public static final int ACTION_DOWN=0;
-public static final int ACTION_UP=1;
-public static final int ACTION_MOVE=2;
-public static final int ACTION_CANCEL=3;
-public static final int ACTION_OUTSIDE=4;
-public static final int ACTION_SCROLL=8;
-public static final int ACTION_BUTTON_PRESS=11;
-public static final int ACTION_BUTTON_RELEASE=12;
-private int x;
-private int y;
-private int rawX;
-private int rawY;
-private int action;
-public int getAction(){
-return action;
-}
-public void setAction(int action){
-this.action=action;
-}
-public int getX(){
-return x;
-}
-public void setX(int x){
-this.x=x;
-}
-public int getY(){
-return y;
-}
-public void setY(int y){
-this.y=y;
-}
-public int getRawX(){
-return rawX;
-}
-public void setRawX(int rawX){
-this.rawX=rawX;
-}
-public int getRawY(){
-return rawY;
-}
-public void setRawY(int rawY){
-this.rawY=rawY;
-}
-}
 public static class DragEvent {
 private int x;
 private int y;
@@ -2656,6 +2631,27 @@ public View inflateView(String layout){
 throw new RuntimeException("Implemented by subclass.");
 }
 public void setMyAttribute(String name,Object value){
+throw new RuntimeException("Implemented by subclass.");
+}
+public void state0(){
+throw new RuntimeException("Implemented by subclass.");
+}
+public void state1(){
+throw new RuntimeException("Implemented by subclass.");
+}
+public void state2(){
+throw new RuntimeException("Implemented by subclass.");
+}
+public void state3(){
+throw new RuntimeException("Implemented by subclass.");
+}
+public void state4(){
+throw new RuntimeException("Implemented by subclass.");
+}
+public void stateYes(){
+throw new RuntimeException("Implemented by subclass.");
+}
+public void stateNo(){
 throw new RuntimeException("Implemented by subclass.");
 }
 }

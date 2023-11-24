@@ -72,5 +72,12 @@ public class Bundle {
 	public Object clone() {
 		return null;
 	}
+	public void putFloat(String name, float value) {
+		putObject(name, value);
+	}
+	public float getFloat(String key) {
+		Object object = get(key);
+		return object == null ? 0 : (float) object;
+	}
 
 }

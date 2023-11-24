@@ -3,6 +3,7 @@ package r.android;
 public class R {
 	public static class id {
 		public static final int content = 0;
+		public static int view_transition = 1000;
 
 	}
 	public static class attr {

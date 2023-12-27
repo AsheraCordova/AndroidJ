@@ -29,4 +29,19 @@ public class Trace {
 		
 	}
 
+	public static void asyncTraceEnd(int traceTagView, String nameForTrace, int identityHashCode) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void asyncTraceBegin(int traceTagView, String nameForTrace, int identityHashCode) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void traceCounter(int traceTagView, String string, int i) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

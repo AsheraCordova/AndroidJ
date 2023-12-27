@@ -15,6 +15,11 @@ public class Color {
 
     public static int parseColor(String colorString) {
         if (colorString.charAt(0) == '#') {
+        	if (colorString.length() == 4) {
+        		colorString = "#" + colorString.charAt(1) + "" + colorString.charAt(1) + "" +
+        				colorString.charAt(2) + "" + colorString.charAt(2) + "" +
+        				colorString.charAt(3) + "" + colorString.charAt(3) + "";
+			}
             // Use a long to avoid rollovers on #ffXXXXXX
             long color = Long.parseLong(colorString.substring(1), 16);
             if (colorString.length() == 7) {

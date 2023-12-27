@@ -9,4 +9,8 @@ public class AnimationUtils {
 		return null;
 	}
 
+	public static long currentAnimationTimeMillis() {
+		return System.currentTimeMillis();
+	}
+
 }

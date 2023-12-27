@@ -18,4 +18,8 @@ public class ArrayUtils {
 	public static int[] newUnpaddedIntArray(int initialCapacity) {
 		return new int[initialCapacity];
 	}
+
+	public static long[] newUnpaddedLongArray(int initialCapacity) {
+		return new long[initialCapacity];
+	}
 }

@@ -9,5 +9,7 @@ public interface Parcel {
 	void readIntArray(int[] mGapPerSpan);
 	List readArrayList(ClassLoader classLoader);
 	void writeList(List mFullSpanItems);
+	int readInt();
+	void writeInt(int x);
 
 }

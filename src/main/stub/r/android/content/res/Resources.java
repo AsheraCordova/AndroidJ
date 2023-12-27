@@ -4,6 +4,9 @@ import r.android.util.DisplayMetrics;
 
 public class Resources {
 	static DisplayMetrics displayMetric = new DisplayMetrics();
+	public static class Theme {
+		
+	}
 	public class NotFoundException extends RuntimeException {
 
 	}

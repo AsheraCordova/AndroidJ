@@ -2654,8 +2654,4 @@ throw new RuntimeException("Implemented by subclass.");
 public void stateNo(){
 throw new RuntimeException("Implemented by subclass.");
 }
-public void relayout() {
-	mPrivateFlags|=PFLAG_LAYOUT_REQUIRED;
-	layout(mLeft, mTop, mRight, mBottom);
-}
 }

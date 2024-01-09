@@ -23,4 +23,24 @@ public class RenderNode {
 		return false;
 	}
 
+	public void setTop(int mTop) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setBottom(int mBottom) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setLeft(int left) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setRight(int mRight) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

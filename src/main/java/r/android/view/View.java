@@ -634,14 +634,172 @@ public interface OnLayoutChangeListener {
   public final int getTop(){
     return mTop;
   }
+  public final void setTop(  int top){
+    if (top != mTop) {
+      final boolean matrixIsIdentity=hasIdentityMatrix();
+      if (matrixIsIdentity) {
+        if (mAttachInfo != null) {
+          int minTop;
+          int yLoc;
+          if (top < mTop) {
+            minTop=top;
+            yLoc=top - mTop;
+          }
+ else {
+            minTop=mTop;
+            yLoc=0;
+          }
+          invalidate(0,yLoc,mRight - mLeft,mBottom - minTop);
+        }
+      }
+ else {
+        invalidate(true);
+      }
+      int width=mRight - mLeft;
+      int oldHeight=mBottom - mTop;
+      mTop=top;
+      mRenderNode.setTop(mTop);
+      sizeChange(width,mBottom - mTop,width,oldHeight);
+      if (!matrixIsIdentity) {
+        mPrivateFlags|=PFLAG_DRAWN;
+        invalidate(true);
+      }
+      mBackgroundSizeChanged=true;
+      mDefaultFocusHighlightSizeChanged=true;
+      if (mForegroundInfo != null) {
+        mForegroundInfo.mBoundsChanged=true;
+      }
+      invalidateParentIfNeeded();
+      if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
+        invalidateParentIfNeeded();
+      }
+    }
+  }
   public final int getBottom(){
     return mBottom;
+  }
+  public final void setBottom(  int bottom){
+    if (bottom != mBottom) {
+      final boolean matrixIsIdentity=hasIdentityMatrix();
+      if (matrixIsIdentity) {
+        if (mAttachInfo != null) {
+          int maxBottom;
+          if (bottom < mBottom) {
+            maxBottom=mBottom;
+          }
+ else {
+            maxBottom=bottom;
+          }
+          invalidate(0,0,mRight - mLeft,maxBottom - mTop);
+        }
+      }
+ else {
+        invalidate(true);
+      }
+      int width=mRight - mLeft;
+      int oldHeight=mBottom - mTop;
+      mBottom=bottom;
+      mRenderNode.setBottom(mBottom);
+      sizeChange(width,mBottom - mTop,width,oldHeight);
+      if (!matrixIsIdentity) {
+        mPrivateFlags|=PFLAG_DRAWN;
+        invalidate(true);
+      }
+      mBackgroundSizeChanged=true;
+      mDefaultFocusHighlightSizeChanged=true;
+      if (mForegroundInfo != null) {
+        mForegroundInfo.mBoundsChanged=true;
+      }
+      invalidateParentIfNeeded();
+      if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
+        invalidateParentIfNeeded();
+      }
+    }
   }
   public final int getLeft(){
     return mLeft;
   }
+  public final void setLeft(  int left){
+    if (left != mLeft) {
+      final boolean matrixIsIdentity=hasIdentityMatrix();
+      if (matrixIsIdentity) {
+        if (mAttachInfo != null) {
+          int minLeft;
+          int xLoc;
+          if (left < mLeft) {
+            minLeft=left;
+            xLoc=left - mLeft;
+          }
+ else {
+            minLeft=mLeft;
+            xLoc=0;
+          }
+          invalidate(xLoc,0,mRight - minLeft,mBottom - mTop);
+        }
+      }
+ else {
+        invalidate(true);
+      }
+      int oldWidth=mRight - mLeft;
+      int height=mBottom - mTop;
+      mLeft=left;
+      mRenderNode.setLeft(left);
+      sizeChange(mRight - mLeft,height,oldWidth,height);
+      if (!matrixIsIdentity) {
+        mPrivateFlags|=PFLAG_DRAWN;
+        invalidate(true);
+      }
+      mBackgroundSizeChanged=true;
+      mDefaultFocusHighlightSizeChanged=true;
+      if (mForegroundInfo != null) {
+        mForegroundInfo.mBoundsChanged=true;
+      }
+      invalidateParentIfNeeded();
+      if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
+        invalidateParentIfNeeded();
+      }
+    }
+  }
   public final int getRight(){
     return mRight;
+  }
+  public final void setRight(  int right){
+    if (right != mRight) {
+      final boolean matrixIsIdentity=hasIdentityMatrix();
+      if (matrixIsIdentity) {
+        if (mAttachInfo != null) {
+          int maxRight;
+          if (right < mRight) {
+            maxRight=mRight;
+          }
+ else {
+            maxRight=right;
+          }
+          invalidate(0,0,maxRight - mLeft,mBottom - mTop);
+        }
+      }
+ else {
+        invalidate(true);
+      }
+      int oldWidth=mRight - mLeft;
+      int height=mBottom - mTop;
+      mRight=right;
+      mRenderNode.setRight(mRight);
+      sizeChange(mRight - mLeft,height,oldWidth,height);
+      if (!matrixIsIdentity) {
+        mPrivateFlags|=PFLAG_DRAWN;
+        invalidate(true);
+      }
+      mBackgroundSizeChanged=true;
+      mDefaultFocusHighlightSizeChanged=true;
+      if (mForegroundInfo != null) {
+        mForegroundInfo.mBoundsChanged=true;
+      }
+      invalidateParentIfNeeded();
+      if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
+        invalidateParentIfNeeded();
+      }
+    }
   }
   private static final int PROVIDER_BACKGROUND=0;
   private static final int PROVIDER_NONE=1;
@@ -856,6 +1014,12 @@ public interface OnLayoutChangeListener {
   }
   public boolean isOpaque(){
     return (mPrivateFlags & PFLAG_OPAQUE_MASK) == PFLAG_OPAQUE_MASK && getFinalAlpha() >= 1.0f;
+  }
+  public ViewRootImpl getViewRootImpl(){
+    if (mAttachInfo != null) {
+      return mAttachInfo.mViewRootImpl;
+    }
+    return null;
   }
   public boolean post(  Runnable action){
     final AttachInfo attachInfo=mAttachInfo;
@@ -2124,6 +2288,10 @@ return mLeft;
 public int getY(){
 return mTop;
 }
+public void relayout(){
+mPrivateFlags|=PFLAG_LAYOUT_REQUIRED;
+layout(mLeft,mTop,mRight,mBottom);
+}
 public void remeasure(){
 throw new RuntimeException("Implemented by subclass. ");
 }
@@ -2133,6 +2301,7 @@ throw new RuntimeException("Implemented by subclass. ");
 public void initAttachInfo(){
 mAttachInfo=new AttachInfo();
 mAttachInfo.mTreeObserver=new ViewTreeObserver(mContext);
+mAttachInfo.mViewRootImpl=new ViewRootImpl();
 }
 public IBinder getApplicationWindowToken(){
 return null;
@@ -2325,6 +2494,7 @@ public java.util.List<View> mScrollContainers;
 public ViewTreeObserver mTreeObserver;
 public View mRootView;
 public boolean mHardwareAccelerationRequested;
+ViewRootImpl mViewRootImpl;
 public int mWindowVisibility=View.VISIBLE;
 Rect mTmpInvalRect=new Rect();
 Object mViewRequestingLayout;
@@ -2354,9 +2524,11 @@ return false;
 boolean requestLayoutDuringLayout(View view){
 return false;
 }
+public void requestTransitionStart(r.android.animation.LayoutTransition transition){
+if (transition.currentChangingAnimations.size() == 1) {
+post(() -> transition.startChangingAnimations());
 }
-ViewRootImpl getViewRootImpl(){
-return null;
+}
 }
 ListenerInfo mListenerInfo;
 class ListenerInfo {

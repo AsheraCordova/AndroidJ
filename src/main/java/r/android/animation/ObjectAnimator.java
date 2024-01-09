@@ -984,10 +984,10 @@ public final class ObjectAnimator extends ValueAnimator {
             return;
         }
 
-        super.animateValue(fraction);
+        super.animateValue(fraction);try {if (target instanceof r.android.view.View) {((r.android.view.View) target).setMyAttribute("swtRedraw", false);}
         int numValues = mValues.length;
         for (int i = 0; i < numValues; ++i) {
-            mValues[i].setAnimatedValue(target);
+            mValues[i].setAnimatedValue(target);}} finally {if (target instanceof r.android.view.View) {((r.android.view.View) target).setMyAttribute("swtRedraw", true);}
         }
     }
 

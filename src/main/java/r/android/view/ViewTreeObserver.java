@@ -3,9 +3,27 @@ import r.android.content.Context;
 import java.util.ArrayList;
 public final class ViewTreeObserver {
   private CopyOnWriteArray<OnScrollChangedListener> mOnScrollChangedListeners;
+  private CopyOnWriteArray<OnPreDrawListener> mOnPreDrawListeners;
   private boolean mAlive=true;
+public interface OnPreDrawListener {
+    public boolean onPreDraw();
+  }
 public interface OnScrollChangedListener {
     public void onScrollChanged();
+  }
+  public void addOnPreDrawListener(  OnPreDrawListener listener){
+    checkIsAlive();
+    if (mOnPreDrawListeners == null) {
+      mOnPreDrawListeners=new CopyOnWriteArray<OnPreDrawListener>();
+    }
+    mOnPreDrawListeners.add(listener);
+  }
+  public void removeOnPreDrawListener(  OnPreDrawListener victim){
+    checkIsAlive();
+    if (mOnPreDrawListeners == null) {
+      return;
+    }
+    mOnPreDrawListeners.remove(victim);
   }
   public void addOnScrollChangedListener(  OnScrollChangedListener listener){
     checkIsAlive();
@@ -25,6 +43,9 @@ public interface OnScrollChangedListener {
     if (!mAlive) {
       throw new IllegalStateException("This ViewTreeObserver is not alive, call " + "getViewTreeObserver() again");
     }
+  }
+  public boolean isAlive(){
+    return mAlive;
   }
   private void kill(){
     mAlive=false;

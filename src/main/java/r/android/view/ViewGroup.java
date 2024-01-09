@@ -1,4 +1,5 @@
 package r.android.view;
+import r.android.animation.LayoutTransition;
 import r.android.graphics.Insets;
 import r.android.graphics.Rect;
 import java.util.ArrayList;
@@ -6,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 public abstract class ViewGroup extends View implements ViewParent {
   private static final boolean DBG=false;
+  protected ArrayList<View> mDisappearingChildren;
   protected OnHierarchyChangeListener mOnHierarchyChangeListener;
   private View mFocused;
   private View mDefaultFocus;
@@ -66,12 +68,36 @@ public abstract class ViewGroup extends View implements ViewParent {
   private boolean mLayoutCalledWhileSuppressed=false;
   private static final int ARRAY_INITIAL_CAPACITY=12;
   private static final int ARRAY_CAPACITY_INCREMENT=12;
+  private LayoutTransition mTransition;
   private ArrayList<View> mTransitioningViews;
+  private ArrayList<View> mVisibilityChangingChildren;
   private int mChildCountWithTransientState=0;
   private int mNestedScrollAxes;
   private List<Integer> mTransientIndices=null;
   private List<View> mTransientViews=null;
   int mChildUnhandledKeyListeners=0;
+  protected void onChildVisibilityChanged(  View child,  int oldVisibility,  int newVisibility){
+    if (mTransition != null) {
+      if (newVisibility == VISIBLE) {
+        mTransition.showChild(this,child,oldVisibility);
+      }
+ else {
+        mTransition.hideChild(this,child,newVisibility);
+        if (mTransitioningViews != null && mTransitioningViews.contains(child)) {
+          if (mVisibilityChangingChildren == null) {
+            mVisibilityChangingChildren=new ArrayList<View>();
+          }
+          mVisibilityChangingChildren.add(child);
+          addDisappearingView(child);
+        }
+      }
+    }
+    if (newVisibility == VISIBLE && mCurrentDragStartEvent != null) {
+      if (!mChildrenInterestedInDrag.contains(child)) {
+        notifyChildOfDragStart(child);
+      }
+    }
+  }
   void dispatchAttachedToWindow(  AttachInfo info,  int visibility){
     mGroupFlags|=FLAG_PREVENT_DISPATCH_ATTACHED_TO_WINDOW;
     super.dispatchAttachedToWindow(info,visibility);
@@ -395,7 +421,7 @@ public interface OnHierarchyChangeListener {
     view.clearAccessibilityFocus();
     cancelTouchTarget(view);
     cancelHoverTarget(view);
-    if (false) {
+    if (view.getAnimation() != null || (mTransitioningViews != null && mTransitioningViews.contains(view))) {
       addDisappearingView(view);
     }
  else     if (view.mAttachInfo != null) {
@@ -433,6 +459,20 @@ public interface OnHierarchyChangeListener {
       mChildrenInterestedInDrag.remove(view);
     }
   }
+  public void setLayoutTransition(  LayoutTransition transition){
+    if (mTransition != null) {
+      LayoutTransition previousTransition=mTransition;
+      previousTransition.cancel();
+      previousTransition.removeTransitionListener(mLayoutTransitionListener);
+    }
+    mTransition=transition;
+    if (mTransition != null) {
+      mTransition.addTransitionListener(mLayoutTransitionListener);
+    }
+  }
+  public LayoutTransition getLayoutTransition(){
+    return mTransition;
+  }
   public void removeAllViews(){
     removeAllViewsInLayout();
     requestLayout();
@@ -461,7 +501,7 @@ public interface OnHierarchyChangeListener {
       view.clearAccessibilityFocus();
       cancelTouchTarget(view);
       cancelHoverTarget(view);
-      if (false) {
+      if (view.getAnimation() != null || (mTransitioningViews != null && mTransitioningViews.contains(view))) {
         addDisappearingView(view);
       }
  else       if (detach) {
@@ -675,6 +715,59 @@ break;
 }
 return MeasureSpec.makeMeasureSpec(resultSize,resultMode);
 }
+private void addDisappearingView(View v){
+ArrayList<View> disappearingChildren=mDisappearingChildren;
+if (disappearingChildren == null) {
+disappearingChildren=mDisappearingChildren=new ArrayList<View>();
+}
+disappearingChildren.add(v);
+}
+public void startViewTransition(View view){
+if (view.mParent == this) {
+if (mTransitioningViews == null) {
+mTransitioningViews=new ArrayList<View>();
+}
+mTransitioningViews.add(view);
+}
+}
+public void endViewTransition(View view){
+if (mTransitioningViews != null) {
+mTransitioningViews.remove(view);
+final ArrayList<View> disappearingChildren=mDisappearingChildren;
+if (disappearingChildren != null && disappearingChildren.contains(view)) {
+disappearingChildren.remove(view);
+if (mVisibilityChangingChildren != null && mVisibilityChangingChildren.contains(view)) {
+mVisibilityChangingChildren.remove(view);
+}
+ else {
+if (view.mAttachInfo != null) {
+view.dispatchDetachedFromWindow();
+}
+if (view.mParent != null) {
+view.mParent=null;
+}
+}
+invalidate();
+}
+}
+}
+private LayoutTransition.TransitionListener mLayoutTransitionListener=new LayoutTransition.TransitionListener(){
+public void startTransition(LayoutTransition transition,ViewGroup container,View view,int transitionType){
+if (transitionType == LayoutTransition.DISAPPEARING) {
+startViewTransition(view);
+}
+}
+public void endTransition(LayoutTransition transition,ViewGroup container,View view,int transitionType){
+if (mLayoutCalledWhileSuppressed && !transition.isChangingLayout()) {
+requestLayout();
+mLayoutCalledWhileSuppressed=false;
+}
+if (transitionType == LayoutTransition.DISAPPEARING && mTransitioningViews != null) {
+endViewTransition(view);
+}
+}
+}
+;
 protected void drawableStateChanged(){
 super.drawableStateChanged();
 if ((mGroupFlags & FLAG_NOTIFY_CHILDREN_ON_DRAWABLE_STATE_CHANGE) != 0) {
@@ -727,6 +820,12 @@ return (mGroupFlags & FLAG_ADD_STATES_FROM_CHILDREN) != 0;
 public void childDrawableStateChanged(View child){
 if ((mGroupFlags & FLAG_ADD_STATES_FROM_CHILDREN) != 0) {
 refreshDrawableState();
+}
+}
+public void requestTransitionStart(LayoutTransition transition){
+ViewRootImpl viewAncestor=getViewRootImpl();
+if (viewAncestor != null) {
+viewAncestor.requestTransitionStart(transition);
 }
 }
 protected void onSetLayoutParams(View child,LayoutParams layoutParams){
@@ -943,17 +1042,6 @@ public void incrementChildUnhandledKeyListeners(){
 }
 @Override public void focusableViewAvailable(View v){
 }
-public void cancel(String disappearing2){
-}
-public void cancel(){
-}
-public boolean isChangingLayout(){
-return false;
-}
-public void cancel(int disappearing2){
-}
-public void layoutChange(ViewGroup viewGroup){
-}
 protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p){
 return p;
 }
@@ -967,8 +1055,6 @@ private boolean rootViewRequestFocus(){
 return false;
 }
 private void clearChildFocus(View view){
-}
-private void addDisappearingView(View view){
 }
 private void cancelHoverTarget(View view){
 }
@@ -990,18 +1076,6 @@ private void clearDefaultFocus(View view){
 }
 class DragEvent {
 }
-LayoutTransition mTransition;
-public class LayoutTransition {
-public static final int DISAPPEARING=0;
-public void showChild(ViewGroup viewGroup,View child,int oldVisibility){
-}
-public void addChild(ViewGroup viewGroup,View child){
-}
-public void cancel(int disappearing2){
-}
-public void removeChild(ViewGroup viewGroup,View view){
-}
-}
 public int measureHeightOfChildren(int widthMeasureSpec,int startPosition,int endPosition,int maxHeight,int disallowPartialChildPosition){
 int height=0;
 final int size=mChildrenCount;
@@ -1014,5 +1088,11 @@ measureChild(child,widthMeasureSpec,-2);
 height+=child.getMeasuredHeight();
 }
 return height;
+}
+public void setRedraw(boolean flag){
+for (int i=0; i < getChildCount(); i++) {
+final View child=getChildAt(i);
+child.setMyAttribute("swtRedraw",flag);
+}
 }
 }

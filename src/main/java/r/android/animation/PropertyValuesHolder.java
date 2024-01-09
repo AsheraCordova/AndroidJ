@@ -881,7 +881,7 @@ public class PropertyValuesHolder implements Cloneable {
      * @param target The target object from which the current value should be extracted.
      * @param kf The keyframe which holds the property name and value.
      */
-    private void setupValue(Object target, Keyframe kf) {
+    private void setupValue(Object target, Keyframe kf) {if (target instanceof com.ashera.widget.ILifeCycleDecorator) {Object value = ((com.ashera.widget.ILifeCycleDecorator) target).getWidget().getAttribute(mPropertyName, true);kf.setValue(value);return;}
         if (mProperty != null) {
             Object value = convertBack(mProperty.get(target));
             kf.setValue(value);
@@ -1715,7 +1715,7 @@ public class PropertyValuesHolder implements Cloneable {
             int numParams) {return methodName;}
     static private  String nGetMultipleFloatMethod(Class targetClass, String methodName,
             int numParams) {return methodName;}
-    static private void nCallIntMethod(Object target,  String methodID, int arg) {if (target instanceof r.android.view.View) {((r.android.view.View) target).setMyAttribute(methodID, arg);}}
+    static private void nCallIntMethod(Object target,  String methodID, int arg) {if (target instanceof r.android.view.View) {if(methodID.startsWith("scroll")) {return;}((r.android.view.View) target).setMyAttribute(methodID, arg);}}
     static private void nCallFloatMethod(Object target,  String methodID, float arg) {if (target instanceof r.android.view.View) {((r.android.view.View) target).setMyAttribute(methodID, arg);}}
     static private void nCallTwoIntMethod(Object target,  String methodID, int arg1, int arg2) {}
     static private void nCallFourIntMethod(Object target,  String methodID, int arg1, int arg2,

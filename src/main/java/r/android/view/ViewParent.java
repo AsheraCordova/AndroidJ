@@ -17,4 +17,11 @@ public interface ViewParent {
   public boolean canResolveTextAlignment();
   public boolean isTextAlignmentResolved();
   public int getTextAlignment();
+  public boolean onStartNestedScroll(  View child,  View target,  int nestedScrollAxes);
+  public void onNestedScrollAccepted(  View child,  View target,  int nestedScrollAxes);
+  public void onStopNestedScroll(  View target);
+  public void onNestedScroll(  View target,  int dxConsumed,  int dyConsumed,  int dxUnconsumed,  int dyUnconsumed);
+  public void onNestedPreScroll(  View target,  int dx,  int dy,  int[] consumed);
+  public boolean onNestedFling(  View target,  float velocityX,  float velocityY,  boolean consumed);
+  public boolean onNestedPreFling(  View target,  float velocityX,  float velocityY);
 }

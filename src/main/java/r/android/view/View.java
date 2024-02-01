@@ -400,6 +400,8 @@ private static class ForegroundInfo {
   int mLayerType=LAYER_TYPE_NONE;
   public boolean mCachingFailed;
   private boolean mSendingHoverAccessibilityEvents;
+  private ViewParent mNestedScrollingParent;
+  private int[] mTempNestedScrollConsumed;
   private RoundScrollbarRenderer mRoundScrollbarRenderer;
   ListenerInfo getListenerInfo(){
     if (mListenerInfo != null) {
@@ -1992,6 +1994,85 @@ public void setMinimumWidth(int minWidth){
 mMinWidth=minWidth;
 requestLayout();
 }
+public boolean isNestedScrollingEnabled(){
+return (mPrivateFlags3 & PFLAG3_NESTED_SCROLLING_ENABLED) == PFLAG3_NESTED_SCROLLING_ENABLED;
+}
+public void stopNestedScroll(){
+if (mNestedScrollingParent != null) {
+mNestedScrollingParent.onStopNestedScroll(this);
+mNestedScrollingParent=null;
+}
+}
+public boolean dispatchNestedScroll(int dxConsumed,int dyConsumed,int dxUnconsumed,int dyUnconsumed,int[] offsetInWindow){
+if (isNestedScrollingEnabled() && mNestedScrollingParent != null) {
+if (dxConsumed != 0 || dyConsumed != 0 || dxUnconsumed != 0 || dyUnconsumed != 0) {
+int startX=0;
+int startY=0;
+if (offsetInWindow != null) {
+getLocationInWindow(offsetInWindow);
+startX=offsetInWindow[0];
+startY=offsetInWindow[1];
+}
+mNestedScrollingParent.onNestedScroll(this,dxConsumed,dyConsumed,dxUnconsumed,dyUnconsumed);
+if (offsetInWindow != null) {
+getLocationInWindow(offsetInWindow);
+offsetInWindow[0]-=startX;
+offsetInWindow[1]-=startY;
+}
+return true;
+}
+ else if (offsetInWindow != null) {
+offsetInWindow[0]=0;
+offsetInWindow[1]=0;
+}
+}
+return false;
+}
+public boolean dispatchNestedPreScroll(int dx,int dy,int[] consumed,int[] offsetInWindow){
+if (isNestedScrollingEnabled() && mNestedScrollingParent != null) {
+if (dx != 0 || dy != 0) {
+int startX=0;
+int startY=0;
+if (offsetInWindow != null) {
+getLocationInWindow(offsetInWindow);
+startX=offsetInWindow[0];
+startY=offsetInWindow[1];
+}
+if (consumed == null) {
+if (mTempNestedScrollConsumed == null) {
+mTempNestedScrollConsumed=new int[2];
+}
+consumed=mTempNestedScrollConsumed;
+}
+consumed[0]=0;
+consumed[1]=0;
+mNestedScrollingParent.onNestedPreScroll(this,dx,dy,consumed);
+if (offsetInWindow != null) {
+getLocationInWindow(offsetInWindow);
+offsetInWindow[0]-=startX;
+offsetInWindow[1]-=startY;
+}
+return consumed[0] != 0 || consumed[1] != 0;
+}
+ else if (offsetInWindow != null) {
+offsetInWindow[0]=0;
+offsetInWindow[1]=0;
+}
+}
+return false;
+}
+public boolean dispatchNestedFling(float velocityX,float velocityY,boolean consumed){
+if (isNestedScrollingEnabled() && mNestedScrollingParent != null) {
+return mNestedScrollingParent.onNestedFling(this,velocityX,velocityY,consumed);
+}
+return false;
+}
+public boolean dispatchNestedPreFling(float velocityX,float velocityY){
+if (isNestedScrollingEnabled() && mNestedScrollingParent != null) {
+return mNestedScrollingParent.onNestedPreFling(this,velocityX,velocityY);
+}
+return false;
+}
 public int getRawTextDirection(){
 return (mPrivateFlags2 & PFLAG2_TEXT_DIRECTION_MASK) >> PFLAG2_TEXT_DIRECTION_MASK_SHIFT;
 }
@@ -2310,6 +2391,9 @@ public int getAccessibilityViewId(){
 return 0;
 }
 public void getLocationOnScreen(int[] appScreenLocation){
+}
+public void getLocationInWindow(int[] appScreenLocation){
+getLocationOnScreen(appScreenLocation);
 }
 public void getHitRect(Rect outRect){
 }

@@ -178,4 +178,8 @@ public class Drawable {
 	public void setHotspotBounds(int left2, int top2, int right2, int bottom2) {
 		
 	}
+
+	public void jumpToCurrentState() {
+		
+	}
 }

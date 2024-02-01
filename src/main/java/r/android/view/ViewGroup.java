@@ -828,6 +828,28 @@ if (viewAncestor != null) {
 viewAncestor.requestTransitionStart(transition);
 }
 }
+public boolean onStartNestedScroll(View child,View target,int nestedScrollAxes){
+return false;
+}
+public void onNestedScrollAccepted(View child,View target,int axes){
+mNestedScrollAxes=axes;
+}
+public void onStopNestedScroll(View child){
+stopNestedScroll();
+mNestedScrollAxes=0;
+}
+public void onNestedScroll(View target,int dxConsumed,int dyConsumed,int dxUnconsumed,int dyUnconsumed){
+dispatchNestedScroll(dxConsumed,dyConsumed,dxUnconsumed,dyUnconsumed,null);
+}
+public void onNestedPreScroll(View target,int dx,int dy,int[] consumed){
+dispatchNestedPreScroll(dx,dy,consumed,null);
+}
+public boolean onNestedFling(View target,float velocityX,float velocityY,boolean consumed){
+return dispatchNestedFling(velocityX,velocityY,consumed);
+}
+public boolean onNestedPreFling(View target,float velocityX,float velocityY){
+return dispatchNestedPreFling(velocityX,velocityY);
+}
 protected void onSetLayoutParams(View child,LayoutParams layoutParams){
 requestLayout();
 }

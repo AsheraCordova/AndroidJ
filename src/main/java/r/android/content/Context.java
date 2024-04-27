@@ -70,4 +70,8 @@ public class Context {
 		return new PackageManager();
 	}
 
+	public CharSequence getText(int hintId) {
+		return null;
+	}
+
 }

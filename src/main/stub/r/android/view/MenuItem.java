@@ -38,4 +38,5 @@ public interface MenuItem {
     public MenuItem setIconTintList(ColorStateList tint);
     public void setShowAsAction(int actionEnum);
     public int getItemId();
+    public View getActionView();
 }

@@ -14,8 +14,38 @@ public class Drawable {
 	private int minimumWidth;
 	private Object drawable;
 	private boolean redraw; 
+	private Object tintColor; 
+	private String tintMode;
+	private MeasureTextHelper measureTextHelper;
+	private boolean useGC;
+	@com.google.j2objc.annotations.Weak private com.ashera.widget.IWidget overlay;
 	
-    public boolean isRedraw() {
+	public void setOverlay(com.ashera.widget.IWidget overlay) {
+		this.overlay = overlay;
+	}
+	
+	public void setUseGC(boolean useGC) {
+		this.useGC = useGC;
+	}
+
+
+	public String getTintMode() {
+		return tintMode;
+	}
+
+	public void setTintMode(String tintMode) {
+		this.tintMode = tintMode;
+	}
+
+	public Object getTintColor() {
+		return tintColor;
+	}
+
+	public void setTintColor(Object tintColor) {
+		this.tintColor = tintColor;
+	}
+
+	public boolean isRedraw() {
 		return redraw;
 	}
 
@@ -32,6 +62,9 @@ public class Drawable {
     }
     
 	public Rect getBounds() {
+		if (overlay != null) {
+			overlay.invokeMethod("updateBounds");
+		}
 		return mBounds;
 	}
 
@@ -181,5 +214,60 @@ public class Drawable {
 
 	public void jumpToCurrentState() {
 		
+	}
+	
+	public java.lang.String getSimulatedWidgetGroupName() {
+		if (useGC) {
+			return null;
+		}
+		return "ImageView";
+	}
+	
+	public java.lang.String getSimulatedWidgetLocalName() {
+		if (useGC) {
+			return null;
+		}
+		return "ImageView";
+	}
+	
+	public java.lang.String[] getSimulatedWidgetAttrs() {
+		if (useGC) {
+			return null;
+		}
+		return new String[]{"zIndex", "scaleType", "src"};
+	}
+	
+	public java.lang.String[] getViewAttrs() {
+		if (!useGC) {
+			return null;
+		}
+		return new String[]{"swtGCImage"};
+	}
+	
+	public java.lang.Object getAttribute(java.lang.String key) {
+		switch (key) {
+		case "zIndex":
+			return "1000";
+		case "src":
+			return this;
+		case "scaleType":
+			return "fitXY";
+		case "swtGCImage":
+			return Arrays.asList(this);
+		}
+		return null;
+	}
+	
+	public static interface MeasureTextHelper {
+		public float getTextWidth();
+		public float getTextHeight();
+	}
+	
+	public void setMeasureTextHelper(MeasureTextHelper helper) {
+		this.measureTextHelper = helper;
+	}
+	
+    public MeasureTextHelper getMeasureTextHelper() {
+		return measureTextHelper;
 	}
 }

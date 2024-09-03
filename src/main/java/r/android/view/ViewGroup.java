@@ -1117,4 +1117,13 @@ final View child=getChildAt(i);
 child.setMyAttribute("swtRedraw",flag);
 }
 }
+public boolean hasChild(View child){
+for (int i=0; i < getChildCount(); i++) {
+View view=getChildAt(i);
+if (view == child) {
+return true;
+}
+}
+return false;
+}
 }

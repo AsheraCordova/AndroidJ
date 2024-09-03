@@ -400,6 +400,7 @@ private static class ForegroundInfo {
   int mLayerType=LAYER_TYPE_NONE;
   public boolean mCachingFailed;
   private boolean mSendingHoverAccessibilityEvents;
+  ViewOverlay mOverlay;
   private ViewParent mNestedScrollingParent;
   private int[] mTempNestedScrollConsumed;
   private RoundScrollbarRenderer mRoundScrollbarRenderer;
@@ -1252,8 +1253,8 @@ return Math.max(vis1,vis2);
 }
 void dispatchAttachedToWindow(AttachInfo info,int visibility){
 mAttachInfo=info;
-if (false) {
-//mOverlay.  getOverlayView().dispatchAttachedToWindow(info,visibility);
+if (mOverlay != null) {
+mOverlay.getOverlayView().dispatchAttachedToWindow(info,visibility);
 }
 mWindowAttachCount++;
 mPrivateFlags|=PFLAG_DRAWABLE_STATE_DIRTY;
@@ -1322,8 +1323,8 @@ mAttachInfo.mScrollContainers.remove(this);
 mPrivateFlags&=~PFLAG_SCROLL_CONTAINER_ADDED;
 }
 mAttachInfo=null;
-if (false) {
-//mOverlay.  getOverlayView().dispatchDetachedFromWindow();
+if (mOverlay != null) {
+mOverlay.getOverlayView().dispatchDetachedFromWindow();
 }
 notifyEnterOrExitForAutoFillIfNeeded(false);
 }
@@ -1332,6 +1333,12 @@ setFlags(enabled ? DUPLICATE_PARENT_STATE : 0,DUPLICATE_PARENT_STATE);
 }
 public boolean isDuplicateParentStateEnabled(){
 return (mViewFlags & DUPLICATE_PARENT_STATE) == DUPLICATE_PARENT_STATE;
+}
+public ViewOverlay getOverlay(){
+if (mOverlay == null) {
+mOverlay=new ViewOverlay(mContext,this);
+}
+return mOverlay;
 }
 public boolean isLayoutRequested(){
 return (mPrivateFlags & PFLAG_FORCE_LAYOUT) == PFLAG_FORCE_LAYOUT;
@@ -1480,6 +1487,9 @@ resetResolvedDrawablesInternal();
 }
 void resetResolvedDrawablesInternal(){
 mPrivateFlags2&=~PFLAG2_DRAWABLE_RESOLVED;
+}
+protected boolean verifyDrawable(Drawable who){
+return who == mBackground || (mForegroundInfo != null && mForegroundInfo.mDrawable == who) || (mDefaultFocusHighlight == who);
 }
 public void refreshDrawableState(){
 mPrivateFlags|=PFLAG_DRAWABLE_STATE_DIRTY;
@@ -1836,7 +1846,7 @@ return null;
 }
 public void setTag(int key,final Object tag){
 if ((key >>> 24) < 2) {
-throw new IllegalArgumentException("The key must be an application-specific " + "resource id.");
+//throw new IllegalArgumentException("The key must be an application-specific " + "resource id.");
 }
 setKeyedTag(key,tag);
 }
@@ -2361,6 +2371,7 @@ private int verticalScrollbarWidth;
 private int horizontalScrollbarHeight;
 public View(){
 mViewFlags=SOUND_EFFECTS_ENABLED | HAPTIC_FEEDBACK_ENABLED;
+mContext=new r.android.content.Context();
 mPrivateFlags2=(LAYOUT_DIRECTION_DEFAULT << PFLAG2_LAYOUT_DIRECTION_MASK_SHIFT) | (TEXT_DIRECTION_DEFAULT << PFLAG2_TEXT_DIRECTION_MASK_SHIFT) | (PFLAG2_TEXT_DIRECTION_RESOLVED_DEFAULT)| (TEXT_ALIGNMENT_DEFAULT << PFLAG2_TEXT_ALIGNMENT_MASK_SHIFT)| (PFLAG2_TEXT_ALIGNMENT_RESOLVED_DEFAULT)| (IMPORTANT_FOR_ACCESSIBILITY_DEFAULT << PFLAG2_IMPORTANT_FOR_ACCESSIBILITY_SHIFT);
 }
 public int getX(){
@@ -2630,7 +2641,7 @@ public void setId(int id){
 this.mID=id;
 }
 public r.android.content.Context getContext(){
-return new r.android.content.Context();
+return mContext;
 }
 public boolean hasFocus(){
 return false;
@@ -2909,5 +2920,21 @@ throw new RuntimeException("Implemented by subclass.");
 }
 public void stateNo(){
 throw new RuntimeException("Implemented by subclass.");
+}
+public void getDrawingRect(Rect anchorRect){
+anchorRect.set(getLeft(),getTop(),getRight(),getBottom());
+}
+private boolean isOverlay;
+public boolean isOverlay(){
+return isOverlay;
+}
+public void setOverlay(boolean isOverlay){
+this.isOverlay=isOverlay;
+if (isOverlay) {
+setFlags(GONE,VISIBILITY_MASK);
+}
+ else {
+setFlags(VISIBLE,VISIBILITY_MASK);
+}
 }
 }

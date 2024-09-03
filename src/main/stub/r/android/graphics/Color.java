@@ -2,8 +2,9 @@ package r.android.graphics;
 
 public class Color {
 
-	public static final int BLACK = 0;
+	public static final int BLACK = 0xFF000000;
 	public static final int RED = 0xFFFF0000;
+	public static final int WHITE = 0xFFFFFFFF;
 
 	public static int HSVToColor(float[] value) {
 		return 0;
@@ -34,7 +35,7 @@ public class Color {
     }
     
     public static String formatColor(int intColor) {
-    	String hexColor = String.format("#%06X", (0xFFFFFF & intColor));
+    	String hexColor = String.format("#%08X", (0xFFFFFFFF & intColor));
     	return hexColor;
     }
 }

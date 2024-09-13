@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * PathKeyframes relies on approximating the Path as a series of line segments.
  * The line segments are recursively divided until there is less than 1/2 pixel error
  * between the lines and the curve. Each point of the line segment is converted
- * to a Keyframe and a linear interpolation between Keyframes creates a good approximation
+ * to a Keyframe and a linear interpolation between IKeyframes creates a good approximation
  * of the curve.
  * <p>
  * PathKeyframes is optimized to reduce the number of objects created when there are
@@ -32,11 +32,11 @@ import java.util.ArrayList;
  * </p>
  * <p>
  * Typically, the returned type is a PointF, but the individual components can be extracted
- * as either an IntKeyframes or FloatKeyframes.
+ * as either an IntIKeyframes or FloatIKeyframes.
  * </p>
  * @hide
  */
-public class PathKeyframes implements Keyframes {
+public class PathKeyframes implements IKeyframes {
     private static final int FRACTION_OFFSET = 0;
     private static final int X_OFFSET = 1;
     private static final int Y_OFFSET = 2;
@@ -58,7 +58,7 @@ public class PathKeyframes implements Keyframes {
     }
 
     @Override
-    public ArrayList<Keyframe> getKeyframes() {
+    public ArrayList<Keyframe> getIKeyframes() {
         return EMPTY_KEYFRAMES;
     }
 
@@ -127,10 +127,10 @@ public class PathKeyframes implements Keyframes {
     }
 
     @Override
-    public Keyframes clone() {
-        Keyframes clone = null;
+    public IKeyframes clone() {
+        IKeyframes clone = null;
         try {
-            clone = (Keyframes) super.clone();
+            clone = (IKeyframes) super.clone();
         } catch (CloneNotSupportedException e) {}
         return clone;
     }
@@ -149,11 +149,11 @@ public class PathKeyframes implements Keyframes {
     }
 
     /**
-     * Returns a FloatKeyframes for the X component of the Path.
-     * @return a FloatKeyframes for the X component of the Path.
+     * Returns a FloatIKeyframes for the X component of the Path.
+     * @return a FloatIKeyframes for the X component of the Path.
      */
-    public FloatKeyframes createXFloatKeyframes() {
-        return new FloatKeyframesBase() {
+    public FloatIKeyframes createXFloatKeyframes() {
+        return new FloatIKeyframesBase() {
             @Override
             public float getFloatValue(float fraction) {
                 PointF pointF = (PointF) PathKeyframes.this.getValue(fraction);
@@ -163,11 +163,11 @@ public class PathKeyframes implements Keyframes {
     }
 
     /**
-     * Returns a FloatKeyframes for the Y component of the Path.
-     * @return a FloatKeyframes for the Y component of the Path.
+     * Returns a FloatIKeyframes for the Y component of the Path.
+     * @return a FloatIKeyframes for the Y component of the Path.
      */
-    public FloatKeyframes createYFloatKeyframes() {
-        return new FloatKeyframesBase() {
+    public FloatIKeyframes createYFloatKeyframes() {
+        return new FloatIKeyframesBase() {
             @Override
             public float getFloatValue(float fraction) {
                 PointF pointF = (PointF) PathKeyframes.this.getValue(fraction);
@@ -177,11 +177,11 @@ public class PathKeyframes implements Keyframes {
     }
 
     /**
-     * Returns an IntKeyframes for the X component of the Path.
-     * @return an IntKeyframes for the X component of the Path.
+     * Returns an IntIKeyframes for the X component of the Path.
+     * @return an IntIKeyframes for the X component of the Path.
      */
-    public IntKeyframes createXIntKeyframes() {
-        return new IntKeyframesBase() {
+    public IntIKeyframes createXIntKeyframes() {
+        return new IntIKeyframesBase() {
             @Override
             public int getIntValue(float fraction) {
                 PointF pointF = (PointF) PathKeyframes.this.getValue(fraction);
@@ -194,8 +194,8 @@ public class PathKeyframes implements Keyframes {
      * Returns an IntKeyframeSet for the Y component of the Path.
      * @return an IntKeyframeSet for the Y component of the Path.
      */
-    public IntKeyframes createYIntKeyframes() {
-        return new IntKeyframesBase() {
+    public IntIKeyframes createYIntKeyframes() {
+        return new IntIKeyframesBase() {
             @Override
             public int getIntValue(float fraction) {
                 PointF pointF = (PointF) PathKeyframes.this.getValue(fraction);
@@ -204,27 +204,27 @@ public class PathKeyframes implements Keyframes {
         };
     }
 
-    private abstract static class SimpleKeyframes implements Keyframes {
+    private abstract static class SimpleIKeyframes implements IKeyframes {
         @Override
         public void setEvaluator(TypeEvaluator evaluator) {
         }
 
         @Override
-        public ArrayList<Keyframe> getKeyframes() {
+        public ArrayList<Keyframe> getIKeyframes() {
             return EMPTY_KEYFRAMES;
         }
 
         @Override
-        public Keyframes clone() {
-            Keyframes clone = null;
+        public IKeyframes clone() {
+            IKeyframes clone = null;
             try {
-                clone = (Keyframes) super.clone();
+                clone = (IKeyframes) super.clone();
             } catch (CloneNotSupportedException e) {}
             return clone;
         }
     }
 
-    abstract static class IntKeyframesBase extends SimpleKeyframes implements IntKeyframes {
+    abstract static class IntIKeyframesBase extends SimpleIKeyframes implements IntIKeyframes {
         @Override
         public Class getType() {
             return Integer.class;
@@ -236,8 +236,8 @@ public class PathKeyframes implements Keyframes {
         }
     }
 
-    abstract static class FloatKeyframesBase extends SimpleKeyframes
-            implements FloatKeyframes {
+    abstract static class FloatIKeyframesBase extends SimpleIKeyframes
+            implements FloatIKeyframes {
         @Override
         public Class getType() {
             return Float.class;

@@ -23,14 +23,14 @@ import java.util.List;
 /**
  * This class holds a collection of FloatKeyframe objects and is called by ValueAnimator to calculate
  * values between those keyframes for a given animation. The class internal to the animation
- * package because it is an implementation detail of how Keyframes are stored and used.
+ * package because it is an implementation detail of how IKeyframes are stored and used.
  *
  * <p>This type-specific subclass of KeyframeSet, along with the other type-specific subclass for
  * int, exists to speed up the getValue() method when there is no custom
  * TypeEvaluator set for the animation, so that values can be calculated without autoboxing to the
  * Object equivalents of these primitive types.</p>
  */
-class FloatKeyframeSet extends KeyframeSet implements Keyframes.FloatKeyframes {
+class FloatKeyframeSet extends KeyframeSet implements IKeyframes.FloatIKeyframes {
     public FloatKeyframeSet(FloatKeyframe... keyframes) {
         super(keyframes);
     }
@@ -44,11 +44,11 @@ class FloatKeyframeSet extends KeyframeSet implements Keyframes.FloatKeyframes {
     public FloatKeyframeSet clone() {
         final List<Keyframe> keyframes = mKeyframes;
         final int numKeyframes = mKeyframes.size();
-        FloatKeyframe[] newKeyframes = new FloatKeyframe[numKeyframes];
+        FloatKeyframe[] newIKeyframes = new FloatKeyframe[numKeyframes];
         for (int i = 0; i < numKeyframes; ++i) {
-            newKeyframes[i] = (FloatKeyframe) keyframes.get(i).clone();
+            newIKeyframes[i] = (FloatKeyframe) keyframes.get(i).clone();
         }
-        FloatKeyframeSet newSet = new FloatKeyframeSet(newKeyframes);
+        FloatKeyframeSet newSet = new FloatKeyframeSet(newIKeyframes);
         return newSet;
     }
 

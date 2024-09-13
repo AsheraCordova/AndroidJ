@@ -28,10 +28,10 @@ import java.util.List;
 /**
  * This class holds a collection of Keyframe objects and is called by ValueAnimator to calculate
  * values between those keyframes for a given animation. The class internal to the animation
- * package because it is an implementation detail of how Keyframes are stored and used.
+ * package because it is an implementation detail of how IKeyframes are stored and used.
  * @hide
  */
-public class KeyframeSet implements Keyframes {
+public class KeyframeSet implements IKeyframes {
 
     int mNumKeyframes;
 
@@ -51,7 +51,7 @@ public class KeyframeSet implements Keyframes {
         mInterpolator = mLastKeyframe.getInterpolator();
     }
 
-    public List<Keyframe> getKeyframes() {
+    public List<Keyframe> getIKeyframes() {
         return mKeyframes;
     }
 
@@ -113,17 +113,17 @@ public class KeyframeSet implements Keyframes {
             }
         }
         if (hasFloat && !hasInt && !hasOther) {
-            FloatKeyframe floatKeyframes[] = new FloatKeyframe[numKeyframes];
+            FloatKeyframe floatIKeyframes[] = new FloatKeyframe[numKeyframes];
             for (int i = 0; i < numKeyframes; ++i) {
-                floatKeyframes[i] = (FloatKeyframe) keyframes[i];
+                floatIKeyframes[i] = (FloatKeyframe) keyframes[i];
             }
-            return new FloatKeyframeSet(floatKeyframes);
+            return new FloatKeyframeSet(floatIKeyframes);
         } else if (hasInt && !hasFloat && !hasOther) {
-            IntKeyframe intKeyframes[] = new IntKeyframe[numKeyframes];
+            IntKeyframe intIKeyframes[] = new IntKeyframe[numKeyframes];
             for (int i = 0; i < numKeyframes; ++i) {
-                intKeyframes[i] = (IntKeyframe) keyframes[i];
+                intIKeyframes[i] = (IntKeyframe) keyframes[i];
             }
-            return new IntKeyframeSet(intKeyframes);
+            return new IntKeyframeSet(intIKeyframes);
         } else {
             return new KeyframeSet(keyframes);
         }
@@ -173,11 +173,11 @@ public class KeyframeSet implements Keyframes {
     public KeyframeSet clone() {
         List<Keyframe> keyframes = mKeyframes;
         int numKeyframes = mKeyframes.size();
-        final Keyframe[] newKeyframes = new Keyframe[numKeyframes];
+        final Keyframe[] newIKeyframes = new Keyframe[numKeyframes];
         for (int i = 0; i < numKeyframes; ++i) {
-            newKeyframes[i] = keyframes.get(i).clone();
+            newIKeyframes[i] = keyframes.get(i).clone();
         }
-        KeyframeSet newSet = new KeyframeSet(newKeyframes);
+        KeyframeSet newSet = new KeyframeSet(newIKeyframes);
         return newSet;
     }
 

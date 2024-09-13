@@ -45,7 +45,7 @@ import java.lang.ref.WeakReference;
  * {@sample development/samples/ApiDemos/res/anim/object_animator_pvh.xml
  * PropertyValuesHolderResources}
  *
- * <p>Using Keyframes allows animations to follow more complex paths from the start
+ * <p>Using IKeyframes allows animations to follow more complex paths from the start
  * to the end values. Note that you can specify explicit fractional values (from 0 to 1) for
  * each keyframe to determine when, in the overall duration, the animation should arrive at that
  * value. Alternatively, you can leave the fractions off and the keyframes will be equally

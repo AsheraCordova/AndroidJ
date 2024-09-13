@@ -22,11 +22,11 @@ import java.util.List;
  * ValueAnimator to calculate values between those keyframes for a given animation.
  * @hide
  */
-public interface Keyframes extends Cloneable {
+public interface IKeyframes extends Cloneable {
 
     /**
      * Sets the TypeEvaluator to be used when calculating animated values. This object
-     * is required only for Keyframes that are not either IntKeyframes or FloatKeyframes,
+     * is required only for IKeyframes that are not either IntIKeyframes or FloatIKeyframes,
      * both of which assume their own evaluator to speed up calculations with those primitive
      * types.
      *
@@ -35,7 +35,7 @@ public interface Keyframes extends Cloneable {
     void setEvaluator(TypeEvaluator evaluator);
 
     /**
-     * @return The value type contained by the contained Keyframes.
+     * @return The value type contained by the contained IKeyframes.
      */
     Class getType();
 
@@ -54,17 +54,17 @@ public interface Keyframes extends Cloneable {
     Object getValue(float fraction);
 
     /**
-     * @return A list of all Keyframes contained by this. This may return null if this is
-     * not made up of Keyframes.
+     * @return A list of all IKeyframes contained by this. This may return null if this is
+     * not made up of IKeyframes.
      */
-    List<Keyframe> getKeyframes();
+    List<Keyframe> getIKeyframes();
 
-    Keyframes clone();
+    IKeyframes clone();
 
     /**
-     * A specialization of Keyframes that has integer primitive value calculation.
+     * A specialization of IKeyframes that has integer primitive value calculation.
      */
-    public interface IntKeyframes extends Keyframes {
+    public interface IntIKeyframes extends IKeyframes {
 
         /**
          * Works like {@link #getValue(float)}, but returning a primitive.
@@ -75,9 +75,9 @@ public interface Keyframes extends Cloneable {
     }
 
     /**
-     * A specialization of Keyframes that has float primitive value calculation.
+     * A specialization of IKeyframes that has float primitive value calculation.
      */
-    public interface FloatKeyframes extends Keyframes {
+    public interface FloatIKeyframes extends IKeyframes {
 
         /**
          * Works like {@link #getValue(float)}, but returning a primitive.

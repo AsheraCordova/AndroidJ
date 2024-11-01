@@ -18,6 +18,17 @@ public class Drawable {
 	private String tintMode;
 	private MeasureTextHelper measureTextHelper;
 	private boolean useGC;
+	private boolean recycleable;
+	private AttributeChangeListener attributeChangeListener; 
+	
+	public interface AttributeChangeListener {
+		void onAttributeChange(String name, Object attribute);
+	}
+	
+	public void setAttributeChangeListener(AttributeChangeListener attributeChangeListener) {
+		this.attributeChangeListener = attributeChangeListener;
+	}
+
 	@com.google.j2objc.annotations.Weak private com.ashera.widget.IWidget overlay;
 	
 	public void setOverlay(com.ashera.widget.IWidget overlay) {
@@ -86,7 +97,7 @@ public class Drawable {
                 invalidateSelf();
             }
             mBounds.set(left, top, right, bottom);
-            onBoundsChange(mBounds);
+            onBoundsChange(mBounds);            
         }
     }
     
@@ -95,6 +106,9 @@ public class Drawable {
     }
     
     protected void onBoundsChange(Rect bounds) {
+    	if (this.attributeChangeListener != null) {
+    		this.attributeChangeListener.onAttributeChange("bounds", bounds);
+    	}
     }
 
 	public int getTop() {
@@ -269,5 +283,23 @@ public class Drawable {
 	
     public MeasureTextHelper getMeasureTextHelper() {
 		return measureTextHelper;
+	}
+    
+	public boolean isRecycleable() {
+		return recycleable;
+	}
+
+	public void setRecycleable(boolean recycleable) {
+		this.recycleable = recycleable;
+	}
+
+	public boolean hasDrawable() {
+		return drawable != null && !drawable.equals("@null");
+	}
+
+	public void setAlpha(int alpha) {
+		if (this.attributeChangeListener != null) {
+    		this.attributeChangeListener.onAttributeChange("alpha", alpha);
+    	}		
 	}
 }

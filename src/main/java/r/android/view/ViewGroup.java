@@ -235,7 +235,7 @@ public interface OnHierarchyChangeListener {
       mTransition.cancel(LayoutTransition.DISAPPEARING);
     }
     if (child.getParent() != null) {
-      if(child.getParent() == this) {return;}throw new IllegalStateException("The specified child already has a parent. " + "You must call removeView() on the child's parent first.");
+      if(child.getParent() == this) {child.mLayoutParams=params;return;}throw new IllegalStateException("The specified child already has a parent. " + "You must call removeView() on the child's parent first.");
     }
     if (mTransition != null) {
       mTransition.addChild(this,child);

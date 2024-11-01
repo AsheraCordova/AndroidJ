@@ -22,6 +22,8 @@ public interface MenuItem {
   public boolean isVisible();
   public MenuItem setEnabled(  boolean enabled);
   public boolean isEnabled();
+  public boolean hasSubMenu();
+  public SubMenu getSubMenu();
   public void setShowAsAction(  int actionEnum);
   public View getActionView();
 }

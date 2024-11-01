@@ -112,6 +112,8 @@ public class View {
   public static final int MEASURED_STATE_MASK=0xff000000;
   public static final int MEASURED_HEIGHT_STATE_SHIFT=16;
   public static final int MEASURED_STATE_TOO_SMALL=0x01000000;
+  protected static final int[] EMPTY_STATE_SET;
+  protected static final int[] SELECTED_STATE_SET;static {EMPTY_STATE_SET = StateSet.get(0);SELECTED_STATE_SET = StateSet.get(StateSet.VIEW_STATE_SELECTED);}
   static final int DEBUG_CORNERS_SIZE_DIP=8;
   private SparseArray<Object> mKeyedTags;
   private static int sNextAccessibilityViewId;

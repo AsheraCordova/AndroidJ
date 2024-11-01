@@ -179,7 +179,7 @@ public abstract class BaseMeasurableView extends View {
 	    	    height = ((com.ashera.widget.IMeasureHeight) widget).measureHeight(heightMode, heightSize, height);
             }
 
-	    	height += mPaddingTop + mPaddingBottom + (ignoreDrawableHeight ? 0 : getDrawableHeight(topDrawable) + getDrawableHeight(bottomDrawable));
+	    	height += mPaddingTop + mPaddingBottom + (ignoreDrawableHeight ? 0 : getDrawableHeight(topDrawable, true) + getDrawableHeight(bottomDrawable, true));
 	    	
 	        if (widget instanceof com.ashera.widget.IMaxHeight) {
 	            int maxHeight = ((com.ashera.widget.IMaxHeight) widget).getMaxHeight();
@@ -188,8 +188,8 @@ public abstract class BaseMeasurableView extends View {
 	            }
 	        }
 	        
-	        height = Math.max(height, getDrawableHeight(leftDrawable) + mPaddingTop + mPaddingBottom);
-	        height = Math.max(height, getDrawableHeight(rightDrawable) + mPaddingTop + mPaddingBottom);
+	        height = Math.max(height, getDrawableHeight(leftDrawable, false) + mPaddingTop + mPaddingBottom);
+	        height = Math.max(height, getDrawableHeight(rightDrawable, false) + mPaddingTop + mPaddingBottom);
 
 	        height = Math.max(getSuggestedMinimumHeight(), height);
             
@@ -241,11 +241,11 @@ public abstract class BaseMeasurableView extends View {
 		return drawable.getMinimumWidth() + drawablePadding;
 	}
 	
-	private int getDrawableHeight(Drawable drawable) {
-		if (drawable == null) {
+	private int getDrawableHeight(Drawable drawable, boolean considerPadding) {
+		if (drawable == null || !drawable.hasDrawable()) {
 			return 0;
 		}
-		return drawable.getMinimumHeight() + drawablePadding;
+		return drawable.getMinimumHeight() + (considerPadding ? drawablePadding : 0);
 	}
 
     public abstract int nativeMeasureWidth(Object uiView);		

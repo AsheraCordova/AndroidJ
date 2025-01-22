@@ -180,4 +180,33 @@ public final class Rect {
         sb.append(','); sb.append(bottom); sb.append(']');
         return sb.toString();
     }
+    
+    /**
+     * Insets the rectangle on all sides specified by the dimensions of the {@code insets}
+     * rectangle.
+     * @hide
+     * @param insets The rectangle specifying the insets on all side.
+     */
+    public void inset(Rect insets) {
+        left += insets.left;
+        top += insets.top;
+        right -= insets.right;
+        bottom -= insets.bottom;
+    }
+    
+    /**
+     * Inset the rectangle by (dx,dy). If dx is positive, then the sides are
+     * moved inwards, making the rectangle narrower. If dx is negative, then the
+     * sides are moved outwards, making the rectangle wider. The same holds true
+     * for dy and the top and bottom.
+     *
+     * @param dx The amount to add(subtract) from the rectangle's left(right)
+     * @param dy The amount to add(subtract) from the rectangle's top(bottom)
+     */
+    public void inset(int dx, int dy) {
+        left += dx;
+        top += dy;
+        right -= dx;
+        bottom -= dy;
+    }
 }

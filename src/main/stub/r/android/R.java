@@ -5,6 +5,7 @@ public class R {
 		public static final int content = 0;
 		public static int view_transition = 1000;
 		public static int mtrl_view_tag_bottom_padding = 999;
+		public static int row_index_key = 1001;
 
 	}
 	public static class attr {

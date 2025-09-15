@@ -51,7 +51,7 @@ public final class Looper {
      * @deprecated The main looper for your application is created by the Android environment,
      *   so you should never need to call this function yourself.
      */
-    @Deprecated
+    //@Deprecated
     public static void prepareMainLooper() {
     }
 

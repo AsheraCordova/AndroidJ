@@ -25,5 +25,6 @@ public interface MenuItem {
   public boolean hasSubMenu();
   public SubMenu getSubMenu();
   public void setShowAsAction(  int actionEnum);
+  public MenuItem setActionView(  View view);
   public View getActionView();
 }

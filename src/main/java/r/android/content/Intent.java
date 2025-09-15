@@ -178,5 +178,9 @@ public class Intent {
 		}
 		
 	}
+
+	public static boolean isAccessUriMode(int flags) {
+		return false;
+	}
 	
 }

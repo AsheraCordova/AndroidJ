@@ -1329,7 +1329,7 @@ public class LayoutTransition {
     /**
      * @deprecated Use {@link #showChild(r.android.view.ViewGroup, r.android.view.View, int)}.
      */
-    @Deprecated
+    //@Deprecated
     public void showChild(ViewGroup parent, View child) {
         addChild(parent, child, true);
     }
@@ -1407,7 +1407,7 @@ public class LayoutTransition {
     /**
      * @deprecated Use {@link #hideChild(r.android.view.ViewGroup, r.android.view.View, int)}.
      */
-    @Deprecated
+    //@Deprecated
     public void hideChild(ViewGroup parent, View child) {
         removeChild(parent, child, true);
     }

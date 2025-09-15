@@ -33,7 +33,7 @@ public class Patterns {
      *  expected to become out-of-date very quickly. Therefore it is now
      *  deprecated.
      */
-    @Deprecated
+    //@Deprecated
     public static final String TOP_LEVEL_DOMAIN_STR =
         "((aero|arpa|asia|a[cdefgilmnoqrstuwxz])"
         + "|(biz|b[abdefghijmnorstvwyz])"
@@ -66,7 +66,7 @@ public class Patterns {
      *  Regular expression pattern to match all IANA top-level domains.
      *  @deprecated This API is deprecated. See {@link #TOP_LEVEL_DOMAIN_STR}.
      */
-    @Deprecated
+    //@Deprecated
     public static final Pattern TOP_LEVEL_DOMAIN =
         Pattern.compile(TOP_LEVEL_DOMAIN_STR);
 
@@ -78,7 +78,7 @@ public class Patterns {
      *
      *  @deprecated This API is deprecated. See {@link #TOP_LEVEL_DOMAIN_STR}.
      */
-    @Deprecated
+    //@Deprecated
     public static final String TOP_LEVEL_DOMAIN_STR_FOR_WEB_URL =
         "(?:"
         + "(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])"
@@ -239,7 +239,7 @@ public class Patterns {
      *
      * @deprecated Deprecated since it does not include all IRI characters defined in RFC 3987
      */
-    @Deprecated
+    //@Deprecated
     public static final String GOOD_IRI_CHAR =
         "a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF";
 
@@ -254,7 +254,7 @@ public class Patterns {
      *
      * @deprecated Please use {@link r.android.net.InetAddresses#isNumericAddress(String)} instead.
      */
-    @Deprecated
+    //@Deprecated
     public static final Pattern IP_ADDRESS = Pattern.compile(IP_ADDRESS_STRING);
 
     /**

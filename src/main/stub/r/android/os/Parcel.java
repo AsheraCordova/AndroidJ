@@ -11,5 +11,7 @@ public interface Parcel {
 	void writeList(List mFullSpanItems);
 	int readInt();
 	void writeInt(int x);
+	String readString8();
+	void writeString8(String scheme);
 
 }

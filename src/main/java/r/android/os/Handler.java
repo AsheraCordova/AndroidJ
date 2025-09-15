@@ -124,7 +124,7 @@ public class Handler {
      *   {@code new Handler(Looper.myLooper())} to make it clear to readers.
      *
      */
-    @Deprecated
+    //@Deprecated
     public Handler() {
         this(null, false);
     }
@@ -148,7 +148,7 @@ public class Handler {
      *   similar. If the implicit thread local behavior is required for compatibility, use
      *   {@code new Handler(Looper.myLooper(), callback)} to make it clear to readers.
      */
-    @Deprecated
+    //@Deprecated
     public Handler(@Nullable Callback callback) {
         this(callback, false);
     }

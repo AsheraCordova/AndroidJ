@@ -17,4 +17,5 @@ public interface Menu {
   public MenuItem add(  int titleRes);
   public MenuItem add(  int groupId,  int itemId,  int order,  CharSequence title);
   public MenuItem add(  int groupId,  int itemId,  int order,  int titleRes);
+  SubMenu addSubMenu(  final CharSequence title);
 }

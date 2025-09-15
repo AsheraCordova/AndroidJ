@@ -63,7 +63,7 @@ public class Context {
 	}
 
 	public File getCacheDir() {
-		throw new RuntimeException("this should never be called");
+		return com.ashera.widget.PluginInvoker.getExternalFilesDir(this);
 	}
 
 	public PackageManager getPackageManager() {

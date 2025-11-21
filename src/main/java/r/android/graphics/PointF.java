@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2007 The Android Open Source Project
  *
@@ -39,7 +54,7 @@ public class PointF implements Parcelable {
         this.y = p.y;
     }
 
-    /**
+   /**
      * Create a new PointF initialized with the values in the specified
      * PointF (which is left unmodified).
      *
@@ -51,7 +66,7 @@ public class PointF implements Parcelable {
         this.y = p.y;
     }
     
-    /**
+   /**
      * Set the point's x and y coordinates
      */
     public final void set(float x, float y) {
@@ -59,7 +74,7 @@ public class PointF implements Parcelable {
         this.y = y;
     }
     
-    /**
+   /**
      * Set the point's x and y coordinates to the coordinates of p
      */
     public final void set(@NonNull PointF p) {
@@ -77,7 +92,7 @@ public class PointF implements Parcelable {
         y += dy;
     }
     
-    /**
+   /**
      * Returns true if the point's coordinates equal (x,y)
      */
     public final boolean equals(float x, float y) { 
@@ -109,21 +124,21 @@ public class PointF implements Parcelable {
         return "PointF(" + x + ", " + y + ")";
     }
 
-    /**
+   /**
      * Return the euclidian distance from (0,0) to the point
      */
     public final float length() { 
         return length(x, y); 
     }
     
-    /**
+   /**
      * Returns the euclidian distance from (0,0) to (x,y)
      */
     public static float length(float x, float y) {
         return (float) Math.hypot(x, y);
     }
 
-    /**
+   /**
      * Parcelable interface methods
      */
     @Override
@@ -131,7 +146,7 @@ public class PointF implements Parcelable {
         return 0;
     }
 
-    /**
+   /**
      * Write this point to the specified parcel. To restore a point from
      * a parcel, use readFromParcel()
      * @param out The parcel to write the point's coordinates into
@@ -143,7 +158,7 @@ public class PointF implements Parcelable {
     }
 
     public static final @r.android.annotation.NonNull Parcelable.Creator<PointF> CREATOR = new Parcelable.Creator<PointF>() {
-        /**
+       /**
          * Return a new point from the data in the specified parcel.
          */
         @Override
@@ -153,7 +168,7 @@ public class PointF implements Parcelable {
             return r;
         }
 
-        /**
+       /**
          * Return an array of rectangles of the specified size.
          */
         @Override
@@ -162,7 +177,7 @@ public class PointF implements Parcelable {
         }
     };
 
-    /**
+   /**
      * Set the point's coordinates from the data stored in the specified
      * parcel. To write a point to a parcel, call writeToParcel().
      *

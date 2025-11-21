@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 package r.android.content;
 
 import java.io.Serializable;
@@ -22,7 +37,7 @@ public class Intent {
      * Intent are used.
      */
     public static final int FLAG_GRANT_READ_URI_PERMISSION = 0x00000001;
-    /**
+   /**
      * If set, the recipient of this Intent will be granted permission to
      * perform write operations on the URI in the Intent's data and any URIs
      * specified in its ClipData.  When applying to an Intent's ClipData,
@@ -31,13 +46,13 @@ public class Intent {
      * Intent are used.
      */
     public static final int FLAG_GRANT_WRITE_URI_PERMISSION = 0x00000002;
-    /**
+   /**
      * Can be set by the caller to indicate that this Intent is coming from
      * a background operation, not from direct user interaction.
      */
     public static final int FLAG_FROM_BACKGROUND = 0x00000004;
     
-    /**
+   /**
      * When combined with {@link #FLAG_GRANT_READ_URI_PERMISSION} and/or
      * {@link #FLAG_GRANT_WRITE_URI_PERMISSION}, the URI permission grant can be
      * persisted across device reboots until explicitly revoked with
@@ -52,7 +67,7 @@ public class Intent {
      * @see ContentResolver#getOutgoingPersistedUriPermissions()
      */
     public static final int FLAG_GRANT_PERSISTABLE_URI_PERMISSION = 0x00000040;
-    /**
+   /**
      * When combined with {@link #FLAG_GRANT_READ_URI_PERMISSION} and/or
      * {@link #FLAG_GRANT_WRITE_URI_PERMISSION}, the URI permission grant
      * applies to any URI that is a prefix match against the original granted

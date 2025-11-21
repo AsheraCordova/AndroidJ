@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -26,7 +41,7 @@ public class FloatArrayEvaluator implements TypeEvaluator<float[]> {
 
     private float[] mArray;
 
-    /**
+   /**
      * Create a FloatArrayEvaluator that does not reuse the animated value. Care must be taken
      * when using this option because on every evaluation a new <code>float[]</code> will be
      * allocated.
@@ -36,7 +51,7 @@ public class FloatArrayEvaluator implements TypeEvaluator<float[]> {
     public FloatArrayEvaluator() {
     }
 
-    /**
+   /**
      * Create a FloatArrayEvaluator that reuses <code>reuseArray</code> for every evaluate() call.
      * Caution must be taken to ensure that the value returned from
      * {@link r.android.animation.ValueAnimator#getAnimatedValue()} is not cached, modified, or
@@ -48,7 +63,7 @@ public class FloatArrayEvaluator implements TypeEvaluator<float[]> {
         mArray = reuseArray;
     }
 
-    /**
+   /**
      * Interpolates the value at each index by the fraction. If
      * {@link #FloatArrayEvaluator(float[])} was used to construct this object,
      * <code>reuseArray</code> will be returned, otherwise a new <code>float[]</code>

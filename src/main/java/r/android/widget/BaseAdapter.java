@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2007 The Android Open Source Project
  *
@@ -46,7 +61,7 @@ public abstract class BaseAdapter implements ListAdapter, SpinnerAdapter {
         mDataSetObservable.unregisterObserver(observer);
     }
     
-    /**
+   /**
      * Notifies the attached observers that the underlying data has been changed
      * and any View reflecting the data set should refresh itself.
      */
@@ -54,7 +69,7 @@ public abstract class BaseAdapter implements ListAdapter, SpinnerAdapter {
         mDataSetObservable.notifyChanged();
     }
 
-    /**
+   /**
      * Notifies the attached observers that the underlying data is no longer valid
      * or available. Once invoked this adapter is no longer valid and should
      * not report further data set changes.
@@ -92,7 +107,7 @@ public abstract class BaseAdapter implements ListAdapter, SpinnerAdapter {
         return mAutofillOptions;
     }
 
-    /**
+   /**
      * Sets the value returned by {@link #getAutofillOptions()}
      */
     public void setAutofillOptions(@Nullable CharSequence... options) {

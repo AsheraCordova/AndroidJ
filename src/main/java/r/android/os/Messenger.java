@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -34,7 +49,7 @@ import r.android.annotation.Nullable;
 public final class Messenger /****/ {
     private final IMessenger mTarget;
 
-    /**
+   /**
      * Create a new Messenger pointing to the given Handler.  Any Message
      * objects sent through this Messenger will appear in the Handler as if
      * {@link Handler#sendMessage(Message) Handler.sendMessage(Message)} had
@@ -46,7 +61,7 @@ public final class Messenger /****/ {
         mTarget = target.getIMessenger();
     }
     
-    /**
+   /**
      * Send a Message to this Messenger's Handler.
      * 
      * @param message The Message to send.  Usually retrieved through
@@ -59,7 +74,7 @@ public final class Messenger /****/ {
         mTarget.send(message);
     }
     
-    /**
+   /**
      * Retrieve the IBinder that this Messenger is using to communicate with
      * its associated Handler.
      * 
@@ -69,7 +84,7 @@ public final class Messenger /****/ {
         return mTarget.asBinder();
     }
     
-    /**
+   /**
      * Comparison operator on two Messenger objects, such that true
      * is returned then they both point to the same Handler.
      */
@@ -95,7 +110,7 @@ public final class Messenger /****/ {
 
     //
     
-    /**
+   /**
      * Create a Messenger from a raw IBinder, which had previously been
      * retrieved with {@link #getBinder}.
      * 

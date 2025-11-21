@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 package r.android.util;
 
 
@@ -7,14 +22,14 @@ public class LongSparseLongArray {
     private long[] mValues;
     private int mSize;
 
-    /**
+   /**
      * Creates a new SparseLongArray containing no mappings.
      */
     public LongSparseLongArray() {
         this(10);
     }
 
-    /**
+   /**
      * Creates a new SparseLongArray containing no mappings that will not
      * require any additional memory allocation to store the specified
      * number of mappings.  If you supply an initial capacity of 0, the
@@ -33,7 +48,7 @@ public class LongSparseLongArray {
     }
 
 
-    /**
+   /**
      * Gets the long mapped from the specified key, or <code>0</code>
      * if no such mapping has been made.
      */
@@ -41,7 +56,7 @@ public class LongSparseLongArray {
         return get(key, 0);
     }
 
-    /**
+   /**
      * Gets the long mapped from the specified key, or the specified value
      * if no such mapping has been made.
      */
@@ -55,7 +70,7 @@ public class LongSparseLongArray {
         }
     }
 
-    /**
+   /**
      * Removes the mapping from the specified key, if there was any.
      */
     public void delete(long key) {
@@ -66,7 +81,7 @@ public class LongSparseLongArray {
         }
     }
 
-    /**
+   /**
      * Removes the mapping at the given index.
      */
     public void removeAt(int index) {
@@ -75,7 +90,7 @@ public class LongSparseLongArray {
         mSize--;
     }
 
-    /**
+   /**
      * Adds a mapping from the specified key to the specified value,
      * replacing the previous mapping from the specified key if there
      * was one.
@@ -94,7 +109,7 @@ public class LongSparseLongArray {
         }
     }
 
-    /**
+   /**
      * Returns the number of key-value mappings that this SparseIntArray
      * currently stores.
      */
@@ -102,7 +117,7 @@ public class LongSparseLongArray {
         return mSize;
     }
 
-    /**
+   /**
      * Given an index in the range <code>0...size()-1</code>, returns
      * the key from the <code>index</code>th key-value mapping that this
      * SparseLongArray stores.
@@ -116,7 +131,7 @@ public class LongSparseLongArray {
         return mKeys[index];
     }
 
-    /**
+   /**
      * Given an index in the range <code>0...size()-1</code>, returns
      * the value from the <code>index</code>th key-value mapping that this
      * SparseLongArray stores.
@@ -131,7 +146,7 @@ public class LongSparseLongArray {
         return mValues[index];
     }
 
-    /**
+   /**
      * Returns the index for which {@link #keyAt} would return the
      * specified key, or a negative number if the specified
      * key is not mapped.
@@ -140,7 +155,7 @@ public class LongSparseLongArray {
         return ContainerHelpers.binarySearch(mKeys, mSize, key);
     }
 
-    /**
+   /**
      * Returns an index for which {@link #valueAt} would return the
      * specified key, or a negative number if no keys map to the
      * specified value.
@@ -156,7 +171,7 @@ public class LongSparseLongArray {
         return -1;
     }
 
-    /**
+   /**
      * Removes all key-value mappings from this SparseIntArray.
      */
     public void clear() {

@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2011 The Android Open Source Project
  *
@@ -32,7 +47,7 @@ class ReflectiveProperty<T, V> extends Property<T, V> {
     private Method mGetter;
     private Field mField;
 
-    /**
+   /**
      * For given property name 'name', look for getName/isName method or 'name' field.
      * Also look for setName method (optional - could be readonly). Failing method getters and
      * field results in throwing NoSuchPropertyException.
@@ -87,7 +102,7 @@ class ReflectiveProperty<T, V> extends Property<T, V> {
         }
     }
 
-    /**
+   /**
      * Utility method to check whether the type of the underlying field/method on the target
      * object matches the type of the Property. The extra checks for primitive types are because
      * generics will force the Property type to be a class, whereas the type of the underlying
@@ -153,7 +168,7 @@ class ReflectiveProperty<T, V> extends Property<T, V> {
         throw new AssertionError();
     }
 
-    /**
+   /**
      * Returns false if there is no setter or public field underlying this Property.
      */
     @Override

@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 package com.ashera.view;
 
 import com.ashera.widget.IWidget;
@@ -101,7 +116,7 @@ public abstract class BaseMeasurableImageView extends View {
         int heightSize;
         
         if (resizeWidth || resizeHeight) {
-            /* If we get here, it means we want to resize to match the
+           /* If we get here, it means we want to resize to match the
                 drawables aspect ratio, and we have the freedom to change at
                 least one dimension. 
             */
@@ -155,7 +170,7 @@ public abstract class BaseMeasurableImageView extends View {
                 }
             }
         } else {
-            /* We are either don't want to preserve the drawables aspect ratio,
+           /* We are either don't want to preserve the drawables aspect ratio,
                or we are not allowed to change view dimensions. Just measure in
                the normal way.
             */
@@ -244,7 +259,7 @@ public abstract class BaseMeasurableImageView extends View {
         }
     }
 
-    /**
+   /**
      * <p>Set the offset of the widget's text baseline from the widget's top
      * boundary.  This value is overridden by the {@link #setBaselineAlignBottom(boolean)}
      * property.</p>
@@ -261,7 +276,7 @@ public abstract class BaseMeasurableImageView extends View {
         }
     }
 
-    /**
+   /**
      * Sets whether the baseline of this view to the bottom of the view.
      * Setting this value overrides any calls to setBaseline.
      *
@@ -276,7 +291,7 @@ public abstract class BaseMeasurableImageView extends View {
         }
     }
 
-    /**
+   /**
      * Checks whether this view's baseline is considered the bottom of the view.
      *
      * @return True if the ImageView's baseline is considered the bottom of the view, false if otherwise.

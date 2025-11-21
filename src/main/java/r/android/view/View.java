@@ -1,3 +1,33 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
+/*
+ * Copyright (C) 2006 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package r.android.view;
 import static java.lang.Math.max;
 import r.android.content.Context;
@@ -2931,12 +2961,36 @@ public boolean isOverlay(){
 return isOverlay;
 }
 public void setOverlay(boolean isOverlay){
-this.isOverlay=isOverlay;
-if (isOverlay) {
-setFlags(GONE,VISIBILITY_MASK);
 }
- else {
-setFlags(VISIBLE,VISIBILITY_MASK);
+public boolean onTouchEvent(MotionEvent event){
+return false;
 }
+private MotionEvent motionEvent;
+public void onTouchEventMove(int x,int y){
+initMotionEvent(x,y,MotionEvent.ACTION_MOVE);
+onTouchEvent(motionEvent);
+}
+private void initMotionEvent(int x,int y,int action){
+if (motionEvent == null) {
+motionEvent=new MotionEvent();
+}
+motionEvent.setX(x);
+motionEvent.setX(y);
+motionEvent.setAction(action);
+}
+public void onTouchEventDown(int x,int y){
+initMotionEvent(x,y,MotionEvent.ACTION_DOWN);
+onTouchEvent(motionEvent);
+}
+public void onTouchEventUp(int x,int y){
+initMotionEvent(x,y,MotionEvent.ACTION_UP);
+onTouchEvent(motionEvent);
+}
+private boolean hasOnTouchEvent;
+public boolean hasOnTouchEvent(){
+return hasOnTouchEvent;
+}
+public void setHasOnTouchEvent(boolean hasOnTouchEvent){
+this.hasOnTouchEvent=hasOnTouchEvent;
 }
 }

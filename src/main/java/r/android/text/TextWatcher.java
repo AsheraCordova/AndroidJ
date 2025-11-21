@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -21,7 +36,7 @@ package r.android.text;
  * be called when the text is changed.
  */
 public interface TextWatcher extends NoCopySpan {
-    /**
+   /**
      * This method is called to notify you that, within <code>s</code>,
      * the <code>count</code> characters beginning at <code>start</code>
      * are about to be replaced by new text with length <code>after</code>.
@@ -30,7 +45,7 @@ public interface TextWatcher extends NoCopySpan {
      */
     public void beforeTextChanged(CharSequence s, int start,
                                   int count, int after);
-    /**
+   /**
      * This method is called to notify you that, within <code>s</code>,
      * the <code>count</code> characters beginning at <code>start</code>
      * have just replaced old text that had length <code>before</code>.
@@ -39,7 +54,7 @@ public interface TextWatcher extends NoCopySpan {
      */
     public void onTextChanged(CharSequence s, int start, int before, int count);
 
-    /**
+   /**
      * This method is called to notify you that, somewhere within
      * <code>s</code>, the text has been changed.
      * It is legitimate to make further changes to <code>s</code> from

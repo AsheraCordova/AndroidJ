@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -64,7 +79,7 @@ import r.android.util.Log;
  * in the Handler's message queue and processed when appropriate.
  */
 public class Handler {
-    /*
+   /*
      * Set this flag to true to detect anonymous, local or member classes
      * that extend this Handler class and that are not static. These kind
      * of classes can potentially create leaks.
@@ -73,25 +88,25 @@ public class Handler {
     private static final String TAG = "Handler";
     private static Handler MAIN_THREAD_HANDLER = null;
 
-    /**
+   /**
      * Callback interface you can use when instantiating a Handler to avoid
      * having to implement your own subclass of Handler.
      */
     public interface Callback {
-        /**
+       /**
          * @param msg A {@link r.android.os.Message Message} object
          * @return True if no further handling is desired
          */
         boolean handleMessage(@NonNull Message msg);
     }
     
-    /**
+   /**
      * Subclasses must implement this to receive messages.
      */
     public void handleMessage(@NonNull Message msg) {
     }
     
-    /**
+   /**
      * Handle system messages here.
      */
     public void dispatchMessage(@NonNull Message msg) {
@@ -107,7 +122,7 @@ public class Handler {
         }
     }
 
-    /**
+   /**
      * Default constructor associates this handler with the {@link Looper} for the
      * current thread.
      *
@@ -129,7 +144,7 @@ public class Handler {
         this(null, false);
     }
 
-    /**
+   /**
      * Constructor associates this handler with the {@link Looper} for the
      * current thread and takes a callback interface in which you can handle
      * messages.
@@ -153,7 +168,7 @@ public class Handler {
         this(callback, false);
     }
 
-    /**
+   /**
      * Use the provided {@link Looper} instead of the default one.
      *
      * @param looper The looper, must not be null.
@@ -162,7 +177,7 @@ public class Handler {
         this(looper, null, false);
     }
 
-    /**
+   /**
      * Use the provided {@link Looper} instead of the default one and take a callback
      * interface in which to handle messages.
      *
@@ -173,7 +188,7 @@ public class Handler {
         this(looper, callback, false);
     }
 
-    /**
+   /**
      * Use the {@link Looper} for the current thread
      * and set whether the handler should be asynchronous.
      *
@@ -194,7 +209,7 @@ public class Handler {
         this(null, async);
     }
 
-    /**
+   /**
      * Use the {@link Looper} for the current thread with the specified callback interface
      * and set whether the handler should be asynchronous.
      *
@@ -228,7 +243,7 @@ public class Handler {
         mAsynchronous = async;
     }
 
-    /**
+   /**
      * Use the provided {@link Looper} instead of the default one and take a callback
      * interface in which to handle messages.  Also set whether the handler
      * should be asynchronous.
@@ -255,7 +270,7 @@ public class Handler {
         mAsynchronous = async;
     }
 
-    /**
+   /**
      * Create a new Handler whose posted messages and runnables are not subject to
      * synchronization barriers such as display vsync.
      *
@@ -273,7 +288,7 @@ public class Handler {
         return new Handler(looper, null, true);
     }
 
-    /**
+   /**
      * Create a new Handler whose posted messages and runnables are not subject to
      * synchronization barriers such as display vsync.
      *
@@ -292,7 +307,7 @@ public class Handler {
         return new Handler(looper, callback, true);
     }
 
-    /** @hide */
+   /** @hide */
     @UnsupportedAppUsage//(maxTargetSdk = Build.VERSION_CODES.R, trackingBug = 170729553)
     @NonNull
     public static Handler getMain() {
@@ -302,13 +317,13 @@ public class Handler {
         return MAIN_THREAD_HANDLER;
     }
 
-    /** @hide */
+   /** @hide */
     @NonNull
     public static Handler mainIfNull(@Nullable Handler handler) {
         return handler == null ? getMain() : handler;
     }
 
-    /** {@hide} */
+   /** {@hide} */
     @NonNull
     public String getTraceName(@NonNull Message message) {
         if (false) {
@@ -325,7 +340,7 @@ public class Handler {
         return sb.toString();
     }
 
-    /**
+   /**
      * Returns a string representing the name of the specified message.
      * The default implementation will either return the class name of the
      * message callback if any, or the hexadecimal representation of the
@@ -341,7 +356,7 @@ public class Handler {
         return "0x" + Integer.toHexString(message.what);
     }
 
-    /**
+   /**
      * Returns a new {@link r.android.os.Message Message} from the global message pool. More efficient than
      * creating and allocating new instances. The retrieved message has its handler set to this instance (Message.target == this).
      *  If you don't want that facility, just call Message.obtain() instead.
@@ -352,7 +367,7 @@ public class Handler {
         return Message.obtain(this);
     }
 
-    /**
+   /**
      * Same as {@link #obtainMessage()}, except that it also sets the what member of the returned Message.
      * 
      * @param what Value to assign to the returned Message.what field.
@@ -364,7 +379,7 @@ public class Handler {
         return Message.obtain(this, what);
     }
     
-    /**
+   /**
      * 
      * Same as {@link #obtainMessage()}, except that it also sets the what and obj members 
      * of the returned Message.
@@ -378,7 +393,7 @@ public class Handler {
         return Message.obtain(this, what, obj);
     }
 
-    /**
+   /**
      * 
      * Same as {@link #obtainMessage()}, except that it also sets the what, arg1 and arg2 members of the returned
      * Message.
@@ -393,7 +408,7 @@ public class Handler {
         return Message.obtain(this, what, arg1, arg2);
     }
     
-    /**
+   /**
      * 
      * Same as {@link #obtainMessage()}, except that it also sets the what, obj, arg1,and arg2 values on the 
      * returned Message.
@@ -408,7 +423,7 @@ public class Handler {
         return Message.obtain(this, what, arg1, arg2, obj);
     }
 
-    /**
+   /**
      * Causes the Runnable r to be added to the message queue.
      * The runnable will be run on the thread to which this handler is 
      * attached. 
@@ -423,7 +438,7 @@ public class Handler {
        return  sendMessageDelayed(getPostMessage(r), 0);
     }
     
-    /**
+   /**
      * Causes the Runnable r to be added to the message queue, to be run
      * at a specific time given by <var>uptimeMillis</var>.
      * <b>The time-base is {@link r.android.os.SystemClock#uptimeMillis}.</b>
@@ -445,7 +460,7 @@ public class Handler {
         return sendMessageAtTime(getPostMessage(r), uptimeMillis);
     }
     
-    /**
+   /**
      * Causes the Runnable r to be added to the message queue, to be run
      * at a specific time given by <var>uptimeMillis</var>.
      * <b>The time-base is {@link r.android.os.SystemClock#uptimeMillis}.</b>
@@ -472,7 +487,7 @@ public class Handler {
         return sendMessageAtTime(getPostMessage(r, token), uptimeMillis);
     }
     
-    /**
+   /**
      * Causes the Runnable r to be added to the message queue, to be run
      * after the specified amount of time elapses.
      * The runnable will be run on the thread to which this handler
@@ -495,12 +510,12 @@ public class Handler {
         return sendMessageDelayed(getPostMessage(r), delayMillis);
     }
     
-    /** @hide */
+   /** @hide */
     public final boolean postDelayed(Runnable r, int what, long delayMillis) {
         return sendMessageDelayed(getPostMessage(r).setWhat(what), delayMillis);
     }
 
-    /**
+   /**
      * Causes the Runnable r to be added to the message queue, to be run
      * after the specified amount of time elapses.
      * The runnable will be run on the thread to which this handler
@@ -526,7 +541,7 @@ public class Handler {
         return sendMessageDelayed(getPostMessage(r, token), delayMillis);
     }
 
-    /**
+   /**
      * Posts a message to an object that implements Runnable.
      * Causes the Runnable r to executed on the next iteration through the
      * message queue. The runnable will be run on the thread to which this
@@ -545,7 +560,7 @@ public class Handler {
         return sendMessageAtFrontOfQueue(getPostMessage(r));
     }
 
-    /**
+   /**
      * Runs the specified task synchronously.
      * <p>
      * If the current thread is the same as the handler thread, then the runnable
@@ -602,14 +617,14 @@ public class Handler {
         return br.postAndWait(this, timeout);
     }
 
-    /**
+   /**
      * Remove any pending posts of Runnable r that are in the message queue.
      */
     public final void removeCallbacks(@NonNull Runnable r) {
         mQueue.removeMessages(this, r, null);
     }
 
-    /**
+   /**
      * Remove any pending posts of Runnable <var>r</var> with Object
      * <var>token</var> that are in the message queue.  If <var>token</var> is null,
      * all callbacks will be removed.
@@ -618,7 +633,7 @@ public class Handler {
         mQueue.removeMessages(this, r, token);
     }
 
-    /**
+   /**
      * Pushes a message onto the end of the message queue after all pending messages
      * before the current time. It will be received in {@link #handleMessage},
      * in the thread attached to this handler.
@@ -631,7 +646,7 @@ public class Handler {
         return sendMessageDelayed(msg, 0);
     }
 
-    /**
+   /**
      * Sends a Message containing only the what value.
      *  
      * @return Returns true if the message was successfully placed in to the 
@@ -643,7 +658,7 @@ public class Handler {
         return sendEmptyMessageDelayed(what, 0);
     }
 
-    /**
+   /**
      * Sends a Message containing only the what value, to be delivered
      * after the specified amount of time elapses.
      * @see #sendMessageDelayed(r.android.os.Message, long) 
@@ -658,7 +673,7 @@ public class Handler {
         return sendMessageDelayed(msg, delayMillis);
     }
 
-    /**
+   /**
      * Sends a Message containing only the what value, to be delivered 
      * at a specific time.
      * @see #sendMessageAtTime(r.android.os.Message, long)
@@ -674,7 +689,7 @@ public class Handler {
         return sendMessageAtTime(msg, uptimeMillis);
     }
 
-    /**
+   /**
      * Enqueue a message into the message queue after all pending messages
      * before (current time + delayMillis). You will receive it in
      * {@link #handleMessage}, in the thread attached to this handler.
@@ -693,7 +708,7 @@ public class Handler {
         return sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);
     }
 
-    /**
+   /**
      * Enqueue a message into the message queue after all pending messages
      * before the absolute time (in milliseconds) <var>uptimeMillis</var>.
      * <b>The time-base is {@link r.android.os.SystemClock#uptimeMillis}.</b>
@@ -723,7 +738,7 @@ public class Handler {
         return enqueueMessage(queue, msg, uptimeMillis);
     }
 
-    /**
+   /**
      * Enqueue a message at the front of the message queue, to be processed on
      * the next iteration of the message loop.  You will receive it in
      * {@link #handleMessage}, in the thread attached to this handler.
@@ -746,7 +761,7 @@ public class Handler {
         return enqueueMessage(queue, msg, 0);
     }
 
-    /**
+   /**
      * Executes the message synchronously if called on the same thread this handler corresponds to,
      * or {@link #sendMessage pushes it to the queue} otherwise
      *
@@ -774,7 +789,7 @@ public class Handler {
         return queue.enqueueMessage(msg, uptimeMillis);
     }
 
-    /**
+   /**
      * Remove any pending posts of messages with code 'what' that are in the
      * message queue.
      */
@@ -782,7 +797,7 @@ public class Handler {
         mQueue.removeMessages(this, what, null);
     }
 
-    /**
+   /**
      * Remove any pending posts of messages with code 'what' and whose obj is
      * 'object' that are in the message queue.  If <var>object</var> is null,
      * all messages will be removed.
@@ -791,7 +806,7 @@ public class Handler {
         mQueue.removeMessages(this, what, object);
     }
 
-    /**
+   /**
      * Remove any pending posts of messages with code 'what' and whose obj is
      * 'object' that are in the message queue.  If <var>object</var> is null,
      * all messages will be removed.
@@ -806,7 +821,7 @@ public class Handler {
         mQueue.removeEqualMessages(this, what, object);
     }
 
-    /**
+   /**
      * Remove any pending posts of callbacks and sent messages whose
      * <var>obj</var> is <var>token</var>.  If <var>token</var> is null,
      * all callbacks and messages will be removed.
@@ -815,7 +830,7 @@ public class Handler {
         mQueue.removeCallbacksAndMessages(this, token);
     }
 
-    /**
+   /**
      * Remove any pending posts of callbacks and sent messages whose
      * <var>obj</var> is <var>token</var>.  If <var>token</var> is null,
      * all callbacks and messages will be removed.
@@ -825,7 +840,7 @@ public class Handler {
     public final void removeCallbacksAndEqualMessages(@Nullable Object token) {
         mQueue.removeCallbacksAndEqualMessages(this, token);
     }
-    /**
+   /**
      * Check if there are any pending posts of messages with code 'what' in
      * the message queue.
      */
@@ -833,7 +848,7 @@ public class Handler {
         return mQueue.hasMessages(this, what, null);
     }
 
-    /**
+   /**
      * Return whether there are any messages or callbacks currently scheduled on this handler.
      * @hide
      */
@@ -841,7 +856,7 @@ public class Handler {
         return mQueue.hasMessages(this);
     }
 
-    /**
+   /**
      * Check if there are any pending posts of messages with code 'what' and
      * whose obj is 'object' in the message queue.
      */
@@ -849,7 +864,7 @@ public class Handler {
         return mQueue.hasMessages(this, what, object);
     }
 
-    /**
+   /**
      * Check if there are any pending posts of messages with code 'what' and
      * whose obj is 'object' in the message queue.
      *
@@ -859,7 +874,7 @@ public class Handler {
         return mQueue.hasEqualMessages(this, what, object);
     }
 
-    /**
+   /**
      * Check if there are any pending posts of messages with callback r in
      * the message queue.
      */

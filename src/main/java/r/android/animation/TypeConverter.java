@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -31,7 +46,7 @@ public abstract class TypeConverter<T, V> {
         mToClass = toClass;
     }
 
-    /**
+   /**
      * Returns the target converted type. Used by the animation system to determine
      * the proper setter function to call.
      * @return The Class to convert the input to.
@@ -40,14 +55,14 @@ public abstract class TypeConverter<T, V> {
         return mToClass;
     }
 
-    /**
+   /**
      * Returns the source conversion type.
      */
     Class<T> getSourceType() {
         return mFromClass;
     }
 
-    /**
+   /**
      * Converts a value from one type to another.
      * @param value The Object to convert.
      * @return A value of type V, converted from <code>value</code>.

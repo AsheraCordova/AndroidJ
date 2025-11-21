@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -36,7 +51,7 @@ public class HandlerThread extends Thread {
         mPriority = 10;
     }
     
-    /**
+   /**
      * Constructs a HandlerThread.
      * @param name
      * @param priority The priority to run the thread at. The value supplied must be from 
@@ -47,7 +62,7 @@ public class HandlerThread extends Thread {
         mPriority = priority;
     }
     
-    /**
+   /**
      * Call back method that can be explicitly overridden if needed to execute some
      * setup before Looper loops.
      */
@@ -68,7 +83,7 @@ public class HandlerThread extends Thread {
         mTid = -1;
     }
     
-    /**
+   /**
      * This method returns the Looper associated with this thread. If this thread not been started
      * or for any reason isAlive() returns false, this method will return null. If this thread
      * has been started, this method will block until the looper has been initialized.
@@ -92,7 +107,7 @@ public class HandlerThread extends Thread {
             }
         }
 
-        /*
+       /*
          * We may need to restore the thread's interrupted flag, because it may
          * have been cleared above since we eat InterruptedExceptions
          */
@@ -103,7 +118,7 @@ public class HandlerThread extends Thread {
         return mLooper;
     }
 
-    /**
+   /**
      * @return a shared {@link Handler} associated with this thread
      * @hide
      */
@@ -115,7 +130,7 @@ public class HandlerThread extends Thread {
         return mHandler;
     }
 
-    /**
+   /**
      * Quits the handler thread's looper.
      * <p>
      * Causes the handler thread's looper to terminate without processing any
@@ -143,7 +158,7 @@ public class HandlerThread extends Thread {
         return false;
     }
 
-    /**
+   /**
      * Quits the handler thread's looper safely.
      * <p>
      * Causes the handler thread's looper to terminate as soon as all remaining messages
@@ -170,7 +185,7 @@ public class HandlerThread extends Thread {
         return false;
     }
 
-    /**
+   /**
      * Returns the identifier of this thread. See 100.
      */
     public int getThreadId() {

@@ -1,14 +1,29 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 package r.android.util;
 
 public class SparseBooleanArray {
-    /**
+   /**
      * Creates a new SparseBooleanArray containing no mappings.
      */
     public SparseBooleanArray() {
         this(10);
     }
 
-    /**
+   /**
      * Creates a new SparseBooleanArray containing no mappings that will not
      * require any additional memory allocation to store the specified
      * number of mappings.  If you supply an initial capacity of 0, the
@@ -34,12 +49,12 @@ public class SparseBooleanArray {
             clone.mKeys = mKeys.clone();
             clone.mValues = mValues.clone();
         } catch (CloneNotSupportedException cnse) {
-            /* ignore */
+           /* ignore */
         }
         return clone;
     }
 
-    /**
+   /**
      * Gets the boolean mapped from the specified key, or <code>false</code>
      * if no such mapping has been made.
      */
@@ -47,7 +62,7 @@ public class SparseBooleanArray {
         return get(key, false);
     }
 
-    /**
+   /**
      * Gets the boolean mapped from the specified key, or the specified value
      * if no such mapping has been made.
      */
@@ -61,7 +76,7 @@ public class SparseBooleanArray {
         }
     }
 
-    /**
+   /**
      * Removes the mapping from the specified key, if there was any.
      */
     public void delete(int key) {
@@ -74,14 +89,14 @@ public class SparseBooleanArray {
         }
     }
 
-    /** @hide */
+   /** @hide */
     public void removeAt(int index) {
         System.arraycopy(mKeys, index + 1, mKeys, index, mSize - (index + 1));
         System.arraycopy(mValues, index + 1, mValues, index, mSize - (index + 1));
         mSize--;
     }
 
-    /**
+   /**
      * Adds a mapping from the specified key to the specified value,
      * replacing the previous mapping from the specified key if there
      * was one.
@@ -100,7 +115,7 @@ public class SparseBooleanArray {
         }
     }
 
-    /**
+   /**
      * Returns the number of key-value mappings that this SparseBooleanArray
      * currently stores.
      */
@@ -108,7 +123,7 @@ public class SparseBooleanArray {
         return mSize;
     }
 
-    /**
+   /**
      * Given an index in the range <code>0...size()-1</code>, returns
      * the key from the <code>index</code>th key-value mapping that this
      * SparseBooleanArray stores.
@@ -122,7 +137,7 @@ public class SparseBooleanArray {
         return mKeys[index];
     }
 
-    /**
+   /**
      * Given an index in the range <code>0...size()-1</code>, returns
      * the value from the <code>index</code>th key-value mapping that this
      * SparseBooleanArray stores.
@@ -137,12 +152,12 @@ public class SparseBooleanArray {
         return mValues[index];
     }
 
-    /** @hide */
+   /** @hide */
     public void setValueAt(int index, boolean value) {
         mValues[index] = value;
     }
 
-    /**
+   /**
      * Returns the index for which {@link #keyAt} would return the
      * specified key, or a negative number if the specified
      * key is not mapped.
@@ -151,7 +166,7 @@ public class SparseBooleanArray {
         return ContainerHelpers.binarySearch(mKeys, mSize, key);
     }
 
-    /**
+   /**
      * Returns an index for which {@link #valueAt} would return the
      * specified key, or a negative number if no keys map to the
      * specified value.
@@ -167,14 +182,14 @@ public class SparseBooleanArray {
         return -1;
     }
 
-    /**
+   /**
      * Removes all key-value mappings from this SparseBooleanArray.
      */
     public void clear() {
         mSize = 0;
     }
 
-    /**
+   /**
      * Puts a key/value pair into the array, optimizing for the case where
      * the key is greater than all existing keys in the array.
      */
@@ -189,7 +204,7 @@ public class SparseBooleanArray {
         mSize++;
     }
 
-    /**
+   /**
      * {@inheritDoc}
      *
      * <p>This implementation composes a string by iterating over its mappings.

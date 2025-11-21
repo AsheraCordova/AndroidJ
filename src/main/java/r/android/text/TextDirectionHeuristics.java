@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2011 The Android Open Source Project
  *
@@ -34,19 +49,19 @@ import java.nio.CharBuffer;
  */
 public class TextDirectionHeuristics {
 
-    /**
+   /**
      * Always decides that the direction is left to right.
      */
     public static final TextDirectionHeuristic LTR =
-        new TextDirectionHeuristicInternal(null /* no algorithm */, false);
+        new TextDirectionHeuristicInternal(null/* no algorithm */, false);
 
-    /**
+   /**
      * Always decides that the direction is right to left.
      */
     public static final TextDirectionHeuristic RTL =
-        new TextDirectionHeuristicInternal(null /* no algorithm */, true);
+        new TextDirectionHeuristicInternal(null/* no algorithm */, true);
 
-    /**
+   /**
      * Determines the direction based on the first strong directional character, including bidi
      * format chars, falling back to left to right if it finds none. This is the default behavior
      * of the Unicode Bidirectional Algorithm.
@@ -54,7 +69,7 @@ public class TextDirectionHeuristics {
     public static final TextDirectionHeuristic FIRSTSTRONG_LTR =
         new TextDirectionHeuristicInternal(FirstStrong.INSTANCE, false);
 
-    /**
+   /**
      * Determines the direction based on the first strong directional character, including bidi
      * format chars, falling back to right to left if it finds none. This is similar to the default
      * behavior of the Unicode Bidirectional Algorithm, just with different fallback behavior.
@@ -62,26 +77,26 @@ public class TextDirectionHeuristics {
     public static final TextDirectionHeuristic FIRSTSTRONG_RTL =
         new TextDirectionHeuristicInternal(FirstStrong.INSTANCE, true);
 
-    /**
+   /**
      * If the text contains any strong right to left non-format character, determines that the
      * direction is right to left, falling back to left to right if it finds none.
      */
     public static final TextDirectionHeuristic ANYRTL_LTR =
         new TextDirectionHeuristicInternal(AnyStrong.INSTANCE_RTL, false);
 
-    /**
+   /**
      * Force the paragraph direction to the Locale direction. Falls back to left to right.
      */
     public static final TextDirectionHeuristic LOCALE = TextDirectionHeuristicLocale.INSTANCE;
 
-    /**
+   /**
      * State constants for taking care about true / false / unknown
      */
     private static final int STATE_TRUE = 0;
     private static final int STATE_FALSE = 1;
     private static final int STATE_UNKNOWN = 2;
 
-    /* Returns STATE_TRUE for strong RTL characters, STATE_FALSE for strong LTR characters, and
+   /* Returns STATE_TRUE for strong RTL characters, STATE_FALSE for strong LTR characters, and
      * STATE_UNKNOWN for everything else.
      */
     private static int isRtlCodePoint(int codePoint) {
@@ -127,7 +142,7 @@ public class TextDirectionHeuristics {
         }
     }
 
-    /**
+   /**
      * Computes the text direction based on an algorithm.  Subclasses implement
      * {@link #defaultIsRtl} to handle cases where the algorithm cannot determine the
      * direction from the text alone.
@@ -139,7 +154,7 @@ public class TextDirectionHeuristics {
             mAlgorithm = algorithm;
         }
 
-        /**
+       /**
          * Return true if the default text direction is rtl.
          */
         abstract protected boolean defaultIsRtl();
@@ -187,17 +202,17 @@ public class TextDirectionHeuristics {
         }
     }
 
-    /**
+   /**
      * Interface for an algorithm to guess the direction of a paragraph of text.
      */
     private static interface TextDirectionAlgorithm {
-        /**
+       /**
          * Returns whether the range of text is RTL according to the algorithm.
          */
         int checkRtl(CharSequence cs, int start, int count);
     }
 
-    /**
+   /**
      * Algorithm that uses the first strong directional character to determine the paragraph
      * direction. This is the standard Unicode Bidirectional Algorithm (steps P2 and P3), with the
      * exception that if no strong character is found, UNKNOWN is returned.
@@ -229,7 +244,7 @@ public class TextDirectionHeuristics {
         public static final FirstStrong INSTANCE = new FirstStrong();
     }
 
-    /**
+   /**
      * Algorithm that uses the presence of any strong directional character of the type indicated
      * in the constructor parameter to determine the direction of text.
      *
@@ -282,7 +297,7 @@ public class TextDirectionHeuristics {
         public static final AnyStrong INSTANCE_LTR = new AnyStrong(false);
     }
 
-    /**
+   /**
      * Algorithm that uses the Locale direction to force the direction of a paragraph.
      */
     private static class TextDirectionHeuristicLocale extends TextDirectionHeuristicImpl {

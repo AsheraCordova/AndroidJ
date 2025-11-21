@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -32,14 +47,14 @@ import r.android.view.ViewGroup;
  * @see r.android.widget.SimpleCursorAdapter
  */
 public interface Adapter {
-    /**
+   /**
      * Register an observer that is called when changes happen to the data used by this adapter.
      *
      * @param observer the object that gets notified when the data set changes.
      */
     void registerDataSetObserver(DataSetObserver observer);
 
-    /**
+   /**
      * Unregister an observer that has previously been registered with this
      * adapter via {@link #registerDataSetObserver}.
      *
@@ -47,14 +62,14 @@ public interface Adapter {
      */
     void unregisterDataSetObserver(DataSetObserver observer);
 
-    /**
+   /**
      * How many items are in the data set represented by this Adapter.
      * 
      * @return Count of items.
      */
     int getCount();   
     
-    /**
+   /**
      * Get the data item associated with the specified position in the data set.
      * 
      * @param position Position of the item whose data we want within the adapter's 
@@ -63,7 +78,7 @@ public interface Adapter {
      */
     Object getItem(int position);
     
-    /**
+   /**
      * Get the row id associated with the specified position in the list.
      * 
      * @param position The position of the item within the adapter's data set whose row id we want.
@@ -71,7 +86,7 @@ public interface Adapter {
      */
     long getItemId(int position);
     
-    /**
+   /**
      * Indicates whether the item ids are stable across changes to the
      * underlying data.
      * 
@@ -79,7 +94,7 @@ public interface Adapter {
      */
     boolean hasStableIds();
     
-    /**
+   /**
      * Get a View that displays the data at the specified position in the data set. You can either
      * create a View manually or inflate it from an XML layout file. When the View is inflated, the
      * parent View (GridView, ListView...) will apply default layout parameters unless you use
@@ -99,7 +114,7 @@ public interface Adapter {
      */
     View getView(int position, View convertView, ViewGroup parent);
 
-    /**
+   /**
      * An item view type that causes the {@link AdapterView} to ignore the item
      * view. For example, this can be used if the client does not want a
      * particular view to be given for conversion in
@@ -110,7 +125,7 @@ public interface Adapter {
      */
     static final int IGNORE_ITEM_VIEW_TYPE = AdapterView.ITEM_VIEW_TYPE_IGNORE;
     
-    /**
+   /**
      * Get the type of View that will be created by {@link #getView} for the specified item.
      * 
      * @param position The position of the item within the adapter's data set whose view type we
@@ -123,7 +138,7 @@ public interface Adapter {
      */
     int getItemViewType(int position);
     
-    /**
+   /**
      * <p>
      * Returns the number of types of Views that will be created by
      * {@link #getView}. Each type represents a set of views that can be
@@ -140,7 +155,7 @@ public interface Adapter {
     
     static final int NO_SELECTION = Integer.MIN_VALUE;
  
-     /**
+    /**
       * @return true if this adapter doesn't contain any data.  This is used to determine
       * whether the empty view should be displayed.  A typical implementation will return
       * getCount() == 0 but since getCount() includes the headers and footers, specialized
@@ -148,7 +163,7 @@ public interface Adapter {
       */
      boolean isEmpty();
 
-    /**
+   /**
      * Gets a string representation of the adapter data that can help
      * {@link r.android.service.autofill.AutofillService} autofill the view backed by the adapter.
      *

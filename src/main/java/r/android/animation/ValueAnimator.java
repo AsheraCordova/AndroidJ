@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -83,11 +98,11 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
     private static final boolean TRACE_ANIMATION_FRACTION = SystemProperties.getBoolean(
             "persist.debug.animator.trace_fraction", false);
 
-    /**
+   /**
      * Internal constants
      */
 
-    /**
+   /**
      * System-wide animation scale.
      *
      * <p>To check whether animations are enabled system-wise use {@link #areAnimatorsEnabled()}.
@@ -98,14 +113,14 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
     private static final ArrayList<WeakReference<DurationScaleChangeListener>>
             sDurationScaleChangeListeners = new ArrayList<>();
 
-    /**
+   /**
      * Internal variables
      * NOTE: This object implements the clone() method, making a deep copy of any referenced
      * objects. As other non-trivial fields are added to this class, make sure to add logic
      * to clone() to make deep copies of them.
      */
 
-    /**
+   /**
      * The first time that the animation's animateFrame() method is called. This time is used to
      * determine elapsed time (and therefore the elapsed fraction) in subsequent calls
      * to animateFrame().
@@ -114,7 +129,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
      */
     long mStartTime = -1;
 
-    /**
+   /**
      * When true, the start time has been firmly committed as a chosen reference point in
      * time by which the progress of the animation will be evaluated.  When false, the
      * start time may be updated when the first animation frame is committed so as
@@ -128,20 +143,20 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
      */
     boolean mStartTimeCommitted;
 
-    /**
+   /**
      * Set when setCurrentPlayTime() is called. If negative, animation is not currently seeked
      * to a value.
      */
     float mSeekFraction = -1;
 
-    /**
+   /**
      * Set on the next frame after pause() is called, used to calculate a new startTime
      * or delayStartTime which allows the animator to continue from the point at which
      * it was paused. If negative, has not yet been set.
      */
     private long mPauseTime;
 
-    /**
+   /**
      * Set when an animator is resumed. This triggers logic in the next frame which
      * actually resumes the animator.
      */
@@ -151,7 +166,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
     private static final TimeInterpolator sDefaultInterpolator =
             new AccelerateDecelerateInterpolator();
 
-    /**
+   /**
      * Flag to indicate whether this animator is playing in reverse mode, specifically
      * by being started or interrupted by a call to reverse(). This flag is different than
      * mPlayingBackwards, which indicates merely whether the current iteration of the
@@ -160,29 +175,29 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
      */
     private boolean mReversing;
 
-    /**
+   /**
      * Tracks the overall fraction of the animation, ranging from 0 to mRepeatCount + 1
      */
     private float mOverallFraction = 0f;
 
-    /**
+   /**
      * Tracks current elapsed/eased fraction, for querying in getAnimatedFraction().
      * This is calculated by interpolating the fraction (range: [0, 1]) in the current iteration.
      */
     private float mCurrentFraction = 0f;
 
-    /**
+   /**
      * Tracks the time (in milliseconds) when the last frame arrived.
      */
     private long mLastFrameTime = -1;
 
-    /**
+   /**
      * Tracks the time (in milliseconds) when the first frame arrived. Note the frame may arrive
      * during the start delay.
      */
     private long mFirstFrameTime = -1;
 
-    /**
+   /**
      * Additional playing state to indicate whether an animator has been start()'d. There is
      * some lag between a call to start() and the first animation frame. We should still note
      * that the animation has been started, even if it's first animation frame has not yet
@@ -192,19 +207,19 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
      */
     private boolean mRunning = false;
 
-    /**
+   /**
      * Additional playing state to indicate whether an animator has been start()'d, whether or
      * not there is a nonzero startDelay.
      */
     private boolean mStarted = false;
 
-    /**
+   /**
      * Flag that denotes whether the animation is set up and ready to go. Used to
      * set up animation that has not yet been started.
      */
     boolean mInitialized = false;
 
-    /**
+   /**
      * Flag that tracks whether animation has been requested to end.
      */
     private boolean mAnimationEndRequested = false;
@@ -226,84 +241,84 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
     // will play only once
     private int mRepeatCount = 0;
 
-    /**
+   /**
      * The type of repetition that will occur when repeatMode is nonzero. RESTART means the
      * animation will start from the beginning on every new cycle. REVERSE means the animation
      * will reverse directions on each iteration.
      */
     private int mRepeatMode = RESTART;
 
-    /**
+   /**
      * Whether or not the animator should register for its own animation callback to receive
      * animation pulse.
      */
     private boolean mSelfPulse = true;
 
-    /**
+   /**
      * Whether or not the animator has been requested to start without pulsing. This flag gets set
      * in startWithoutPulsing(), and reset in start().
      */
     private boolean mSuppressSelfPulseRequested = false;
 
-    /**
+   /**
      * The time interpolator to be used. The elapsed fraction of the animation will be passed
      * through this interpolator to calculate the interpolated fraction, which is then used to
      * calculate the animated values.
      */
     private TimeInterpolator mInterpolator = sDefaultInterpolator;
 
-    /**
+   /**
      * The set of listeners to be sent events through the life of an animation.
      */
     ArrayList<AnimatorUpdateListener> mUpdateListeners = null;
 
-    /**
+   /**
      * The property/value sets being animated.
      */
     PropertyValuesHolder[] mValues;
 
-    /**
+   /**
      * A hashmap of the PropertyValuesHolder objects. This map is used to lookup animated values
      * by property name during calls to getAnimatedValue(String).
      */
     HashMap<String, PropertyValuesHolder> mValuesMap;
 
-    /**
+   /**
      * If set to non-negative value, this will override {@link #sDurationScale}.
      */
     private float mDurationScale = -1f;
 
-    /**
+   /**
      * Animation handler used to schedule updates for this animation.
      */
     private AnimationHandler mAnimationHandler;
 
-    /**
+   /**
      * Public constants
      */
 
-    /** @hide */
+   /** @hide */
     @IntDef({RESTART, REVERSE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface RepeatMode {}
 
-    /**
+   /**
      * When the animation reaches the end and <code>repeatCount</code> is INFINITE
      * or a positive value, the animation restarts from the beginning.
      */
     public static final int RESTART = 1;
-    /**
+   /**
      * When the animation reaches the end and <code>repeatCount</code> is INFINITE
      * or a positive value, the animation reverses direction on every iteration.
      */
     public static final int REVERSE = 2;
-    /**
+   /**
      * This value used used with the {@link #setRepeatCount(int)} property to repeat
      * the animation indefinitely.
      */
     public static final int INFINITE = -1;
 
-    /**
+   /**
      * @hide
      */
     @UnsupportedAppUsage
@@ -326,7 +341,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Returns the system-wide scaling factor for Animator-based animations.
      *
      * This affects both the start delay and duration of all such animations. Setting to 0 will
@@ -339,7 +354,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return sDurationScale;
     }
 
-    /**
+   /**
      * Registers a {@link DurationScaleChangeListener}
      *
      * This listens for changes to the system-wide scaling factor for Animator-based animations.
@@ -372,7 +387,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Unregisters a DurationScaleChangeListener.
      *
      * @see #registerDurationScaleChangeListener(DurationScaleChangeListener)
@@ -394,7 +409,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Returns whether animators are currently enabled, system-wide. By default, all
      * animators are enabled. This can change if either the user sets a Developer Option
      * to set the animator duration scale to 0 or by Battery Savery mode being enabled
@@ -411,7 +426,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return !(sDurationScale == 0);
     }
 
-    /**
+   /**
      * Creates a new ValueAnimator object. This default constructor is primarily for
      * use internally; the factory methods which take parameters are more generally
      * useful.
@@ -419,7 +434,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
     public ValueAnimator() {
     }
 
-    /**
+   /**
      * Constructs and returns a ValueAnimator that animates between int values. A single
      * value implies that that value is the one being animated to. However, this is not typically
      * useful in a ValueAnimator object because there is no way for the object to determine the
@@ -436,7 +451,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return anim;
     }
 
-    /**
+   /**
      * Constructs and returns a ValueAnimator that animates between color values. A single
      * value implies that that value is the one being animated to. However, this is not typically
      * useful in a ValueAnimator object because there is no way for the object to determine the
@@ -454,7 +469,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return anim;
     }
 
-    /**
+   /**
      * Constructs and returns a ValueAnimator that animates between float values. A single
      * value implies that that value is the one being animated to. However, this is not typically
      * useful in a ValueAnimator object because there is no way for the object to determine the
@@ -471,7 +486,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return anim;
     }
 
-    /**
+   /**
      * Constructs and returns a ValueAnimator that animates between the values
      * specified in the PropertyValuesHolder objects.
      *
@@ -484,7 +499,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         anim.setValues(values);
         return anim;
     }
-    /**
+   /**
      * Constructs and returns a ValueAnimator that animates between Object values. A single
      * value implies that that value is the one being animated to. However, this is not typically
      * useful in a ValueAnimator object because there is no way for the object to determine the
@@ -514,7 +529,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return anim;
     }
 
-    /**
+   /**
      * Sets int values that will be animated between. A single
      * value implies that that value is the one being animated to. However, this is not typically
      * useful in a ValueAnimator object because there is no way for the object to determine the
@@ -542,7 +557,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         mInitialized = false;
     }
 
-    /**
+   /**
      * Sets float values that will be animated between. A single
      * value implies that that value is the one being animated to. However, this is not typically
      * useful in a ValueAnimator object because there is no way for the object to determine the
@@ -570,7 +585,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         mInitialized = false;
     }
 
-    /**
+   /**
      * Sets the values to animate between for this animation. A single
      * value implies that that value is the one being animated to. However, this is not typically
      * useful in a ValueAnimator object because there is no way for the object to determine the
@@ -607,7 +622,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         mInitialized = false;
     }
 
-    /**
+   /**
      * Sets the values, per property, being animated between. This function is called internally
      * by the constructors of ValueAnimator that take a list of values. But a ValueAnimator can
      * be constructed without values and this method can be called to set the values manually
@@ -627,7 +642,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         mInitialized = false;
     }
 
-    /**
+   /**
      * Returns the values that this ValueAnimator animates between. These values are stored in
      * PropertyValuesHolder objects, even if the ValueAnimator was created with a simple list
      * of value objects instead.
@@ -639,7 +654,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mValues;
     }
 
-    /**
+   /**
      * This function is called immediately before processing the first animation
      * frame of an animation. If there is a nonzero <code>startDelay</code>, the
      * function is called after that delay ends.
@@ -662,7 +677,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Sets the length of the animation. The default duration is 300 milliseconds.
      *
      * @param duration The length of the animation, in milliseconds. This value cannot
@@ -681,7 +696,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return this;
     }
 
-    /**
+   /**
      * Overrides the global duration scale by a custom value.
      *
      * @param durationScale The duration scale to set; or {@code -1f} to use the global duration
@@ -700,7 +715,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return (long)(mDuration * resolveDurationScale());
     }
 
-    /**
+   /**
      * Gets the length of the animation. The default duration is 300 milliseconds.
      *
      * @return The length of the animation, in milliseconds.
@@ -719,7 +734,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Sets the position of the animation to the specified point in time. This time should
      * be between 0 and the total duration of the animation, including any repetition. If
      * the animation has not yet been started, then it will not advance forward after it is
@@ -734,7 +749,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         setCurrentFraction(fraction);
     }
 
-    /**
+   /**
      * Sets the position of the animation to the specified fraction. This fraction should
      * be between 0 and the total fraction of the animation, including any repetition. That is,
      * a fraction of 0 will position the animation at the beginning, a value of 1 at the end,
@@ -771,7 +786,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         animateValue(currentIterationFraction);
     }
 
-    /**
+   /**
      * Calculates current iteration based on the overall fraction. The overall fraction will be
      * in the range of [0, mRepeatCount + 1]. Both current iteration and fraction in the current
      * iteration can be derived from it.
@@ -788,7 +803,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return (int) iteration;
     }
 
-    /**
+   /**
      * Calculates the fraction of the current iteration, taking into account whether the animation
      * should be played backwards. E.g. When the animation is played backwards in an iteration,
      * the fraction for that iteration will go from 1f to 0f.
@@ -800,7 +815,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return shouldPlayBackward(iteration, inReverse) ? 1f - currentFraction : currentFraction;
     }
 
-    /**
+   /**
      * Clamps fraction into the correct range: [0, mRepeatCount + 1]. If repeat count is infinite,
      * no upper bound will be set for the fraction.
      *
@@ -816,7 +831,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return fraction;
     }
 
-    /**
+   /**
      * Calculates the direction of animation playing (i.e. forward or backward), based on 1)
      * whether the entire animation is being reversed, 2) repeat mode applied to the current
      * iteration.
@@ -836,7 +851,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Gets the current position of the animation in time, which is equal to the current
      * time minus the time that the animation started. An animation that is not yet started will
      * return a value of zero, unless the animation has has its play time set via
@@ -859,7 +874,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return (long) ((AnimationUtils.currentAnimationTimeMillis() - mStartTime) / durationScale);
     }
 
-    /**
+   /**
      * The amount of time, in milliseconds, to delay starting the animation after
      * {@link #start()} is called.
      *
@@ -870,7 +885,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mStartDelay;
     }
 
-    /**
+   /**
      * The amount of time, in milliseconds, to delay starting the animation after
      * {@link #start()} is called. Note that the start delay should always be non-negative. Any
      * negative start delay will be clamped to 0 on N and above.
@@ -887,7 +902,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         mStartDelay = startDelay;
     }
 
-    /**
+   /**
      * The amount of time, in milliseconds, between each frame of the animation. This is a
      * requested time that the animation will attempt to honor, but the actual delay between
      * frames may be different, depending on system load and capabilities. This is a static
@@ -907,7 +922,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return AnimationHandler.getInstance().getFrameDelay();
     }
 
-    /**
+   /**
      * The amount of time, in milliseconds, between each frame of the animation. This is a
      * requested time that the animation will attempt to honor, but the actual delay between
      * frames may be different, depending on system load and capabilities. This is a static
@@ -927,7 +942,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         AnimationHandler.getInstance().setFrameDelay(frameDelay);
     }
 
-    /**
+   /**
      * The most recent value calculated by this <code>ValueAnimator</code> when there is just one
      * property being animated. This value is only sensible while the animation is running. The main
      * purpose for this read-only property is to retrieve the value from the <code>ValueAnimator</code>
@@ -947,7 +962,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return null;
     }
 
-    /**
+   /**
      * The most recent value calculated by this <code>ValueAnimator</code> for <code>propertyName</code>.
      * The main purpose for this read-only property is to retrieve the value from the
      * <code>ValueAnimator</code> during a call to
@@ -967,7 +982,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Sets how many times the animation should be repeated. If the repeat
      * count is 0, the animation is never repeated. If the repeat count is
      * greater than 0 or {@link #INFINITE}, the repeat mode will be taken
@@ -978,7 +993,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
     public void setRepeatCount(int value) {
         mRepeatCount = value;
     }
-    /**
+   /**
      * Defines how many times the animation should repeat. The default value
      * is 0.
      *
@@ -988,7 +1003,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mRepeatCount;
     }
 
-    /**
+   /**
      * Defines what this animation should do when it reaches the end. This
      * setting is applied only when the repeat count is either greater than
      * 0 or {@link #INFINITE}. Defaults to {@link #RESTART}.
@@ -999,7 +1014,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         mRepeatMode = value;
     }
 
-    /**
+   /**
      * Defines what this animation should do when it reaches the end.
      *
      * @return either one of {@link #REVERSE} or {@link #RESTART}
@@ -1009,7 +1024,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mRepeatMode;
     }
 
-    /**
+   /**
      * Adds a listener to the set of listeners that are sent update events through the life of
      * an animation. This method is called on all listeners for every frame of the animation,
      * after the values for the animation have been calculated.
@@ -1023,7 +1038,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         mUpdateListeners.add(listener);
     }
 
-    /**
+   /**
      * Removes all listeners from the set listening to frame updates for this animation.
      */
     public void removeAllUpdateListeners() {
@@ -1034,7 +1049,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         mUpdateListeners = null;
     }
 
-    /**
+   /**
      * Removes a listener from the set listening to frame updates for this animation.
      *
      * @param listener the listener to be removed from the current set of update listeners
@@ -1051,7 +1066,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
     }
 
 
-    /**
+   /**
      * The time interpolator used in calculating the elapsed fraction of this animation. The
      * interpolator determines whether the animation runs with linear or non-linear motion,
      * such as acceleration and deceleration. The default value is
@@ -1069,7 +1084,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Returns the timing interpolator that this ValueAnimator uses.
      *
      * @return The timing interpolator for this ValueAnimator.
@@ -1079,7 +1094,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mInterpolator;
     }
 
-    /**
+   /**
      * The type evaluator to be used when calculating the animated values of this animation.
      * The system will automatically assign a float or int evaluator based on the type
      * of <code>startValue</code> and <code>endValue</code> in the constructor. But if these values
@@ -1101,7 +1116,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Start the animation playing. This version of start() takes a boolean flag that indicates
      * whether the animation should play in reverse. The flag is usually false, but may be set
      * to true if called from the reverse() method.
@@ -1249,7 +1264,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mStarted;
     }
 
-    /**
+   /**
      * Plays the ValueAnimator in reverse. If the animation is already running,
      * it will stop itself and play backwards from the point reached when reverse was called.
      * If the animation is not currently running, then it will start from the end and
@@ -1273,7 +1288,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * @hide
      */
     @Override
@@ -1281,7 +1296,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return true;
     }
 
-    /**
+   /**
      * Called internally to end an animation by removing it from the animations list. Must be
      * called on the UI thread.
      */
@@ -1312,7 +1327,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Called internally to start an animation by adding it to the active animations list. Must be
      * called on the UI thread.
      */
@@ -1334,7 +1349,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         notifyStartListeners(mReversing);
     }
 
-    /**
+   /**
      * Internal only: This tracks whether the animation has gotten on the animation loop. Note
      * this is different than {@link #isRunning()} in that the latter tracks the time after start()
      * is called (or after start delay if any), which may be before the animation loop starts.
@@ -1343,14 +1358,14 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mLastFrameTime >= 0;
     }
 
-    /**
+   /**
      * Returns the name of this animator for debugging purposes.
      */
     String getNameForTrace() {
         return "animator";
     }
 
-    /**
+   /**
      * Applies an adjustment to the animation to compensate for jank between when
      * the animation first ran and when the frame was drawn.
      * @hide
@@ -1368,7 +1383,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * This internal function processes a single animation frame for a given animation. The
      * currentTime parameter is the timing pulse sent by the handler, used to calculate the
      * elapsed duration, and therefore
@@ -1407,7 +1422,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return done;
     }
 
-    /**
+   /**
      * Internal use only.
      *
      * This method does not modify any fields of the animation. It should be called when seeking
@@ -1478,7 +1493,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         }
     }
 
-    /**
+   /**
      * Internal use only.
      * Skips the animation value to end/start, depending on whether the play direction is forward
      * or backward.
@@ -1501,7 +1516,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mInitialized;
     }
 
-    /**
+   /**
      * Processes a frame of the animation, adjusting the start time if needed.
      *
      * @param frameTime The frame time.
@@ -1603,7 +1618,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         getAnimationHandler().addAnimationFrameCallback(this, delay);
     }
 
-    /**
+   /**
      * Returns the current animation fraction, which is the elapsed/interpolated fraction used in
      * the most recent frame update on the animation.
      *
@@ -1613,7 +1628,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mCurrentFraction;
     }
 
-    /**
+   /**
      * This method is called with the elapsed fraction of the animation during every
      * animation frame. This function turns the elapsed fraction into an interpolated fraction
      * and then into an animated value (from the evaluator. The function is called mostly during
@@ -1684,14 +1699,14 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return anim;
     }
 
-    /**
+   /**
      * Implementors of this interface can add themselves as update listeners
      * to an <code>ValueAnimator</code> instance to receive callbacks on every animation
      * frame, after the current frame's values have been calculated for that
      * <code>ValueAnimator</code>.
      */
     public static interface AnimatorUpdateListener {
-        /**
+       /**
          * <p>Notifies the occurrence of another frame of the animation.</p>
          *
          * @param animation The animation which was repeated.
@@ -1700,7 +1715,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
 
     }
 
-    /**
+   /**
      * Return the number of animations currently running.
      *
      * Used by StrictMode internally to annotate violations.
@@ -1723,7 +1738,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return returnVal;
     }
 
-    /**
+   /**
      * <p>Whether or not the ValueAnimator is allowed to run asynchronously off of
      * the UI thread. This is a hint that informs the ValueAnimator that it is
      * OK to run the animation off-thread, however ValueAnimator may decide
@@ -1762,7 +1777,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         // It is up to subclasses to support this, if they can.
     }
 
-    /**
+   /**
      * @return The {@link AnimationHandler} that will be used to schedule updates for this animator.
      * @hide
      */
@@ -1770,7 +1785,7 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         return mAnimationHandler != null ? mAnimationHandler : AnimationHandler.getInstance();
     }
 
-    /**
+   /**
      * Sets the animation handler used to schedule updates for this animator or {@code null} to use
      * the default handler.
      * @hide
@@ -1779,14 +1794,14 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
         mAnimationHandler = animationHandler;
     }
 
-    /**
+   /**
      * Listener interface for the system-wide scaling factor for Animator-based animations.
      *
      * @see #registerDurationScaleChangeListener(DurationScaleChangeListener)
      * @see #unregisterDurationScaleChangeListener(DurationScaleChangeListener)
      */
     public interface DurationScaleChangeListener {
-        /**
+       /**
          * Called when the duration scale changes.
          * @param scale the duration scale
          */

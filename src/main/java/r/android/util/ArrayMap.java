@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -96,23 +111,23 @@ public final class ArrayMap<K, V> implements Map<K, V> {
 	private static final boolean DEBUG = false;
     private static final String TAG = "ArrayMap";
 
-    /**
+   /**
      * The minimum amount by which the capacity of a ArrayMap will increase.
      * This is tuned to be relatively space-efficient.
      */
     private static final int BASE_SIZE = 4;
 
-    /**
+   /**
      * Maximum number of entries to have in array caches.
      */
     private static final int CACHE_SIZE = 10;
 
-    /**
+   /**
      * @hide Special immutable empty ArrayMap.
      */
     public static final ArrayMap EMPTY = new ArrayMap(true);
 
-    /**
+   /**
      * Caches of small array objects to avoid spamming garbage.  The cache
      * Object[] variable is a pointer to a linked list of array objects.
      * The first entry in the array is a pointer to the next array in the
@@ -123,7 +138,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
     static Object[] mTwiceBaseCache;
     static int mTwiceBaseCacheSize;
 
-    /**
+   /**
      * Special hash array value that indicates the container is immutable.
      */
     static final int[] EMPTY_IMMUTABLE_INTS = new int[0];
@@ -271,7 +286,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         }
     }
 
-    /**
+   /**
      * Create a new empty ArrayMap.  The default capacity of an array map is 0, and
      * will grow once items are added to it.
      */
@@ -281,7 +296,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         mSize = 0;
     }
 
-    /**
+   /**
      * Create a new ArrayMap with a given initial capacity.
      */
     public ArrayMap(int capacity) {
@@ -303,7 +318,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         mSize = 0;
     }
 
-    /**
+   /**
      * Create a new ArrayMap with the mappings from the given ArrayMap.
      */
     public ArrayMap(ArrayMap<K, V> map) {
@@ -313,7 +328,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         }
     }
 
-    /**
+   /**
      * Make the array map empty.  All storage is released.
      */
     @Override
@@ -326,7 +341,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         }
     }
 
-    /**
+   /**
      * @hide
      * Like {@link #clear}, but doesn't reduce the capacity of the ArrayMap.
      */
@@ -341,7 +356,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         }
     }
 
-    /**
+   /**
      * Ensure the array map can hold at least <var>minimumCapacity</var>
      * items.
      */
@@ -358,7 +373,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         }
     }
 
-    /**
+   /**
      * Check whether a key exists in the array.
      *
      * @param key The key to search for.
@@ -369,7 +384,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return indexOfKey(key) >= 0;
     }
 
-    /**
+   /**
      * Returns the index of a key in the set.
      *
      * @param key The key to search for.
@@ -398,7 +413,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return -1;
     }
 
-    /**
+   /**
      * Check whether a value exists in the array.  This requires a linear search
      * through the entire array.
      *
@@ -410,7 +425,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return indexOfValue(value) >= 0;
     }
 
-    /**
+   /**
      * Retrieve a value from the array.
      * @param key The key of the value to retrieve.
      * @return Returns the value associated with the given key,
@@ -422,7 +437,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return index >= 0 ? (V)mArray[(index<<1)+1] : null;
     }
 
-    /**
+   /**
      * Return the key at the given index in the array.
      * @param index The desired index, must be between 0 and {@link #size()}-1.
      * @return Returns the key stored at the given index.
@@ -431,7 +446,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return (K)mArray[index << 1];
     }
 
-    /**
+   /**
      * Return the value at the given index in the array.
      * @param index The desired index, must be between 0 and {@link #size()}-1.
      * @return Returns the value stored at the given index.
@@ -440,7 +455,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return (V)mArray[(index << 1) + 1];
     }
 
-    /**
+   /**
      * Set the value at a given index in the array.
      * @param index The desired index, must be between 0 and {@link #size()}-1.
      * @param value The new value to store at this index.
@@ -453,7 +468,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return old;
     }
 
-    /**
+   /**
      * Return true if the array map contains no items.
      */
     @Override
@@ -461,7 +476,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return mSize <= 0;
     }
 
-    /**
+   /**
      * Add a new value to the array map.
      * @param key The key under which to store the value.  If
      * this key already exists in the array, its value will be replaced.
@@ -516,7 +531,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return null;
     }
 
-    /**
+   /**
      * Special fast path for appending items to the end of the array without validation.
      * The array must already be large enough to contain the item.
      * @hide
@@ -540,7 +555,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         mArray[index+1] = value;
     }
 
-    /**
+   /**
      * The use of the {@link #append} function can result in invalid array maps, in particular
      * an array map where the same key appears multiple times.  This function verifies that
      * the array map is valid, throwing IllegalArgumentException if a problem is found.  The
@@ -578,7 +593,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         }
     }
 
-    /**
+   /**
      * Perform a {@link #put(Object, Object)} of all key/value pairs in <var>array</var>
      * @param array The array whose contents are to be retrieved.
      */
@@ -598,7 +613,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         }
     }
 
-    /**
+   /**
      * Remove an existing key from the array map.
      * @param key The key of the mapping to remove.
      * @return Returns the value that was stored under the key, or null if there
@@ -614,7 +629,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return null;
     }
 
-    /**
+   /**
      * Remove the key/value mapping at the given index.
      * @param index The desired index, must be between 0 and {@link #size()}-1.
      * @return Returns the value that was stored at this index.
@@ -663,7 +678,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return (V)old;
     }
 
-    /**
+   /**
      * Return the number of items in this array map.
      */
     @Override
@@ -671,7 +686,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return mSize;
     }
 
-    /**
+   /**
      * {@inheritDoc}
      *
      * <p>This implementation returns false if the object is not a map, or
@@ -713,7 +728,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return false;
     }
 
-    /**
+   /**
      * {@inheritDoc}
      */
     @Override
@@ -728,7 +743,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return result;
     }
 
-    /**
+   /**
      * {@inheritDoc}
      *
      * <p>This implementation composes a string by iterating over its mappings. If
@@ -777,7 +792,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return mCollections;
     }
 
-    /**
+   /**
      * Determine if the array map contains all of the keys in the given collection.
      * @param collection The collection whose contents are to be checked against.
      * @return Returns true if this array map contains a key for every entry
@@ -787,7 +802,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return MapCollections.containsAllHelper(this, collection);
     }
 
-    /**
+   /**
      * Perform a {@link #put(Object, Object)} of all key/value pairs in <var>map</var>
      * @param map The map whose contents are to be retrieved.
      */
@@ -799,7 +814,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         }
     }
 
-    /**
+   /**
      * Remove all keys in the array map that exist in the given collection.
      * @param collection The collection whose contents are to be used to remove keys.
      * @return Returns true if any keys were removed from the array map, else false.
@@ -808,7 +823,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return MapCollections.removeAllHelper(this, collection);
     }
 
-    /**
+   /**
      * Remove all keys in the array map that do <b>not</b> exist in the given collection.
      * @param collection The collection whose contents are to be used to determine which
      * keys to keep.
@@ -818,7 +833,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return MapCollections.retainAllHelper(this, collection);
     }
 
-    /**
+   /**
      * Return a {@link java.util.Set} for iterating over and interacting with all mappings
      * in the array map.
      *
@@ -837,7 +852,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return getCollection().getEntrySet();
     }
 
-    /**
+   /**
      * Return a {@link java.util.Set} for iterating over and interacting with all keys
      * in the array map.
      *
@@ -850,7 +865,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         return getCollection().getKeySet();
     }
 
-    /**
+   /**
      * Return a {@link java.util.Collection} for iterating over and interacting with all values
      * in the array map.
      *

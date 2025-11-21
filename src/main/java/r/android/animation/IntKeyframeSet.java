@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -23,7 +38,7 @@ import java.util.List;
 /**
  * This class holds a collection of IntKeyframe objects and is called by ValueAnimator to calculate
  * values between those keyframes for a given animation. The class internal to the animation
- * package because it is an implementation detail of how IKeyframes are stored and used.
+ *package because it is an implementation detail of how IKeyframes are stored and used.
  *
  * <p>This type-specific subclass of KeyframeSet, along with the other type-specific subclass for
  * float, exists to speed up the getValue() method when there is no custom

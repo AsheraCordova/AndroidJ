@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -30,7 +45,7 @@ import java.util.Comparator;
 public final class Objects {
   private Objects() {}
 
-  /**
+ /**
    * Returns 0 if {@code a == b}, or {@code c.compare(a, b)} otherwise.
    * That is, this makes {@code c} null-safe.
    */
@@ -41,7 +56,7 @@ public final class Objects {
     return c.compare(a, b);
   }
 
-  /**
+ /**
    * Returns true if both arguments are null,
    * the result of {@link Arrays#equals} if both arguments are primitive arrays,
    * the result of {@link Arrays#deepEquals} if both arguments are arrays of reference types,
@@ -72,14 +87,14 @@ public final class Objects {
     return a.equals(b);
   }
 
-  /**
+ /**
    * Null-safe equivalent of {@code a.equals(b)}.
    */
   public static boolean equals(Object a, Object b) {
     return (a == null) ? (b == null) : a.equals(b);
   }
 
-  /**
+ /**
    * Convenience wrapper for {@link Arrays#hashCode}, adding varargs.
    * This can be used to compute a hash code for an object's fields as follows:
    * {@code Objects.hash(a, b, c)}.
@@ -88,14 +103,14 @@ public final class Objects {
     return Arrays.hashCode(values);
   }
 
-  /**
+ /**
    * Returns 0 for null or {@code o.hashCode()}.
    */
   public static int hashCode(Object o) {
     return (o == null) ? 0 : o.hashCode();
   }
 
-  /**
+ /**
    * Returns {@code o} if non-null, or throws {@code NullPointerException}.
    */
   public static <T> T requireNonNull(T o) {
@@ -105,7 +120,7 @@ public final class Objects {
     return o;
   }
 
-  /**
+ /**
    * Returns {@code o} if non-null, or throws {@code NullPointerException}
    * with the given detail message.
    */
@@ -116,21 +131,21 @@ public final class Objects {
     return o;
   }
 
-  /**
+ /**
    * Returns "null" for null or {@code o.toString()}.
    */
   public static String toString(Object o) {
     return (o == null) ? "null" : o.toString();
   }
 
-  /**
+ /**
    * Returns {@code nullString} for null or {@code o.toString()}.
    */
   public static String toString(Object o, String nullString) {
     return (o == null) ? nullString : o.toString();
   }
   
-  /**
+ /**
    * Returns true if two possibly-null objects are equal.
    */
   public static boolean equal(Object a, Object b) {

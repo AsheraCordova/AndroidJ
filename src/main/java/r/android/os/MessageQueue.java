@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -73,7 +88,7 @@ public final class MessageQueue {
         }
     }
 
-    /**
+   /**
      * Returns true if the looper has no pending messages which are due to be processed.
      *
      * <p>This method is safe to call from any thread.
@@ -87,7 +102,7 @@ public final class MessageQueue {
         }
     }
 
-    /**
+   /**
      * Add a new {@link IdleHandler} to this message queue.  This may be
      * removed automatically for you by returning false from
      * {@link IdleHandler#queueIdle IdleHandler.queueIdle()} when it is
@@ -106,7 +121,7 @@ public final class MessageQueue {
         }
     }
 
-    /**
+   /**
      * Remove an {@link IdleHandler} from the queue that was previously added
      * with {@link #addIdleHandler}.  If the given object is not currently
      * in the idle list, nothing is done.
@@ -121,7 +136,7 @@ public final class MessageQueue {
         }
     }
 
-    /**
+   /**
      * Returns whether this looper's thread is currently polling for more work to do.
      * This is a good signal that the loop is still alive rather than being stuck
      * handling a callback.  Note that this method is intrinsically racy, since the
@@ -149,7 +164,7 @@ public final class MessageQueue {
     void quit(boolean safe) {
     }
 
-    /**
+   /**
      * Posts a synchronization barrier to the Looper's message queue.
      *
      * Message processing occurs as usual until the message queue encounters the
@@ -550,12 +565,12 @@ public final class MessageQueue {
 
     //
 
-    /**
+   /**
      * Callback interface for discovering when a thread is going to block
      * waiting for more messages.
      */
     public static interface IdleHandler {
-        /**
+       /**
          * Called when the message queue has run out of messages and will now
          * wait for more.  Return true to keep your idle handler active, false
          * to have it removed.  This may be called if there are still messages
@@ -565,11 +580,11 @@ public final class MessageQueue {
         boolean queueIdle();
     }
 
-    /**
+   /**
      * A listener which is invoked when file descriptor related events occur.
      */
     public interface OnFileDescriptorEventListener {
-        /**
+       /**
          * File descriptor event: Indicates that the file descriptor is ready for input
          * operations, such as reading.
          * <p>
@@ -587,7 +602,7 @@ public final class MessageQueue {
          */
         public static final int EVENT_INPUT = 1 << 0;
 
-        /**
+       /**
          * File descriptor event: Indicates that the file descriptor is ready for output
          * operations, such as writing.
          * <p>
@@ -603,7 +618,7 @@ public final class MessageQueue {
          */
         public static final int EVENT_OUTPUT = 1 << 1;
 
-        /**
+       /**
          * File descriptor event: Indicates that the file descriptor encountered a
          * fatal error.
          * <p>
@@ -616,12 +631,12 @@ public final class MessageQueue {
          */
         public static final int EVENT_ERROR = 1 << 2;
 
-        /** @hide */
+       /** @hide */
         @Retention(RetentionPolicy.SOURCE)
         //
         public @interface Events {}
 
-        /**
+       /**
          * Called when a file descriptor receives events.
          *
          * @param fd The file descriptor.

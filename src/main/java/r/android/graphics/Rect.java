@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -128,7 +143,7 @@ public final class Rect {
         return left >= right || top >= bottom;
     }
     
-    /**
+   /**
      * Offset the rectangle by adding dx to its left and right coordinates, and
      * adding dy to its top and bottom coordinates.
      *
@@ -149,7 +164,7 @@ public final class Rect {
 				&& left <= r.left && top <= r.top && right >= r.right && bottom >= r.bottom;
 	}
 	
-    /**
+   /**
      * Returns true if (x,y) is inside the rectangle. The left and top are
      * considered to be inside, while the right and bottom are not. This means
      * that for a x,y to be contained: left <= x < right and top <= y < bottom.
@@ -169,7 +184,7 @@ public final class Rect {
         return toShortString(new StringBuilder(32));
     }
     
-    /**
+   /**
      * Return a string representation of the rectangle in a compact form.
      * @hide
      */
@@ -181,7 +196,7 @@ public final class Rect {
         return sb.toString();
     }
     
-    /**
+   /**
      * Insets the rectangle on all sides specified by the dimensions of the {@code insets}
      * rectangle.
      * @hide
@@ -194,7 +209,7 @@ public final class Rect {
         bottom -= insets.bottom;
     }
     
-    /**
+   /**
      * Inset the rectangle by (dx,dy). If dx is positive, then the sides are
      * moved inwards, making the rectangle narrower. If dx is negative, then the
      * sides are moved outwards, making the rectangle wider. The same holds true

@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -34,32 +49,32 @@ package r.android.animation;
  * types have lower runtime overhead than other types.</p>
  */
 public abstract class Keyframe implements Cloneable {
-    /**
+   /**
      * Flag to indicate whether this keyframe has a valid value. This flag is used when an
      * animation first starts, to populate placeholder keyframes with real values derived
      * from the target object.
      */
     boolean mHasValue;
 
-    /**
+   /**
      * Flag to indicate whether the value in the keyframe was read from the target object or not.
      * If so, its value will be recalculated if target changes.
      */
     boolean mValueWasSetOnStart;
 
 
-    /**
+   /**
      * The time at which mValue will hold true.
      */
     float mFraction;
 
-    /**
+   /**
      * The type of the value in this Keyframe. This type is determined at construction time,
      * based on the type of the <code>value</code> object passed into the constructor.
      */
     Class mValueType;
 
-    /**
+   /**
      * The optional time interpolator for the interval preceding this keyframe. A null interpolator
      * (the default) results in linear interpolation over the interval.
      */
@@ -67,7 +82,7 @@ public abstract class Keyframe implements Cloneable {
 
 
 
-    /**
+   /**
      * Constructs a Keyframe object with the given time and value. The time defines the
      * time, as a proportion of an overall animation's duration, at which the value will hold true
      * for the animation. The value for the animation between keyframes will be calculated as
@@ -83,7 +98,7 @@ public abstract class Keyframe implements Cloneable {
         return new IntKeyframe(fraction, value);
     }
 
-    /**
+   /**
      * Constructs a Keyframe object with the given time. The value at this time will be derived
      * from the target object when the animation first starts (note that this implies that keyframes
      * with no initial value must be used as part of an {@link ObjectAnimator}).
@@ -99,7 +114,7 @@ public abstract class Keyframe implements Cloneable {
         return new IntKeyframe(fraction);
     }
 
-    /**
+   /**
      * Constructs a Keyframe object with the given time and value. The time defines the
      * time, as a proportion of an overall animation's duration, at which the value will hold true
      * for the animation. The value for the animation between keyframes will be calculated as
@@ -115,7 +130,7 @@ public abstract class Keyframe implements Cloneable {
         return new FloatKeyframe(fraction, value);
     }
 
-    /**
+   /**
      * Constructs a Keyframe object with the given time. The value at this time will be derived
      * from the target object when the animation first starts (note that this implies that keyframes
      * with no initial value must be used as part of an {@link ObjectAnimator}).
@@ -131,7 +146,7 @@ public abstract class Keyframe implements Cloneable {
         return new FloatKeyframe(fraction);
     }
 
-    /**
+   /**
      * Constructs a Keyframe object with the given time and value. The time defines the
      * time, as a proportion of an overall animation's duration, at which the value will hold true
      * for the animation. The value for the animation between keyframes will be calculated as
@@ -147,7 +162,7 @@ public abstract class Keyframe implements Cloneable {
         return new ObjectKeyframe(fraction, value);
     }
 
-    /**
+   /**
      * Constructs a Keyframe object with the given time. The value at this time will be derived
      * from the target object when the animation first starts (note that this implies that keyframes
      * with no initial value must be used as part of an {@link ObjectAnimator}).
@@ -163,7 +178,7 @@ public abstract class Keyframe implements Cloneable {
         return new ObjectKeyframe(fraction, null);
     }
 
-    /**
+   /**
      * Indicates whether this keyframe has a valid value. This method is called internally when
      * an {@link ObjectAnimator} first starts; keyframes without values are assigned values at
      * that time by deriving the value for the property from the target object.
@@ -174,7 +189,7 @@ public abstract class Keyframe implements Cloneable {
         return mHasValue;
     }
 
-    /**
+   /**
      * If the Keyframe's value was acquired from the target object, this flag should be set so that,
      * if target changes, value will be reset.
      *
@@ -188,21 +203,21 @@ public abstract class Keyframe implements Cloneable {
         mValueWasSetOnStart = valueWasSetOnStart;
     }
 
-    /**
+   /**
      * Gets the value for this Keyframe.
      *
      * @return The value for this Keyframe.
      */
     public abstract Object getValue();
 
-    /**
+   /**
      * Sets the value for this Keyframe.
      *
      * @param value value for this Keyframe.
      */
     public abstract void setValue(Object value);
 
-    /**
+   /**
      * Gets the time for this keyframe, as a fraction of the overall animation duration.
      *
      * @return The time associated with this keyframe, as a fraction of the overall animation
@@ -212,7 +227,7 @@ public abstract class Keyframe implements Cloneable {
         return mFraction;
     }
 
-    /**
+   /**
      * Sets the time for this keyframe, as a fraction of the overall animation duration.
      *
      * @param fraction time associated with this keyframe, as a fraction of the overall animation
@@ -222,7 +237,7 @@ public abstract class Keyframe implements Cloneable {
         mFraction = fraction;
     }
 
-    /**
+   /**
      * Gets the optional interpolator for this Keyframe. A value of <code>null</code> indicates
      * that there is no interpolation, which is the same as linear interpolation.
      *
@@ -232,7 +247,7 @@ public abstract class Keyframe implements Cloneable {
         return mInterpolator;
     }
 
-    /**
+   /**
      * Sets the optional interpolator for this Keyframe. A value of <code>null</code> indicates
      * that there is no interpolation, which is the same as linear interpolation.
      *
@@ -242,7 +257,7 @@ public abstract class Keyframe implements Cloneable {
         mInterpolator = interpolator;
     }
 
-    /**
+   /**
      * Gets the type of keyframe. This information is used by ValueAnimator to determine the type of
      * {@link TypeEvaluator} to use when calculating values between keyframes. The type is based
      * on the type of Keyframe created.
@@ -256,12 +271,12 @@ public abstract class Keyframe implements Cloneable {
     @Override
     public abstract Keyframe clone();
 
-    /**
+   /**
      * This internal subclass is used for all types which are not int or float.
      */
     static class ObjectKeyframe extends Keyframe {
 
-        /**
+       /**
          * The value of the animation at the time mFraction.
          */
         Object mValue;
@@ -291,12 +306,12 @@ public abstract class Keyframe implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Internal subclass used when the keyframe value is of type int.
      */
     static class IntKeyframe extends Keyframe {
 
-        /**
+       /**
          * The value of the animation at the time mFraction.
          */
         int mValue;
@@ -339,11 +354,11 @@ public abstract class Keyframe implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Internal subclass used when the keyframe value is of type float.
      */
     static class FloatKeyframe extends Keyframe {
-        /**
+       /**
          * The value of the animation at the time mFraction.
          */
         float mValue;

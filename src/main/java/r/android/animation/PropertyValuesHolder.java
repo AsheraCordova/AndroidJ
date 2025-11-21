@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -37,19 +52,19 @@ import java.util.List;
  */
 public class PropertyValuesHolder implements Cloneable {
 
-    /**
+   /**
      * The name of the property associated with the values. This need not be a real property,
      * unless this object is being used with ObjectAnimator. But this is the name by which
      * aniamted values are looked up with getAnimatedValue(String) in ValueAnimator.
      */
     String mPropertyName;
 
-    /**
+   /**
      * @hide
      */
     protected Property mProperty;
 
-    /**
+   /**
      * The setter function, if needed. ObjectAnimator hands off this functionality to
      * PropertyValuesHolder, since it holds all of the per-property information. This
      * property is automatically
@@ -57,7 +72,7 @@ public class PropertyValuesHolder implements Cloneable {
      */
     Method mSetter = null;
 
-    /**
+   /**
      * The getter function, if needed. ObjectAnimator hands off this functionality to
      * PropertyValuesHolder, since it holds all of the per-property information. This
      * property is automatically
@@ -66,13 +81,13 @@ public class PropertyValuesHolder implements Cloneable {
      */
     private Method mGetter = null;
 
-    /**
+   /**
      * The type of values supplied. This information is used both in deriving the setter/getter
      * functions and in deriving the type of TypeEvaluator.
      */
     Class mValueType;
 
-    /**
+   /**
      * The set of keyframes (time/value pairs) that define this animation.
      */
     IKeyframes mKeyframes = null;
@@ -107,7 +122,7 @@ public class PropertyValuesHolder implements Cloneable {
     // Used to pass single value to varargs parameter in setter invocation
     final Object[] mTmpValueArray = new Object[1];
 
-    /**
+   /**
      * The type evaluator used to calculate the animated values. This evaluator is determined
      * automatically based on the type of the start/end objects passed into the constructor,
      * but the system only knows about the primitive types int and float. Any other
@@ -115,19 +130,19 @@ public class PropertyValuesHolder implements Cloneable {
      */
     private TypeEvaluator mEvaluator;
 
-    /**
+   /**
      * The value most recently calculated by calculateValue(). This is set during
      * that function and might be retrieved later either by ValueAnimator.animatedValue() or
      * by the property-setting logic in ObjectAnimator.animatedValue().
      */
     private Object mAnimatedValue;
 
-    /**
+   /**
      * Converts from the source Object type to the setter Object type.
      */
     private TypeConverter mConverter;
 
-    /**
+   /**
      * Internal utility constructor, used by the factory methods to set the property name.
      * @param propertyName The name of the property for this holder.
      */
@@ -135,7 +150,7 @@ public class PropertyValuesHolder implements Cloneable {
         mPropertyName = propertyName;
     }
 
-    /**
+   /**
      * Internal utility constructor, used by the factory methods to set the property.
      * @param property The property for this holder.
      */
@@ -146,7 +161,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property name and
      * set of int values.
      * @param propertyName The name of the property being animated.
@@ -157,7 +172,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new IntPropertyValuesHolder(propertyName, values);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property and
      * set of int values.
      * @param property The property being animated. Should not be null.
@@ -168,7 +183,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new IntPropertyValuesHolder(property, values);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property name and
      * set of <code>int[]</code> values. At least two <code>int[]</code> values must be supplied,
      * a start and end value. If more values are supplied, the values will be animated from the
@@ -202,7 +217,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new MultiIntValuesHolder(propertyName, null, evaluator, (Object[]) values);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property name to use
      * as a multi-int setter. The values are animated a String the path, with the first
      * parameter of the setter set to the x coordinate and the second set to the y coordinate.
@@ -220,7 +235,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new MultiIntValuesHolder(propertyName, converter, null, keyframes);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property and
      * set of Object values for use with ObjectAnimator multi-value setters. The Object
      * values are converted to <code>int[]</code> using the converter.
@@ -242,7 +257,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new MultiIntValuesHolder(propertyName, converter, evaluator, values);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder object with the specified property name or
      * setter name for use in a multi-int setter function using ObjectAnimator. The values can be
      * of any type, but the type should be consistent so that the supplied
@@ -265,7 +280,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new MultiIntValuesHolder(propertyName, converter, evaluator, keyframeSet);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property name and
      * set of float values.
      * @param propertyName The name of the property being animated.
@@ -276,7 +291,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new FloatPropertyValuesHolder(propertyName, values);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property and
      * set of float values.
      * @param property The property being animated. Should not be null.
@@ -287,7 +302,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new FloatPropertyValuesHolder(property, values);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property name and
      * set of <code>float[]</code> values. At least two <code>float[]</code> values must be supplied,
      * a start and end value. If more values are supplied, the values will be animated from the
@@ -321,7 +336,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new MultiFloatValuesHolder(propertyName, null, evaluator, (Object[]) values);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property name to use
      * as a multi-float setter. The values are animated a String the path, with the first
      * parameter of the setter set to the x coordinate and the second set to the y coordinate.
@@ -339,7 +354,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new MultiFloatValuesHolder(propertyName, converter, null, keyframes);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property and
      * set of Object values for use with ObjectAnimator multi-value setters. The Object
      * values are converted to <code>float[]</code> using the converter.
@@ -360,7 +375,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new MultiFloatValuesHolder(propertyName, converter, evaluator, values);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder object with the specified property name or
      * setter name for use in a multi-float setter function using ObjectAnimator. The values can be
      * of any type, but the type should be consistent so that the supplied
@@ -383,7 +398,7 @@ public class PropertyValuesHolder implements Cloneable {
         return new MultiFloatValuesHolder(propertyName, converter, evaluator, keyframeSet);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property name and
      * set of Object values. This variant also takes a TypeEvaluator because the system
      * cannot automatically interpolate between objects of unknown type.
@@ -408,7 +423,7 @@ public class PropertyValuesHolder implements Cloneable {
         return pvh;
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property name and
      * a Path a String which the values should be animated. This variant supports a
      * <code>TypeConverter</code> to convert from <code>PointF</code> to the target
@@ -433,7 +448,7 @@ public class PropertyValuesHolder implements Cloneable {
         return pvh;
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property and
      * set of Object values. This variant also takes a TypeEvaluator because the system
      * cannot automatically interpolate between objects of unknown type.
@@ -459,7 +474,7 @@ public class PropertyValuesHolder implements Cloneable {
         return pvh;
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property and
      * set of Object values. This variant also takes a TypeEvaluator because the system
      * cannot automatically interpolate between objects of unknown type. This variant also
@@ -493,7 +508,7 @@ public class PropertyValuesHolder implements Cloneable {
         return pvh;
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder with a given property and
      * a Path a String which the values should be animated. This variant supports a
      * <code>TypeConverter</code> to convert from <code>PointF</code> to the target
@@ -518,7 +533,7 @@ public class PropertyValuesHolder implements Cloneable {
         return pvh;
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder object with the specified property name and set
      * of values. These values can be of any type, but the type should be consistent so that
      * an appropriate {@link r.android.animation.TypeEvaluator} can be found that matches
@@ -542,7 +557,7 @@ public class PropertyValuesHolder implements Cloneable {
         return ofKeyframes(propertyName, keyframeSet);
     }
 
-    /**
+   /**
      * Constructs and returns a PropertyValuesHolder object with the specified property and set
      * of values. These values can be of any type, but the type should be consistent so that
      * an appropriate {@link r.android.animation.TypeEvaluator} can be found that matches
@@ -590,7 +605,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Set the animated values for this object to this set of ints.
      * If there is only one value, it is assumed to be the end value of an animation,
      * and an initial value will be derived, if possible, by calling a getter function
@@ -608,7 +623,7 @@ public class PropertyValuesHolder implements Cloneable {
         mKeyframes = KeyframeSet.ofInt(values);
     }
 
-    /**
+   /**
      * Set the animated values for this object to this set of floats.
      * If there is only one value, it is assumed to be the end value of an animation,
      * and an initial value will be derived, if possible, by calling a getter function
@@ -626,7 +641,7 @@ public class PropertyValuesHolder implements Cloneable {
         mKeyframes = KeyframeSet.ofFloat(values);
     }
 
-    /**
+   /**
      * Set the animated values for this object to this set of IKeyframes.
      *
      * @param values One or more values that the animation will animate between.
@@ -641,7 +656,7 @@ public class PropertyValuesHolder implements Cloneable {
         mKeyframes = new KeyframeSet(keyframes);
     }
 
-    /**
+   /**
      * Set the animated values for this object to this set of Objects.
      * If there is only one value, it is assumed to be the end value of an animation,
      * and an initial value will be derived, if possible, by calling a getter function
@@ -667,7 +682,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Sets the converter to convert from the values type to the setter's parameter type.
      * If only one value is supplied, <var>converter</var> must be a
      * {@link r.android.animation.BidirectionalTypeConverter}.
@@ -677,7 +692,7 @@ public class PropertyValuesHolder implements Cloneable {
         mConverter = converter;
     }
 
-    /**
+   /**
      * Determine the setter or getter function using the JavaBeans convention of setFoo or
      * getFoo for a property named 'foo'. This function figures out what the name of the
      * function should be and uses reflection to find the Method with that name on the
@@ -742,7 +757,7 @@ public class PropertyValuesHolder implements Cloneable {
     }
 
 
-    /**
+   /**
      * Returns the setter or getter requested. This utility function checks whether the
      * requested method exists in the propertyMapMap cache. If not, it calls another
      * utility function to request the Method from the targetClass directly.
@@ -780,7 +795,7 @@ public class PropertyValuesHolder implements Cloneable {
         return setterOrGetter;
     }
 
-    /**
+   /**
      * Utility function to get the setter from targetClass
      * @param targetClass The Class on which the requested method should exist.
      */
@@ -789,14 +804,14 @@ public class PropertyValuesHolder implements Cloneable {
         mSetter = setupSetterOrGetter(targetClass, sSetterPropertyMap, "set", propertyType);
     }
 
-    /**
+   /**
      * Utility function to get the getter from targetClass
      */
     private void setupGetter(Class targetClass) {
         mGetter = setupSetterOrGetter(targetClass, sGetterPropertyMap, "get", null);
     }
 
-    /**
+   /**
      * Internal function (called from ObjectAnimator) to set up the setter and getter
      * prior to running the animation. If the setter has not been manually set for this
      * object, it will be derived automatically given the property name, target object, and
@@ -874,7 +889,7 @@ public class PropertyValuesHolder implements Cloneable {
         return value;
     }
 
-    /**
+   /**
      * Utility function to set the value stored in a particular Keyframe. The value used is
      * whatever the value is for the property name specified in the keyframe on the target object.
      *
@@ -905,7 +920,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * This function is called by ObjectAnimator when setting the start values for an animation.
      * The start values are set according to the current values in the target object. The
      * property whose value is extracted is whatever is specified by the propertyName of this
@@ -920,7 +935,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * This function is called by ObjectAnimator when setting the end values for an animation.
      * The end values are set according to the current values in the target object. The
      * property whose value is extracted is whatever is specified by the propertyName of this
@@ -950,7 +965,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Internal function to set the value on the target object, using the setter set up
      * earlier on this PropertyValuesHolder object. This function is called by ObjectAnimator
      * to handle turning the value calculated by ValueAnimator into a value set on the object
@@ -973,7 +988,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Internal function, called by ValueAnimator, to set up the TypeEvaluator that will be used
      * to calculate animated values.
      */
@@ -992,7 +1007,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * The TypeEvaluator will be automatically determined based on the type of values
      * supplied to PropertyValuesHolder. The evaluator can be manually set, however, if so
      * desired. This may be important in cases where either the type of the values supplied
@@ -1007,7 +1022,7 @@ public class PropertyValuesHolder implements Cloneable {
         mKeyframes.setEvaluator(evaluator);
     }
 
-    /**
+   /**
      * Function used to calculate the value according to the evaluator set up for
      * this PropertyValuesHolder object. This function is called by ValueAnimator.animateValue().
      *
@@ -1018,7 +1033,7 @@ public class PropertyValuesHolder implements Cloneable {
         mAnimatedValue = mConverter == null ? value : mConverter.convert(value);
     }
 
-    /**
+   /**
      * Sets the name of the property that will be animated. This name is used to derive
      * a setter function that will be called to set animated values.
      * For example, a property name of <code>foo</code> will result
@@ -1037,7 +1052,7 @@ public class PropertyValuesHolder implements Cloneable {
         mPropertyName = propertyName;
     }
 
-    /**
+   /**
      * Sets the property that will be animated.
      *
      * <p>Note that if this PropertyValuesHolder object is used with ObjectAnimator, the property
@@ -1049,7 +1064,7 @@ public class PropertyValuesHolder implements Cloneable {
         mProperty = property;
     }
 
-    /**
+   /**
      * Gets the name of the property that will be animated. This name will be used to derive
      * a setter function that will be called to set animated values.
      * For example, a property name of <code>foo</code> will result
@@ -1061,7 +1076,7 @@ public class PropertyValuesHolder implements Cloneable {
         return mPropertyName;
     }
 
-    /**
+   /**
      * Internal function, called by ValueAnimator and ObjectAnimator, to retrieve the value
      * most recently calculated in calculateValue().
      * @return
@@ -1070,7 +1085,7 @@ public class PropertyValuesHolder implements Cloneable {
         return mAnimatedValue;
     }
 
-    /**
+   /**
      * PropertyValuesHolder is Animators use to hold internal animation related data.
      * Therefore, in order to replicate the animation behavior, we need to get data out of
      * PropertyValuesHolder.
@@ -1111,7 +1126,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * @hide
      */
     public Class getValueType() {
@@ -1123,7 +1138,7 @@ public class PropertyValuesHolder implements Cloneable {
         return mPropertyName + ": " + mKeyframes.toString();
     }
 
-    /**
+   /**
      * Utility method to derive a setter/getter method name from a property name, where the
      * prefix is typically "set" or "get" and the first letter of the property name is
      * capitalized.
@@ -1219,7 +1234,7 @@ public class PropertyValuesHolder implements Cloneable {
             return newPVH;
         }
 
-        /**
+       /**
          * Internal function to set the value on the target object, using the setter set up
          * earlier on this PropertyValuesHolder object. This function is called by ObjectAnimator
          * to handle turning the value calculated by ValueAnimator into a value set on the object
@@ -1366,7 +1381,7 @@ public class PropertyValuesHolder implements Cloneable {
             return newPVH;
         }
 
-        /**
+       /**
          * Internal function to set the value on the target object, using the setter set up
          * earlier on this PropertyValuesHolder object. This function is called by ObjectAnimator
          * to handle turning the value calculated by ValueAnimator into a value set on the object
@@ -1462,7 +1477,7 @@ public class PropertyValuesHolder implements Cloneable {
             setEvaluator(evaluator);
         }
 
-        /**
+       /**
          * Internal function to set the value on the target object, using the setter set up
          * earlier on this PropertyValuesHolder object. This function is called by ObjectAnimator
          * to handle turning the value calculated by ValueAnimator into a value set on the object
@@ -1494,7 +1509,7 @@ public class PropertyValuesHolder implements Cloneable {
             }
         }
 
-        /**
+       /**
          * Internal function (called from ObjectAnimator) to set up the setter and getter
          * prior to running the animation. No getter can be used for multiple parameters.
          *
@@ -1569,7 +1584,7 @@ public class PropertyValuesHolder implements Cloneable {
             setEvaluator(evaluator);
         }
 
-        /**
+       /**
          * Internal function to set the value on the target object, using the setter set up
          * earlier on this PropertyValuesHolder object. This function is called by ObjectAnimator
          * to handle turning the value calculated by ValueAnimator into a value set on the object
@@ -1601,7 +1616,7 @@ public class PropertyValuesHolder implements Cloneable {
             }
         }
 
-        /**
+       /**
          * Internal function (called from ObjectAnimator) to set up the setter and getter
          * prior to running the animation. No getter can be used for multiple parameters.
          *
@@ -1655,7 +1670,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Convert from PointF to float[] for multi-float setters a String a Path.
      */
     private static class PointFToFloatArray extends TypeConverter<PointF, float[]> {
@@ -1673,7 +1688,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     };
 
-    /**
+   /**
      * Convert from PointF to int[] for multi-int setters a String a Path.
      */
     private static class PointFToIntArray extends TypeConverter<PointF, int[]> {
@@ -1691,7 +1706,7 @@ public class PropertyValuesHolder implements Cloneable {
         }
     };
 
-    /**
+   /**
      * @hide
      */
     public static class PropertyValues {

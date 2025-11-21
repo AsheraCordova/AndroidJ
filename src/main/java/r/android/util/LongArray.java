@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -43,7 +58,7 @@ public class LongArray implements Cloneable {
         mSize = Preconditions.checkArgumentInRange(size, 0, array.length, "size");
     }
 
-    /**
+   /**
      * Creates an empty LongArray with the default initial capacity.
      */
     //@UnsupportedAppUsage(maxTargetSdk = Build.VERSION_CODES.R, trackingBug = 170729553)
@@ -51,7 +66,7 @@ public class LongArray implements Cloneable {
         this(0);
     }
 
-    /**
+   /**
      * Creates an empty LongArray with the specified initial capacity.
      */
     public LongArray(int initialCapacity) {
@@ -63,21 +78,21 @@ public class LongArray implements Cloneable {
         mSize = 0;
     }
 
-    /**
+   /**
      * Creates an LongArray wrapping the given primitive long array.
      */
     public static LongArray wrap(long[] array) {
         return new LongArray(array, array.length);
     }
 
-    /**
+   /**
      * Creates an LongArray from the given primitive long array, copying it.
      */
     public static LongArray fromArray(long[] array, int size) {
         return wrap(Arrays.copyOf(array, size));
     }
 
-    /**
+   /**
      * Changes the size of this LongArray. If this LongArray is shrinked, the backing array capacity
      * is unchanged. If the new size is larger than backing array capacity, a new backing array is
      * created from the current content of this LongArray padded with 0s.
@@ -92,14 +107,14 @@ public class LongArray implements Cloneable {
         mSize = newSize;
     }
 
-    /**
+   /**
      * Appends the specified value to the end of this array.
      */
     public void add(long value) {
         add(mSize, value);
     }
 
-    /**
+   /**
      * Inserts a value at the specified position in this array. If the specified index is equal to
      * the length of the array, the value is added at the end.
      *
@@ -120,7 +135,7 @@ public class LongArray implements Cloneable {
         mValues[index] = value;
     }
 
-    /**
+   /**
      * Adds the values in the specified array to this array.
      */
     public void addAll(LongArray values) {
@@ -131,7 +146,7 @@ public class LongArray implements Cloneable {
         mSize += count;
     }
 
-    /**
+   /**
      * Ensures capacity to append at least <code>count</code> values.
      */
     private void ensureCapacity(int count) {
@@ -147,7 +162,7 @@ public class LongArray implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Removes all values from this array.
      */
     public void clear() {
@@ -161,12 +176,12 @@ public class LongArray implements Cloneable {
             clone = (LongArray) super.clone();
             clone.mValues = mValues.clone();
         } catch (CloneNotSupportedException cnse) {
-            /* ignore */
+           /* ignore */
         }
         return clone;
     }
 
-    /**
+   /**
      * Returns the value at the specified position in this array.
      */
     //@UnsupportedAppUsage
@@ -175,7 +190,7 @@ public class LongArray implements Cloneable {
         return mValues[index];
     }
 
-    /**
+   /**
      * Sets the value at the specified position in this array.
      */
     public void set(int index, long value) {
@@ -183,7 +198,7 @@ public class LongArray implements Cloneable {
         mValues[index] = value;
     }
 
-    /**
+   /**
      * Returns the index of the first occurrence of the specified value in this
      * array, or -1 if this array does not contain the value.
      */
@@ -197,7 +212,7 @@ public class LongArray implements Cloneable {
         return -1;
     }
 
-    /**
+   /**
      * Removes the value at the specified index from this array.
      */
     public void remove(int index) {
@@ -206,7 +221,7 @@ public class LongArray implements Cloneable {
         mSize--;
     }
 
-    /**
+   /**
      * Returns the number of values in this array.
      */
     //@UnsupportedAppUsage(maxTargetSdk = Build.VERSION_CODES.R, trackingBug = 170729553)
@@ -214,14 +229,14 @@ public class LongArray implements Cloneable {
         return mSize;
     }
 
-    /**
+   /**
      * Returns a new array with the contents of this LongArray.
      */
     public long[] toArray() {
         return Arrays.copyOf(mValues, mSize);
     }
 
-    /**
+   /**
      * Test if each element of {@code a} equals corresponding element from {@code b}
      */
     public static boolean elementsEqual(@Nullable LongArray a, @Nullable LongArray b) {

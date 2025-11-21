@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2015 The Android Open Source Project
  *
@@ -43,7 +58,7 @@ public class AnimationHandler {
     private static final String TAG = "AnimationHandler";
     private static final boolean LOCAL_LOGV = false;
 
-    /**
+   /**
      * Internal per-thread collections used to avoid set collisions as animations start and end
      * while being processed.
      */
@@ -61,14 +76,14 @@ public class AnimationHandler {
     // Static flag which prevents the system property from overriding sAnimatorPausingEnabled field.
     private static boolean sOverrideAnimatorPausingSystemProperty = false;
 
-    /**
+   /**
      * This paused list is used to store animators forcibly paused when the activity
      * went into the background (to avoid unnecessary background processing work).
      * These animators should be resume()'d when the activity returns to the foreground.
      */
     private final ArrayList<Animator> mPausedAnimators = new ArrayList<>();
 
-    /**
+   /**
      * This structure is used to store the currently active objects (ViewRootImpls or
      * WallpaperService.Engines) in the process. Each of these objects sends a request to
      * AnimationHandler when it goes into the background (request to pause) or foreground
@@ -105,7 +120,7 @@ public class AnimationHandler {
         return sAnimatorHandler.get();
     }
 
-    /**
+   /**
      * Sets an instance that will be returned by {@link #getInstance()} on every thread.
      * @return  the previously active test handler, if any.
      * @hide
@@ -116,7 +131,7 @@ public class AnimationHandler {
         return oldHandler;
     }
 
-    /**
+   /**
      * System property that controls the behavior of pausing infinite animators when an app
      * is moved to the background.
      *
@@ -128,7 +143,7 @@ public class AnimationHandler {
                 .getBoolean("framework.pause_bg_animations.enabled", true);
     }
 
-    /**
+   /**
      * Disable the default behavior of pausing infinite animators when
      * apps go into the background.
      *
@@ -138,7 +153,7 @@ public class AnimationHandler {
         sAnimatorPausingEnabled = enable;
     }
 
-    /**
+   /**
      * Prevents the setAnimatorPausingEnabled behavior from being overridden
      * by the 'framework.pause_bg_animations.enabled' system property value.
      *
@@ -151,7 +166,7 @@ public class AnimationHandler {
         sOverrideAnimatorPausingSystemProperty = enable;
     }
 
-    /**
+   /**
      * This is called when a window goes away. We should remove
      * it from the requestors list to ensure that we are counting requests correctly and not
      * tracking obsolete+enabled requestors.
@@ -163,7 +178,7 @@ public class AnimationHandler {
         }
     }
 
-    /**
+   /**
      * This method is called from ViewRootImpl or WallpaperService when either a window is no
      * longer visible (enable == false) or when a window becomes visible (enable == true).
      * If animators are not properly disabled when activities are backgrounded, it can lead to
@@ -266,7 +281,7 @@ public class AnimationHandler {
         }
     };
 
-    /**
+   /**
      * By default, the Choreographer is used to provide timing for frame callbacks. A custom
      * provider can be used here to provide different timing pulse.
      */
@@ -285,7 +300,7 @@ public class AnimationHandler {
         return mProvider;
     }
 
-    /**
+   /**
      * Register to get a callback on the next frame after the delay.
      */
     public void addAnimationFrameCallback(final AnimationFrameCallback callback, long delay) {
@@ -301,7 +316,7 @@ public class AnimationHandler {
         }
     }
 
-    /**
+   /**
      * Register to get a one shot callback for frame commit timing. Frame commit timing is the
      * time *after* traversals are done, as opposed to the animation frame timing, which is
      * before any traversals. This timing can be used to adjust the start time of an animation
@@ -318,7 +333,7 @@ public class AnimationHandler {
         }
     }
 
-    /**
+   /**
      * Removes the given callback from the list, so it will no longer be called for frame related
      * timing.
      */
@@ -363,7 +378,7 @@ public class AnimationHandler {
         }
     }
 
-    /**
+   /**
      * Remove the callbacks from mDelayedCallbackStartTime once they have passed the initial delay
      * so that they can start getting frame callbacks.
      *
@@ -381,7 +396,7 @@ public class AnimationHandler {
         return false;
     }
 
-    /**
+   /**
      * Return the number of callbacks that have registered for frame callbacks.
      */
     public static int getAnimationCount() {
@@ -437,7 +452,7 @@ public class AnimationHandler {
         return count;
     }
 
-    /**
+   /**
      * Default provider of timing pulse that uses Choreographer for frame callbacks.
      */
     private class MyFrameCallbackProvider implements AnimationFrameCallbackProvider {
@@ -470,12 +485,12 @@ public class AnimationHandler {
         }
     }
 
-    /**
+   /**
      * Callbacks that receives notifications for animation timing and frame commit timing.
      * @hide
      */
     public interface AnimationFrameCallback {
-        /**
+       /**
          * Run animation based on the frame time.
          * @param frameTime The frame start time, in the {@link SystemClock#uptimeMillis()} time
          *                  base.
@@ -483,7 +498,7 @@ public class AnimationHandler {
          */
         boolean doAnimationFrame(long frameTime);
 
-        /**
+       /**
          * This notifies the callback of frame commit time. Frame commit time is the time after
          * traversals happen, as opposed to the normal animation frame time that is before
          * traversals. This is used to compensate expensive traversals that happen as the
@@ -501,7 +516,7 @@ public class AnimationHandler {
         void commitAnimationFrame(long frameTime);
     }
 
-    /**
+   /**
      * The intention for having this interface is to increase the testability of ValueAnimator.
      * Specifically, we can have a custom implementation of the interface below and provide
      * timing pulse without using Choreographer. That way we could use any arbitrary interval for

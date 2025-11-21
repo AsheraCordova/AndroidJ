@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2014 The Android Open Source Project
  *
@@ -24,7 +39,7 @@ import java.util.List;
  */
 public interface IKeyframes extends Cloneable {
 
-    /**
+   /**
      * Sets the TypeEvaluator to be used when calculating animated values. This object
      * is required only for IKeyframes that are not either IntIKeyframes or FloatIKeyframes,
      * both of which assume their own evaluator to speed up calculations with those primitive
@@ -34,12 +49,12 @@ public interface IKeyframes extends Cloneable {
      */
     void setEvaluator(TypeEvaluator evaluator);
 
-    /**
+   /**
      * @return The value type contained by the contained IKeyframes.
      */
     Class getType();
 
-    /**
+   /**
      * Gets the animated value, given the elapsed fraction of the animation (interpolated by the
      * animation's interpolator) and the evaluator used to calculate in-between values. This
      * function maps the input fraction to the appropriate keyframe interval and a fraction
@@ -53,7 +68,7 @@ public interface IKeyframes extends Cloneable {
      */
     Object getValue(float fraction);
 
-    /**
+   /**
      * @return A list of all IKeyframes contained by this. This may return null if this is
      * not made up of IKeyframes.
      */
@@ -61,12 +76,12 @@ public interface IKeyframes extends Cloneable {
 
     IKeyframes clone();
 
-    /**
+   /**
      * A specialization of IKeyframes that has integer primitive value calculation.
      */
     public interface IntIKeyframes extends IKeyframes {
 
-        /**
+       /**
          * Works like {@link #getValue(float)}, but returning a primitive.
          * @param fraction The elapsed fraction of the animation
          * @return The animated value.
@@ -74,12 +89,12 @@ public interface IKeyframes extends Cloneable {
         int getIntValue(float fraction);
     }
 
-    /**
+   /**
      * A specialization of IKeyframes that has float primitive value calculation.
      */
     public interface FloatIKeyframes extends IKeyframes {
 
-        /**
+       /**
          * Works like {@link #getValue(float)}, but returning a primitive.
          * @param fraction The elapsed fraction of the animation
          * @return The animated value.

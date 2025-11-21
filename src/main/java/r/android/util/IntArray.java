@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2014 The Android Open Source Project
  *
@@ -39,14 +54,14 @@ public class IntArray implements Cloneable {
         mSize = Preconditions.checkArgumentInRange(size, 0, array.length, "size");
     }
 
-    /**
+   /**
      * Creates an empty IntArray with the default initial capacity.
      */
     public IntArray() {
         this(10);
     }
 
-    /**
+   /**
      * Creates an empty IntArray with the specified initial capacity.
      */
     public IntArray(int initialCapacity) {
@@ -58,21 +73,21 @@ public class IntArray implements Cloneable {
         mSize = 0;
     }
 
-    /**
+   /**
      * Creates an IntArray wrapping the given primitive int array.
      */
     public static IntArray wrap(int[] array) {
         return new IntArray(array, array.length);
     }
 
-    /**
+   /**
      * Creates an IntArray from the given primitive int array, copying it.
      */
     public static IntArray fromArray(int[] array, int size) {
         return wrap(Arrays.copyOf(array, size));
     }
 
-    /**
+   /**
      * Changes the size of this IntArray. If this IntArray is shrinked, the backing array capacity
      * is unchanged. If the new size is larger than backing array capacity, a new backing array is
      * created from the current content of this IntArray padded with 0s.
@@ -87,14 +102,14 @@ public class IntArray implements Cloneable {
         mSize = newSize;
     }
 
-    /**
+   /**
      * Appends the specified value to the end of this array.
      */
     public void add(int value) {
         add(mSize, value);
     }
 
-    /**
+   /**
      * Inserts a value at the specified position in this array. If the specified index is equal to
      * the length of the array, the value is added at the end.
      *
@@ -114,7 +129,7 @@ public class IntArray implements Cloneable {
         mValues[index] = value;
     }
 
-    /**
+   /**
      * Searches the array for the specified value using the binary search algorithm. The array must
      * be sorted (as by the {@link Arrays#sort(int[], int, int)} method) prior to making this call.
      * If it is not sorted, the results are undefined. If the range contains multiple elements with
@@ -132,7 +147,7 @@ public class IntArray implements Cloneable {
         return ContainerHelpers.binarySearch(mValues, mSize, value);
     }
 
-    /**
+   /**
      * Adds the values in the specified array to this array.
      */
     public void addAll(IntArray values) {
@@ -143,7 +158,7 @@ public class IntArray implements Cloneable {
         mSize += count;
     }
 
-    /**
+   /**
      * Ensures capacity to append at least <code>count</code> values.
      */
     private void ensureCapacity(int count) {
@@ -159,7 +174,7 @@ public class IntArray implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Removes all values from this array.
      */
     public void clear() {
@@ -173,7 +188,7 @@ public class IntArray implements Cloneable {
         return clone;
     }
 
-    /**
+   /**
      * Returns the value at the specified position in this array.
      */
     public int get(int index) {
@@ -181,7 +196,7 @@ public class IntArray implements Cloneable {
         return mValues[index];
     }
 
-    /**
+   /**
      * Sets the value at the specified position in this array.
      */
     public void set(int index, int value) {
@@ -189,7 +204,7 @@ public class IntArray implements Cloneable {
         mValues[index] = value;
     }
 
-    /**
+   /**
      * Returns the index of the first occurrence of the specified value in this
      * array, or -1 if this array does not contain the value.
      */
@@ -203,7 +218,7 @@ public class IntArray implements Cloneable {
         return -1;
     }
 
-    /**
+   /**
      * Removes the value at the specified index from this array.
      */
     public void remove(int index) {
@@ -212,14 +227,14 @@ public class IntArray implements Cloneable {
         mSize--;
     }
 
-    /**
+   /**
      * Returns the number of values in this array.
      */
     public int size() {
         return mSize;
     }
 
-    /**
+   /**
      * Returns a new array with the contents of this IntArray.
      */
     public int[] toArray() {

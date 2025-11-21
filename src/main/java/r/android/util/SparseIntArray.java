@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 package r.android.util;
 
 public class SparseIntArray {
@@ -5,14 +20,14 @@ public class SparseIntArray {
     private int[] mValues;
     private int mSize;
 
-    /**
+   /**
      * Creates a new SparseIntArray containing no mappings.
      */
     public SparseIntArray() {
         this(10);
     }
 
-    /**
+   /**
      * Creates a new SparseIntArray containing no mappings that will not
      * require any additional memory allocation to store the specified
      * number of mappings.  If you supply an initial capacity of 0, the
@@ -38,12 +53,12 @@ public class SparseIntArray {
             clone.mKeys = mKeys.clone();
             clone.mValues = mValues.clone();
         } catch (CloneNotSupportedException cnse) {
-            /* ignore */
+           /* ignore */
         }
         return clone;
     }
 
-    /**
+   /**
      * Gets the int mapped from the specified key, or <code>0</code>
      * if no such mapping has been made.
      */
@@ -51,7 +66,7 @@ public class SparseIntArray {
         return get(key, 0);
     }
 
-    /**
+   /**
      * Gets the int mapped from the specified key, or the specified value
      * if no such mapping has been made.
      */
@@ -65,7 +80,7 @@ public class SparseIntArray {
         }
     }
 
-    /**
+   /**
      * Removes the mapping from the specified key, if there was any.
      */
     public void delete(int key) {
@@ -76,7 +91,7 @@ public class SparseIntArray {
         }
     }
 
-    /**
+   /**
      * Removes the mapping at the given index.
      */
     public void removeAt(int index) {
@@ -85,7 +100,7 @@ public class SparseIntArray {
         mSize--;
     }
 
-    /**
+   /**
      * Adds a mapping from the specified key to the specified value,
      * replacing the previous mapping from the specified key if there
      * was one.
@@ -104,7 +119,7 @@ public class SparseIntArray {
         }
     }
 
-    /**
+   /**
      * Returns the number of key-value mappings that this SparseIntArray
      * currently stores.
      */
@@ -112,7 +127,7 @@ public class SparseIntArray {
         return mSize;
     }
 
-    /**
+   /**
      * Given an index in the range <code>0...size()-1</code>, returns
      * the key from the <code>index</code>th key-value mapping that this
      * SparseIntArray stores.
@@ -126,7 +141,7 @@ public class SparseIntArray {
         return mKeys[index];
     }
 
-    /**
+   /**
      * Given an index in the range <code>0...size()-1</code>, returns
      * the value from the <code>index</code>th key-value mapping that this
      * SparseIntArray stores.
@@ -141,7 +156,7 @@ public class SparseIntArray {
         return mValues[index];
     }
 
-    /**
+   /**
      * Directly set the value at a particular index.
      * @hide
      */
@@ -149,7 +164,7 @@ public class SparseIntArray {
         mValues[index] = value;
     }
 
-    /**
+   /**
      * Returns the index for which {@link #keyAt} would return the
      * specified key, or a negative number if the specified
      * key is not mapped.
@@ -158,7 +173,7 @@ public class SparseIntArray {
         return ContainerHelpers.binarySearch(mKeys, mSize, key);
     }
 
-    /**
+   /**
      * Returns an index for which {@link #valueAt} would return the
      * specified key, or a negative number if no keys map to the
      * specified value.
@@ -174,14 +189,14 @@ public class SparseIntArray {
         return -1;
     }
 
-    /**
+   /**
      * Removes all key-value mappings from this SparseIntArray.
      */
     public void clear() {
         mSize = 0;
     }
 
-    /**
+   /**
      * Puts a key/value pair into the array, optimizing for the case where
      * the key is greater than all existing keys in the array.
      */
@@ -196,7 +211,7 @@ public class SparseIntArray {
         mSize++;
     }
 
-    /**
+   /**
      * {@inheritDoc}
      *
      * <p>This implementation composes a string by iterating over its mappings.

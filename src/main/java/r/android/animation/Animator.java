@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -33,59 +48,59 @@ import java.util.ArrayList;
  */
 public abstract class Animator implements Cloneable {
 
-    /**
+   /**
      * The value used to indicate infinite duration (e.g. when Animators repeat infinitely).
      */
     public static final long DURATION_INFINITE = -1;
-    /**
+   /**
      * The set of listeners to be sent events through the life of an animation.
      */
     ArrayList<AnimatorListener> mListeners = null;
 
-    /**
+   /**
      * The set of listeners to be sent pause/resume events through the life
      * of an animation.
      */
     ArrayList<AnimatorPauseListener> mPauseListeners = null;
 
-    /**
+   /**
      * Whether this animator is currently in a paused state.
      */
     boolean mPaused = false;
 
-    /**
+   /**
      * A set of flags which identify the type of configuration changes that can affect this
      * Animator. Used by the Animator cache.
      */
     @Config int mChangingConfigurations = 0;
 
-    /**
+   /**
      * If this animator is inflated from a constant state, keep a reference to it so that
      * ConstantState will not be garbage collected until this animator is collected
      */
     private AnimatorConstantState mConstantState;
 
-    /**
+   /**
      * backing field for backgroundPauseDelay property. This could be simply a hardcoded
      * value in AnimationHandler, but it is useful to be able to change the value in tests.
      */
     private static long sBackgroundPauseDelay = 1000;
 
-    /**
+   /**
      * A cache of the values in a list. Used so that when calling the list, we have a copy
      * of it in case the list is modified while iterating. The array can be reused to avoid
      * allocation on every notification.
      */
     private Object[] mCachedList;
 
-    /**
+   /**
      * Tracks whether we've notified listeners of the onAnimationStart() event. This can be
      * complex to keep track of since we notify listeners at different times depending on
      * startDelay and whether start() was called before end().
      */
     boolean mStartListenersCalled = false;
 
-    /**
+   /**
      * Sets the duration for delaying pausing animators when apps go into the background.
      * Used by AnimationHandler when requested to pause animators.
      *
@@ -96,7 +111,7 @@ public abstract class Animator implements Cloneable {
         sBackgroundPauseDelay = value;
     }
 
-    /**
+   /**
      * Gets the duration for delaying pausing animators when apps go into the background.
      * Used by AnimationHandler when requested to pause animators.
      *
@@ -107,7 +122,7 @@ public abstract class Animator implements Cloneable {
         return sBackgroundPauseDelay;
     }
 
-    /**
+   /**
      * Sets the behavior of animator pausing when apps go into the background.
      * This is exposed as a test API for verification, but is intended for use by internal/
      * platform code, potentially for use by a system property that could disable it
@@ -122,7 +137,7 @@ public abstract class Animator implements Cloneable {
         AnimationHandler.setOverrideAnimatorPausingSystemProperty(!enable);
     }
 
-    /**
+   /**
      * Starts this animation. If the animation has a nonzero startDelay, the animation will start
      * running after that delay elapses. A non-delayed animation will have its initial
      * value(s) set immediately, followed by calls to
@@ -138,7 +153,7 @@ public abstract class Animator implements Cloneable {
     public void start() {
     }
 
-    /**
+   /**
      * Cancels the animation. Unlike {@link #end()}, <code>cancel()</code> causes the animation to
      * stop in its tracks, sending an
      * {@link r.android.animation.Animator.AnimatorListener#onAnimationCancel(Animator)} to
@@ -150,7 +165,7 @@ public abstract class Animator implements Cloneable {
     public void cancel() {
     }
 
-    /**
+   /**
      * Ends the animation. This causes the animation to assign the end value of the property being
      * animated, then calling the
      * {@link r.android.animation.Animator.AnimatorListener#onAnimationEnd(Animator)} method on
@@ -161,7 +176,7 @@ public abstract class Animator implements Cloneable {
     public void end() {
     }
 
-    /**
+   /**
      * Pauses a running animation. This method should only be called on the same thread on
      * which the animation was started. If the animation has not yet been {@link
      * #isStarted() started} or has since ended, then the call is ignored. Paused
@@ -180,7 +195,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Resumes a paused animation, causing the animator to pick up where it left off
      * when it was paused. This method should only be called on the same thread on
      * which the animation was started. Calls to resume() on an animator that is
@@ -197,7 +212,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Returns whether this animator is currently in a paused state.
      *
      * @return True if the animator is currently paused, false otherwise.
@@ -209,7 +224,7 @@ public abstract class Animator implements Cloneable {
         return mPaused;
     }
 
-    /**
+   /**
      * The amount of time, in milliseconds, to delay processing the animation
      * after {@link #start()} is called.
      *
@@ -217,7 +232,7 @@ public abstract class Animator implements Cloneable {
      */
     public abstract long getStartDelay();
 
-    /**
+   /**
      * The amount of time, in milliseconds, to delay processing the animation
      * after {@link #start()} is called.
 
@@ -225,21 +240,21 @@ public abstract class Animator implements Cloneable {
      */
     public abstract void setStartDelay(long startDelay);
 
-    /**
+   /**
      * Sets the duration of the animation.
      *
      * @param duration The length of the animation, in milliseconds.
      */
     public abstract Animator setDuration(long duration);
 
-    /**
+   /**
      * Gets the duration of the animation.
      *
      * @return The length of the animation, in milliseconds.
      */
     public abstract long getDuration();
 
-    /**
+   /**
      * Gets the total duration of the animation, accounting for animation sequences, start delay,
      * and repeating. Return {@link #DURATION_INFINITE} if the duration is infinite.
      *
@@ -256,7 +271,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * The time interpolator used in calculating the elapsed fraction of the
      * animation. The interpolator determines whether the animation runs with
      * linear or non-linear motion, such as acceleration and deceleration. The
@@ -266,7 +281,7 @@ public abstract class Animator implements Cloneable {
      */
     public abstract void setInterpolator(TimeInterpolator value);
 
-    /**
+   /**
      * Returns the timing interpolator that this animation uses.
      *
      * @return The timing interpolator for this animation.
@@ -275,7 +290,7 @@ public abstract class Animator implements Cloneable {
         return null;
     }
 
-    /**
+   /**
      * Returns whether this Animator is currently running (having been started and gone past any
      * initial startDelay period and not yet ended).
      *
@@ -283,7 +298,7 @@ public abstract class Animator implements Cloneable {
      */
     public abstract boolean isRunning();
 
-    /**
+   /**
      * Returns whether this Animator has been started and not yet ended. For reusable
      * Animators (which most Animators are, apart from the one-shot animator produced by
      * {@link r.android.view.ViewAnimationUtils#createCircularReveal(
@@ -302,7 +317,7 @@ public abstract class Animator implements Cloneable {
         return isRunning();
     }
 
-    /**
+   /**
      * Adds a listener to the set of listeners that are sent events through the life of an
      * animation, such as start, repeat, and end.
      *
@@ -315,7 +330,7 @@ public abstract class Animator implements Cloneable {
         mListeners.add(listener);
     }
 
-    /**
+   /**
      * Removes a listener from the set listening to this animation.
      *
      * @param listener the listener to be removed from the current set of listeners for this
@@ -331,7 +346,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Gets the set of {@link r.android.animation.Animator.AnimatorListener} objects that are currently
      * listening for events on this <code>Animator</code> object.
      *
@@ -341,7 +356,7 @@ public abstract class Animator implements Cloneable {
         return mListeners;
     }
 
-    /**
+   /**
      * Adds a pause listener to this animator.
      *
      * @param listener the listener to be added to the current set of pause listeners
@@ -354,7 +369,7 @@ public abstract class Animator implements Cloneable {
         mPauseListeners.add(listener);
     }
 
-    /**
+   /**
      * Removes a pause listener from the set listening to this animation.
      *
      * @param listener the listener to be removed from the current set of pause
@@ -370,7 +385,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Removes all {@link #addListener(r.android.animation.Animator.AnimatorListener) listeners}
      * and {@link #addPauseListener(r.android.animation.Animator.AnimatorPauseListener)
      * pauseListeners} from this object.
@@ -386,7 +401,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Return a mask of the configuration parameters for which this animator may change, requiring
      * that it should be re-created from Resources. The default implementation returns whatever
      * value was provided through setChangingConfigurations(int) or 0 by default.
@@ -400,7 +415,7 @@ public abstract class Animator implements Cloneable {
         return mChangingConfigurations;
     }
 
-    /**
+   /**
      * Set a mask of the configuration parameters for which this animator may change, requiring
      * that it be re-created from resource.
      *
@@ -414,7 +429,7 @@ public abstract class Animator implements Cloneable {
         mChangingConfigurations = configs;
     }
 
-    /**
+   /**
      * Sets the changing configurations value to the union of the current changing configurations
      * and the provided configs.
      * This method is called while loading the animator.
@@ -424,7 +439,7 @@ public abstract class Animator implements Cloneable {
         mChangingConfigurations |= configs;
     }
 
-    /**
+   /**
      * Return a {@link r.android.content.res.ConstantState} instance that holds the shared state of
      * this Animator.
      * <p>
@@ -460,7 +475,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * This method tells the object to use appropriate information to extract
      * starting values for the animation. For example, a AnimatorSet object will pass
      * this call to its child objects to tell them to set up the values. A
@@ -472,7 +487,7 @@ public abstract class Animator implements Cloneable {
     public void setupStartValues() {
     }
 
-    /**
+   /**
      * This method tells the object to use appropriate information to extract
      * ending values for the animation. For example, a AnimatorSet object will pass
      * this call to its child objects to tell them to set up the values. A
@@ -484,7 +499,7 @@ public abstract class Animator implements Cloneable {
     public void setupEndValues() {
     }
 
-    /**
+   /**
      * Sets the target object whose property will be animated by this animation. Not all subclasses
      * operate on target objects (for example, {@link ValueAnimator}, but this method
      * is on the superclass for the convenience of dealing generically with those subclasses
@@ -502,14 +517,14 @@ public abstract class Animator implements Cloneable {
     // Hide reverse() and canReverse() for now since reverse() only work for simple
     // cases, like we don't support sequential, neither startDelay.
     // TODO: make reverse() works for all the Animators.
-    /**
+   /**
      * @hide
      */
     public boolean canReverse() {
         return false;
     }
 
-    /**
+   /**
      * @hide
      */
     //@UnsupportedAppUsage(maxTargetSdk = Build.VERSION_CODES.R, trackingBug = 170729553)
@@ -524,7 +539,7 @@ public abstract class Animator implements Cloneable {
         return false;
     }
 
-    /**
+   /**
      * Internal use only.
      * This call starts the animation in regular or reverse direction without requiring them to
      * register frame callbacks. The caller will be responsible for all the subsequent animation
@@ -541,7 +556,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Internal use only.
      * Skips the animation value to end/start, depending on whether the play direction is forward
      * or backward.
@@ -551,7 +566,7 @@ public abstract class Animator implements Cloneable {
      */
     void skipToEndValue(boolean inReverse) {}
 
-    /**
+   /**
      * Internal use only.
      *
      * Returns whether the animation has start/end values setup. For most of the animations, this
@@ -562,7 +577,7 @@ public abstract class Animator implements Cloneable {
         return true;
     }
 
-    /**
+   /**
      * Internal use only. Changes the value of the animator as if currentPlayTime has passed since
      * the start of the animation. Therefore, currentPlayTime includes the start delay, and any
      * repetition. lastPlayTime is similar and is used to calculate how many repeats have been
@@ -570,13 +585,13 @@ public abstract class Animator implements Cloneable {
      */
     void animateValuesInRange(long currentPlayTime, long lastPlayTime) {}
 
-    /**
+   /**
      * Internal use only. This animates any animation that has ended since lastPlayTime.
      * If an animation hasn't been finished, no change will be made.
      */
     void animateSkipToEnds(long currentPlayTime, long lastPlayTime) {}
 
-    /**
+   /**
      * Internal use only. Adds all start times (after delay) to and end times to times.
      * The value must include offset.
      */
@@ -594,7 +609,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Calls notification for each AnimatorListener.
      *
      * @param notification The notification method to call on each listener.
@@ -608,7 +623,7 @@ public abstract class Animator implements Cloneable {
         callOnList(mListeners, notification, this, isReverse);
     }
 
-    /**
+   /**
      * Call pause/resume on each AnimatorPauseListener.
      *
      * @param notification Either ON_PAUSE or ON_RESUME to call onPause or onResume on each
@@ -634,7 +649,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Calls <code>call</code> for every item in <code>list</code> with <code>animator</code> and
      * <code>isReverse</code> as parameters.
      *
@@ -674,14 +689,14 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * <p>An animation listener receives notifications from an animation.
      * Notifications indicate animation related events, such as the end or the
      * repetition of the animation.</p>
      */
     public static interface AnimatorListener {
 
-        /**
+       /**
          * <p>Notifies the start of the animation as well as the animation's overall play direction.
          * This method's default behavior is to call {@link #onAnimationStart(Animator)}. This
          * method can be overridden, though not required, to get the additional play direction info
@@ -695,7 +710,7 @@ public abstract class Animator implements Cloneable {
             onAnimationStart(animation);
         }
 
-        /**
+       /**
          * <p>Notifies the end of the animation. This callback is not invoked
          * for animations with repeat count set to INFINITE.</p>
          *
@@ -711,14 +726,14 @@ public abstract class Animator implements Cloneable {
             onAnimationEnd(animation);
         }
 
-        /**
+       /**
          * <p>Notifies the start of the animation.</p>
          *
          * @param animation The started animation.
          */
         void onAnimationStart(@NonNull Animator animation);
 
-        /**
+       /**
          * <p>Notifies the end of the animation. This callback is not invoked
          * for animations with repeat count set to INFINITE.</p>
          *
@@ -726,7 +741,7 @@ public abstract class Animator implements Cloneable {
          */
         void onAnimationEnd(@NonNull Animator animation);
 
-        /**
+       /**
          * <p>Notifies the cancellation of the animation. This callback is not invoked
          * for animations with repeat count set to INFINITE.</p>
          *
@@ -734,7 +749,7 @@ public abstract class Animator implements Cloneable {
          */
         void onAnimationCancel(@NonNull Animator animation);
 
-        /**
+       /**
          * <p>Notifies the repetition of the animation.</p>
          *
          * @param animation The animation which was repeated.
@@ -742,14 +757,14 @@ public abstract class Animator implements Cloneable {
         void onAnimationRepeat(@NonNull Animator animation);
     }
 
-    /**
+   /**
      * A pause listener receives notifications from an animation when the
      * animation is {@link #pause() paused} or {@link #resume() resumed}.
      *
      * @see #addPauseListener(AnimatorPauseListener)
      */
     public static interface AnimatorPauseListener {
-        /**
+       /**
          * <p>Notifies that the animation was paused.</p>
          *
          * @param animation The animaton being paused.
@@ -757,7 +772,7 @@ public abstract class Animator implements Cloneable {
          */
         void onAnimationPause(@NonNull Animator animation);
 
-        /**
+       /**
          * <p>Notifies that the animation was resumed, after being
          * previously paused.</p>
          *
@@ -767,7 +782,7 @@ public abstract class Animator implements Cloneable {
         void onAnimationResume(@NonNull Animator animation);
     }
 
-    /**
+   /**
      * <p>Whether or not the Animator is allowed to run asynchronously off of
      * the UI thread. This is a hint that informs the Animator that it is
      * OK to run the animation off-thread, however the Animator may decide
@@ -802,7 +817,7 @@ public abstract class Animator implements Cloneable {
         // It is up to subclasses to support this, if they can.
     }
 
-    /**
+   /**
      * Creates a {@link ConstantState} which holds changing configurations information associated
      * with the given Animator.
      * <p>
@@ -833,7 +848,7 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Internally used by {@link #callOnList(ArrayList, AnimatorCaller, Object, boolean)} to
      * make a call on all children of a list. This can be for start, stop, pause, cancel, update,
      * etc notifications.

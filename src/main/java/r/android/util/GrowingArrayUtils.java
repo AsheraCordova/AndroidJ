@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2014 The Android Open Source Project
  *
@@ -29,7 +44,7 @@ import java.lang.reflect.Array;
  * @hide
  */
 public final class GrowingArrayUtils {
-    /**
+   /**
      * Primitive boolean version of {@link #append(Object[], int, Object)}.
      */
     public static boolean[] append(boolean[] array, int currentSize, boolean element) {
@@ -43,7 +58,7 @@ public final class GrowingArrayUtils {
         array[currentSize] = element;
         return array;
     }
-    /**
+   /**
      * Appends an element to the end of the array, growing the array if there is no more room.
      * @param array The array to which to append the element. This must NOT be null.
      * @param currentSize The number of elements in the array. Must be less than or equal to
@@ -67,7 +82,7 @@ public final class GrowingArrayUtils {
     }
 
 
-    /**
+   /**
      * Primitive int version of {@link #append(Object[], int, Object)}.
      */
     public static int[] append(int[] array, int currentSize, int element) {
@@ -82,7 +97,7 @@ public final class GrowingArrayUtils {
         return array;
     }
     
-    /**
+   /**
      * Primitive int version of {@link #insert(Object[], int, int, Object)}.
      */
     public static int[] insert(int[] array, int currentSize, int index, int element) {
@@ -101,7 +116,7 @@ public final class GrowingArrayUtils {
         return newArray;
     }
 
-    /**
+   /**
      * Primitive long version of {@link #insert(Object[], int, int, Object)}.
      */
     public static long[] insert(long[] array, int currentSize, int index, long element) {
@@ -120,7 +135,7 @@ public final class GrowingArrayUtils {
         return newArray;
     }
 
-    /**
+   /**
      * Primitive boolean version of {@link #insert(Object[], int, int, Object)}.
      */
     public static boolean[] insert(boolean[] array, int currentSize, int index, boolean element) {
@@ -139,7 +154,7 @@ public final class GrowingArrayUtils {
         return newArray;
     }
 
-    /**
+   /**
      * Given the current size of an array, returns an ideal size to which the array should grow.
      * This is typically double the given size, but should not be relied upon to do so in the
      * future.
@@ -148,7 +163,7 @@ public final class GrowingArrayUtils {
         return currentSize <= 4 ? 8 : currentSize * 2;
     }
     
-    /**
+   /**
      * Inserts an element into the array at the specified index, growing the array if there is no
      * more room.
      *
@@ -177,7 +192,7 @@ public final class GrowingArrayUtils {
         return newArray;
     }
 
-    /**
+   /**
      * Primitive long version of {@link #append(Object[], int, Object)}.
      */
     public static long[] append(long[] array, int currentSize, long element) {

@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2009 The Android Open Source Project
  *
@@ -42,19 +57,19 @@ package r.android.util;
  */
 public final class Pools {
 
-    /**
+   /**
      * Interface for managing a pool of objects.
      *
      * @param <T> The pooled type.
      */
     public static interface Pool<T> {
 
-        /**
+       /**
          * @return An instance from the pool if such, null otherwise.
          */
         public T acquire();
 
-        /**
+       /**
          * Release an instance to the pool.
          *
          * @param instance The instance to release.
@@ -66,10 +81,10 @@ public final class Pools {
     }
 
     private Pools() {
-        /* do nothing - hiding constructor */
+       /* do nothing - hiding constructor */
     }
 
-    /**
+   /**
      * Simple (non-synchronized) pool of objects.
      *
      * @param <T> The pooled type.
@@ -79,7 +94,7 @@ public final class Pools {
 
         private int mPoolSize;
 
-        /**
+       /**
          * Creates a new instance.
          *
          * @param maxPoolSize The max pool size.
@@ -129,7 +144,7 @@ public final class Pools {
         }
     }
 
-    /**
+   /**
      * Synchronized) pool of objects.
      *
      * @param <T> The pooled type.
@@ -137,7 +152,7 @@ public final class Pools {
     public static class SynchronizedPool<T> extends SimplePool<T> {
         private final Object mLock = new Object();
 
-        /**
+       /**
          * Creates a new instance.
          *
          * @param maxPoolSize The max pool size.

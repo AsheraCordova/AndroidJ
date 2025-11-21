@@ -1,26 +1,41 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 package r.android.util;
 
 public class StateSet {
 	private static final int[][] VIEW_STATE_SETS;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_WINDOW_FOCUSED = 1;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_SELECTED = 1 << 1;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_FOCUSED = 1 << 2;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_ENABLED = 1 << 3;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_PRESSED = 1 << 4;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_ACTIVATED = 1 << 5;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_ACCELERATED = 1 << 6;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_HOVERED = 1 << 7;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_DRAG_CAN_ACCEPT = 1 << 8;
-    /** @hide */
+   /** @hide */
     public static final int VIEW_STATE_DRAG_HOVERED = 1 << 9;
     static final int[] ViewDrawableStates = {
             r.android.R.attr.state_window_focused,    
@@ -148,7 +163,7 @@ public class StateSet {
         }
         return true;
     }
-    /**
+   /**
      * Return whether the state matches the desired stateSpec.
      *
      * @param stateSpec an array of required (if positive) or

@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -28,7 +43,7 @@ import java.util.List;
 /**
  * This class holds a collection of Keyframe objects and is called by ValueAnimator to calculate
  * values between those keyframes for a given animation. The class internal to the animation
- * package because it is an implementation detail of how IKeyframes are stored and used.
+ *package because it is an implementation detail of how IKeyframes are stored and used.
  * @hide
  */
 public class KeyframeSet implements IKeyframes {
@@ -152,7 +167,7 @@ public class KeyframeSet implements IKeyframes {
         return new PathKeyframes(path, error);
     }
 
-    /**
+   /**
      * Sets the TypeEvaluator to be used when calculating animated values. This object
      * is required only for KeyframeSets that are not either IntKeyframeSet or FloatKeyframeSet,
      * both of which assume their own evaluator to speed up calculations with those primitive
@@ -181,7 +196,7 @@ public class KeyframeSet implements IKeyframes {
         return newSet;
     }
 
-    /**
+   /**
      * Gets the animated value, given the elapsed fraction of the animation (interpolated by the
      * animation's interpolator) and the evaluator used to calculate in-between values. This
      * function maps the input fraction to the appropriate keyframe interval and a fraction

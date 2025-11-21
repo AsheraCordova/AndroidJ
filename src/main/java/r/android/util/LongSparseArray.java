@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2009 The Android Open Source Project
  *
@@ -52,14 +67,14 @@ public class LongSparseArray<E> implements Cloneable {
     private Object[] mValues;
     private int mSize;
 
-    /**
+   /**
      * Creates a new LongSparseArray containing no mappings.
      */
     public LongSparseArray() {
         this(10);
     }
 
-    /**
+   /**
      * Creates a new LongSparseArray containing no mappings that will not
      * require any additional memory allocation to store the specified
      * number of mappings.  If you supply an initial capacity of 0, the
@@ -86,12 +101,12 @@ public class LongSparseArray<E> implements Cloneable {
             clone.mKeys = mKeys.clone();
             clone.mValues = mValues.clone();
         } catch (CloneNotSupportedException cnse) {
-            /* ignore */
+           /* ignore */
         }
         return clone;
     }
 
-    /**
+   /**
      * Gets the Object mapped from the specified key, or <code>null</code>
      * if no such mapping has been made.
      */
@@ -99,7 +114,7 @@ public class LongSparseArray<E> implements Cloneable {
         return get(key, null);
     }
 
-    /**
+   /**
      * Gets the Object mapped from the specified key, or the specified Object
      * if no such mapping has been made.
      */
@@ -114,7 +129,7 @@ public class LongSparseArray<E> implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Removes the mapping from the specified key, if there was any.
      */
     public void delete(long key) {
@@ -128,14 +143,14 @@ public class LongSparseArray<E> implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Alias for {@link #delete(long)}.
      */
     public void remove(long key) {
         delete(key);
     }
 
-    /**
+   /**
      * Removes the mapping at the specified index.
      */
     public void removeAt(int index) {
@@ -173,7 +188,7 @@ public class LongSparseArray<E> implements Cloneable {
         // Log.e("SparseArray", "gc end with " + mSize);
     }
 
-    /**
+   /**
      * Adds a mapping from the specified key to the specified value,
      * replacing the previous mapping from the specified key if there
      * was one.
@@ -205,7 +220,7 @@ public class LongSparseArray<E> implements Cloneable {
         }
     }
 
-    /**
+   /**
      * Returns the number of key-value mappings that this LongSparseArray
      * currently stores.
      */
@@ -217,7 +232,7 @@ public class LongSparseArray<E> implements Cloneable {
         return mSize;
     }
 
-    /**
+   /**
      * Given an index in the range <code>0...size()-1</code>, returns
      * the key from the <code>index</code>th key-value mapping that this
      * LongSparseArray stores.
@@ -235,7 +250,7 @@ public class LongSparseArray<E> implements Cloneable {
         return mKeys[index];
     }
 
-    /**
+   /**
      * Given an index in the range <code>0...size()-1</code>, returns
      * the value from the <code>index</code>th key-value mapping that this
      * LongSparseArray stores.
@@ -255,7 +270,7 @@ public class LongSparseArray<E> implements Cloneable {
         return (E) mValues[index];
     }
 
-    /**
+   /**
      * Given an index in the range <code>0...size()-1</code>, sets a new
      * value for the <code>index</code>th key-value mapping that this
      * LongSparseArray stores.
@@ -268,7 +283,7 @@ public class LongSparseArray<E> implements Cloneable {
         mValues[index] = value;
     }
 
-    /**
+   /**
      * Returns the index for which {@link #keyAt} would return the
      * specified key, or a negative number if the specified
      * key is not mapped.
@@ -281,7 +296,7 @@ public class LongSparseArray<E> implements Cloneable {
         return ContainerHelpers.binarySearch(mKeys, mSize, key);
     }
 
-    /**
+   /**
      * Returns an index for which {@link #valueAt} would return the
      * specified key, or a negative number if no keys map to the
      * specified value.
@@ -301,7 +316,7 @@ public class LongSparseArray<E> implements Cloneable {
         return -1;
     }
 
-    /**
+   /**
      * Removes all key-value mappings from this LongSparseArray.
      */
     public void clear() {
@@ -316,7 +331,7 @@ public class LongSparseArray<E> implements Cloneable {
         mGarbage = false;
     }
 
-    /**
+   /**
      * Puts a key/value pair into the array, optimizing for the case where
      * the key is greater than all existing keys in the array.
      */
@@ -335,7 +350,7 @@ public class LongSparseArray<E> implements Cloneable {
         mSize++;
     }
 
-    /**
+   /**
      * {@inheritDoc}
      *
      * <p>This implementation composes a string by iterating over its mappings. If

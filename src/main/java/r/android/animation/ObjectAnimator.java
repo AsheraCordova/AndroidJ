@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -73,7 +88,7 @@ public final class ObjectAnimator extends ValueAnimator {
 
     private static final boolean DBG = false;
 
-    /**
+   /**
      * A weak reference to the target object on which the property exists, set
      * in the constructor. We'll cancel the animation if this goes away.
      */
@@ -85,7 +100,7 @@ public final class ObjectAnimator extends ValueAnimator {
 
     private boolean mAutoCancel = false;
 
-    /**
+   /**
      * Sets the name of the property that will be animated. This name is used to derive
      * a setter function that will be called to set animated values.
      * For example, a property name of <code>foo</code> will result
@@ -126,7 +141,7 @@ public final class ObjectAnimator extends ValueAnimator {
         mInitialized = false;
     }
 
-    /**
+   /**
      * Sets the property that will be animated. Property objects will take precedence over
      * properties specified by the {@link #setPropertyName(String)} method. Animations should
      * be set up to use one or the other, not both.
@@ -151,7 +166,7 @@ public final class ObjectAnimator extends ValueAnimator {
         mInitialized = false;
     }
 
-    /**
+   /**
      * Gets the name of the property that will be animated. This name will be used to derive
      * a setter function that will be called to set animated values.
      * For example, a property name of <code>foo</code> will result
@@ -192,7 +207,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return "animator:" + getPropertyName();
     }
 
-    /**
+   /**
      * Creates a new ObjectAnimator object. This default constructor is primarily for
      * use internally; the other constructors which take parameters are more generally
      * useful.
@@ -200,7 +215,7 @@ public final class ObjectAnimator extends ValueAnimator {
     public ObjectAnimator() {
     }
 
-    /**
+   /**
      * Private utility constructor that initializes the target object and name of the
      * property being animated.
      *
@@ -214,7 +229,7 @@ public final class ObjectAnimator extends ValueAnimator {
         setPropertyName(propertyName);
     }
 
-    /**
+   /**
      * Private utility constructor that initializes the target object and property being animated.
      *
      * @param target The object whose property is to be animated.
@@ -225,7 +240,7 @@ public final class ObjectAnimator extends ValueAnimator {
         setProperty(property);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between int values. A single
      * value implies that that value is the one being animated to, in which case the start value
      * will be derived from the property being animated and the target object when {@link #start()}
@@ -246,7 +261,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return anim;
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates coordinates along a <code>Path</code>
      * using two properties. A <code>Path</code></> animation moves in two dimensions, animating
      * coordinates <code>(x, y)</code> together to follow the line. In this variation, the
@@ -273,7 +288,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, x, y);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between int values. A single
      * value implies that that value is the one being animated to, in which case the start value
      * will be derived from the property being animated and the target object when {@link #start()}
@@ -292,7 +307,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return anim;
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates coordinates along a <code>Path</code>
      * using two properties.  A <code>Path</code></> animation moves in two dimensions, animating
      * coordinates <code>(x, y)</code> together to follow the line. In this variation, the
@@ -315,7 +330,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, x, y);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates over int values for a multiple
      * parameters setter. Only public methods that take only int parameters are supported.
      * Each <code>int[]</code> contains a complete set of parameters to the setter method.
@@ -336,7 +351,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, pvh);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates the target using a multi-int setter
      * along the given <code>Path</code>. A <code>Path</code></> animation moves in two dimensions,
      * animating coordinates <code>(x, y)</code> together to follow the line. In this variation, the
@@ -356,7 +371,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, pvh);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates over values for a multiple int
      * parameters setter. Only public methods that take only int parameters are supported.
      * <p>At least two values must be provided, a start and end. More than two
@@ -383,7 +398,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ObjectAnimator.ofPropertyValuesHolder(target, pvh);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between color values. A single
      * value implies that that value is the one being animated to, in which case the start value
      * will be derived from the property being animated and the target object when {@link #start()}
@@ -404,7 +419,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return animator;
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between color values. A single
      * value implies that that value is the one being animated to, in which case the start value
      * will be derived from the property being animated and the target object when {@link #start()}
@@ -424,7 +439,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return animator;
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between float values. A single
      * value implies that that value is the one being animated to, in which case the start value
      * will be derived from the property being animated and the target object when {@link #start()}
@@ -445,7 +460,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return anim;
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates coordinates along a <code>Path</code>
      * using two properties. A <code>Path</code></> animation moves in two dimensions, animating
      * coordinates <code>(x, y)</code> together to follow the line. In this variation, the
@@ -472,7 +487,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, x, y);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between float values. A single
      * value implies that that value is the one being animated to, in which case the start value
      * will be derived from the property being animated and the target object when {@link #start()}
@@ -492,7 +507,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return anim;
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates coordinates along a <code>Path</code>
      * using two properties. A <code>Path</code></> animation moves in two dimensions, animating
      * coordinates <code>(x, y)</code> together to follow the line. In this variation, the
@@ -515,7 +530,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, x, y);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates over float values for a multiple
      * parameters setter. Only public methods that take only float parameters are supported.
      * Each <code>float[]</code> contains a complete set of parameters to the setter method.
@@ -537,7 +552,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, pvh);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates the target using a multi-float setter
      * along the given <code>Path</code>. A <code>Path</code></> animation moves in two dimensions,
      * animating coordinates <code>(x, y)</code> together to follow the line. In this variation, the
@@ -557,7 +572,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, pvh);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates over values for a multiple float
      * parameters setter. Only public methods that take only float parameters are supported.
      * <p>At least two values must be provided, a start and end. More than two
@@ -584,7 +599,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ObjectAnimator.ofPropertyValuesHolder(target, pvh);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between Object values. A single
      * value implies that that value is the one being animated to, in which case the start value
      * will be derived from the property being animated and the target object when {@link #start()}
@@ -615,7 +630,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return anim;
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates a property along a <code>Path</code>.
      * A <code>Path</code></> animation moves in two dimensions, animating coordinates
      * <code>(x, y)</code> together to follow the line. This variant animates the coordinates
@@ -640,7 +655,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, pvh);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between Object values. A single
      * value implies that that value is the one being animated to, in which case the start value
      * will be derived from the property being animated and the target object when {@link #start()}
@@ -671,7 +686,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return anim;
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between Object values. A single
      * value implies that that value is the one being animated to, in which case the start value
      * will be derived from the property being animated and the target object when {@link #start()}
@@ -705,7 +720,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, pvh);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates a property along a <code>Path</code>.
      * A <code>Path</code></> animation moves in two dimensions, animating coordinates
      * <code>(x, y)</code> together to follow the line. This variant animates the coordinates
@@ -731,7 +746,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return ofPropertyValuesHolder(target, pvh);
     }
 
-    /**
+   /**
      * Constructs and returns an ObjectAnimator that animates between the sets of values specified
      * in <code>PropertyValueHolder</code> objects. This variant should be used when animating
      * several properties at once with the same ObjectAnimator, since PropertyValuesHolder allows
@@ -803,7 +818,7 @@ public final class ObjectAnimator extends ValueAnimator {
         }
     }
 
-    /**
+   /**
      * autoCancel controls whether an ObjectAnimator will be canceled automatically
      * when any other ObjectAnimator with the same target and properties is started.
      * Setting this flag may make it easier to run different animators on the same target
@@ -866,7 +881,7 @@ public final class ObjectAnimator extends ValueAnimator {
         return false;
     }
 
-    /**
+   /**
      * This function is called immediately before processing the first animation
      * frame of an animation. If there is a nonzero <code>startDelay</code>, the
      * function is called after that delay ends.
@@ -895,7 +910,7 @@ public final class ObjectAnimator extends ValueAnimator {
         }
     }
 
-    /**
+   /**
      * Sets the length of the animation. The default duration is 300 milliseconds.
      *
      * @param duration The length of the animation, in milliseconds.
@@ -912,7 +927,7 @@ public final class ObjectAnimator extends ValueAnimator {
     }
 
 
-    /**
+   /**
      * The target object whose property will be animated by this animation
      *
      * @return The object being animated
@@ -961,7 +976,7 @@ public final class ObjectAnimator extends ValueAnimator {
         }
     }
 
-    /**
+   /**
      * This method is called with the elapsed fraction of the animation during every
      * animation frame. This function turns the elapsed fraction into an interpolated fraction
      * and then into an animated value (from the evaluator. The function is called mostly during

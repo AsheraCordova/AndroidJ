@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2007 The Android Open Source Project
  *
@@ -23,7 +38,7 @@ import java.util.regex.Pattern;
  * Commonly used regular expression patterns.
  */
 public class Patterns {
-    /**
+   /**
      *  Regular expression to match all IANA top-level domains.
      *  List accurate as of 2011/07/18.  List taken from:
      *  http://data.iana.org/TLD/tlds-alpha-by-domain.txt
@@ -62,7 +77,7 @@ public class Patterns {
         + "|y[et]"
         + "|z[amw])";
 
-    /**
+   /**
      *  Regular expression pattern to match all IANA top-level domains.
      *  @deprecated This API is deprecated. See {@link #TOP_LEVEL_DOMAIN_STR}.
      */
@@ -70,7 +85,7 @@ public class Patterns {
     public static final Pattern TOP_LEVEL_DOMAIN =
         Pattern.compile(TOP_LEVEL_DOMAIN_STR);
 
-    /**
+   /**
      *  Regular expression to match all IANA top-level domains for WEB_URL.
      *  List accurate as of 2011/07/18.  List taken from:
      *  http://data.iana.org/TLD/tlds-alpha-by-domain.txt
@@ -108,7 +123,7 @@ public class Patterns {
         + "|y[et]"
         + "|z[amw]))";
 
-    /**
+   /**
      *  Regular expression to match all IANA top-level domains.
      *
      *  List accurate as of 2015/11/24.  List taken from:
@@ -234,7 +249,7 @@ public class Patterns {
         + "|(?:yachts|yamaxun|yandex|yodobashi|yoga|yokohama|youtube|y[et])"
         + "|(?:zara|zip|zone|zuerich|z[amw]))";
 
-    /**
+   /**
      * Kept for backward compatibility reasons.
      *
      * @deprecated Deprecated since it does not include all IRI characters defined in RFC 3987
@@ -249,7 +264,7 @@ public class Patterns {
             + "[0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}"
             + "|[1-9][0-9]|[0-9]))";
 
-    /**
+   /**
      * Kept for backward compatibility reasons. It does not match IPv6 addresses.
      *
      * @deprecated Please use {@link r.android.net.InetAddresses#isNumericAddress(String)} instead.
@@ -257,7 +272,7 @@ public class Patterns {
     //@Deprecated
     public static final Pattern IP_ADDRESS = Pattern.compile(IP_ADDRESS_STRING);
 
-    /**
+   /**
      * Valid UCS characters defined in RFC 3987. Excludes space characters.
      */
     private static final String UCS_CHAR = "[" +
@@ -280,23 +295,23 @@ public class Patterns {
             "\uDB44\uDC00-\uDB7F\uDFFD" +
             "&&[^\u00A0[\u2000-\u200A]\u2028\u2029\u202F\u3000]]";
 
-    /**
+   /**
      * Valid characters for IRI label defined in RFC 3987.
      */
     private static final String LABEL_CHAR = "a-zA-Z0-9" + UCS_CHAR;
 
-    /**
+   /**
      * Valid characters for IRI TLD defined in RFC 3987.
      */
     private static final String TLD_CHAR = "a-zA-Z" + UCS_CHAR;
 
-    /**
+   /**
      * RFC 1035 Section 2.3.4 limits the labels to a maximum 63 octets.
      */
     private static final String IRI_LABEL =
             "[" + LABEL_CHAR + "](?:[" + LABEL_CHAR + "_\\-]{0,61}[" + LABEL_CHAR + "]){0,1}";
 
-    /**
+   /**
      * RFC 3492 references RFC 1034 and limits Punycode algorithm output to 63 characters.
      */
     private static final String PUNYCODE_TLD = "xn\\-\\-[\\w\\-]{0,58}\\w";
@@ -310,7 +325,7 @@ public class Patterns {
 
     private static final String PROTOCOL = "(?i:http|https|rtsp|ftp)://";
 
-    /* A word boundary or end of input.  This is to stop foo.sure from matching as foo.su */
+   /* A word boundary or end of input.  This is to stop foo.sure from matching as foo.su */
     private static final String WORD_BOUNDARY = "(?:\\b|$|^)";
 
     private static final String USER_INFO = "(?:[a-zA-Z0-9\\$\\-\\_\\.\\+\\!\\*\\'\\(\\)"
@@ -323,7 +338,7 @@ public class Patterns {
             + ";/\\?:@&=#~"  // plus optional query params
             + "\\-\\.\\+!\\*'\\(\\),_\\$])|(?:%[a-fA-F0-9]{2}))*";
 
-    /**
+   /**
      *  Regular expression pattern to match most part of RFC 3987
      *  Internationalized URLs, aka IRIs.
      */
@@ -337,32 +352,32 @@ public class Patterns {
             + WORD_BOUNDARY
             + ")");
 
-    /**
+   /**
      * Regular expression that matches known TLDs and punycode TLDs
      */
     private static final String STRICT_TLD = "(?:" +
             IANA_TOP_LEVEL_DOMAINS + "|" + PUNYCODE_TLD + ")";
 
-    /**
+   /**
      * Regular expression that matches host names using {@link #STRICT_TLD}
      */
     private static final String STRICT_HOST_NAME = "(?:(?:" + IRI_LABEL + "\\.)+"
             + STRICT_TLD + ")";
 
-    /**
+   /**
      * Regular expression that matches domain names using either {@link #STRICT_HOST_NAME} or
      * {@link #IP_ADDRESS}
      */
     private static final String STRICT_DOMAIN_NAME = "(?:" + STRICT_HOST_NAME + "|"
             + IP_ADDRESS_STRING + ")";
 
-    /**
+   /**
      * Regular expression that matches domain names without a TLD
      */
     private static final String RELAXED_DOMAIN_NAME =
             "(?:" + "(?:" + IRI_LABEL + "(?:\\.(?=\\S))" +"?)+" + "|" + IP_ADDRESS_STRING + ")";
 
-    /**
+   /**
      * Regular expression to match strings that do not start with a supported protocol. The TLDs
      * are expected to be one of the known TLDs.
      */
@@ -377,7 +392,7 @@ public class Patterns {
             + WORD_BOUNDARY
             + ")";
 
-    /**
+   /**
      * Regular expression to match strings that start with a supported protocol. Rules for domain
      * names and TLDs are more relaxed. TLDs are optional.
      */
@@ -392,7 +407,7 @@ public class Patterns {
             + WORD_BOUNDARY
             + ")";
 
-    /**
+   /**
      * Regular expression pattern to match IRIs. If a string starts with http(s):// the expression
      * tries to match the URL structure with a relaxed rule for TLDs. If the string does not start
      * with http(s):// the TLDs are expected to be one of the known TLDs.
@@ -402,27 +417,27 @@ public class Patterns {
     public static final Pattern AUTOLINK_WEB_URL = Pattern.compile(
             "(" + WEB_URL_WITH_PROTOCOL + "|" + WEB_URL_WITHOUT_PROTOCOL + ")");
 
-    /**
+   /**
      * Regular expression for valid email characters. Does not include some of the valid characters
      * defined in RFC5321: #&~!^`{}/=$*?|
      */
     private static final String EMAIL_CHAR = LABEL_CHAR + "\\+\\-_%'";
 
-    /**
+   /**
      * Regular expression for local part of an email address. RFC5321 section 4.5.3.1.1 limits
      * the local part to be at most 64 octets.
      */
     private static final String EMAIL_ADDRESS_LOCAL_PART =
             "[" + EMAIL_CHAR + "]" + "(?:[" + EMAIL_CHAR + "\\.]{0,62}[" + EMAIL_CHAR + "])?";
 
-    /**
+   /**
      * Regular expression for the domain part of an email address. RFC5321 section 4.5.3.1.2 limits
      * the domain to be at most 255 octets.
      */
     private static final String EMAIL_ADDRESS_DOMAIN =
             "(?=.{1,255}(?:\\s|$|^))" + HOST_NAME;
 
-    /**
+   /**
      * Regular expression pattern to match email addresses. It excludes double quoted local parts
      * and the special characters #&~!^`{}/=$*?| that are included in RFC5321.
      * @hide
@@ -443,7 +458,7 @@ public class Patterns {
             ")+"
         );
 
-    /**
+   /**
      * This pattern is intended for searching for things that look like they
      * might be phone numbers in arbitrary text, not for validating whether
      * something is in fact a phone number.  It will miss many things that
@@ -463,7 +478,7 @@ public class Patterns {
                 + "(\\([0-9]+\\)[\\- \\.]*)?"   // (<digits>)<sdd>*
                 + "([0-9][0-9\\- \\.]+[0-9])"); // <digit><digit|sdd>+<digit>
 
-    /**
+   /**
      *  Convenience method to take all of the non-null matching groups in a
      *  regex Matcher and return them as a concatenated string.
      *
@@ -488,7 +503,7 @@ public class Patterns {
         return b.toString();
     }
 
-    /**
+   /**
      * Convenience method to return only the digits and plus signs
      * in the matching string.
      *
@@ -512,7 +527,7 @@ public class Patterns {
         return buffer.toString();
     }
 
-    /**
+   /**
      * Do not create this static utility class.
      */
     private Patterns() {}

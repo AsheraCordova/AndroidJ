@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
 
    Licensed to the Apache Software Foundation (ASF) under one or more
@@ -27,19 +42,19 @@ package r.android.graphics;
  * @version $Id: PathHandler.java 475685 2006-11-16 11:16:05Z cam $
  */
 public interface PathHandler {
-    /**
+   /**
      * Invoked when the path starts.
      * @exception BezierParseException if an error occured while processing the path
      */
     void startPath() throws BezierParseException;
 
-    /**
+   /**
      * Invoked when the path ends.
      * @exception BezierParseException if an error occured while processing the path
      */
     void endPath() throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a relative moveto command has been parsed.
      * <p>Command : <b>m</b>
      * @param x the relative x coordinate for the end point
@@ -48,7 +63,7 @@ public interface PathHandler {
      */
     void movetoRel(float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when an absolute moveto command has been parsed.
      * <p>Command : <b>M</b>
      * @param x the absolute x coordinate for the end point
@@ -57,14 +72,14 @@ public interface PathHandler {
      */
     void movetoAbs(float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a closepath has been parsed.
      * <p>Command : <b>z</b> | <b>Z</b>
      * @exception BezierParseException if an error occured while processing the path
      */
     void closePath() throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a relative line command has been parsed.
      * <p>Command : <b>l</b>
      * @param x the relative x coordinates for the end point
@@ -73,7 +88,7 @@ public interface PathHandler {
      */
     void linetoRel(float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when an absolute line command has been parsed.
      * <p>Command : <b>L</b>
      * @param x the absolute x coordinate for the end point
@@ -82,7 +97,7 @@ public interface PathHandler {
      */
     void linetoAbs(float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when an horizontal relative line command has been parsed.
      * <p>Command : <b>h</b>
      * @param x the relative X coordinate of the end point
@@ -90,7 +105,7 @@ public interface PathHandler {
      */
     void linetoHorizontalRel(float x) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when an horizontal absolute line command has been parsed.
      * <p>Command : <b>H</b>
      * @param x the absolute X coordinate of the end point
@@ -98,7 +113,7 @@ public interface PathHandler {
      */
     void linetoHorizontalAbs(float x) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a vertical relative line command has been parsed.
      * <p>Command : <b>v</b>
      * @param y the relative Y coordinate of the end point
@@ -106,7 +121,7 @@ public interface PathHandler {
      */
     void linetoVerticalRel(float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a vertical absolute line command has been parsed.
      * <p>Command : <b>V</b>
      * @param y the absolute Y coordinate of the end point
@@ -114,7 +129,7 @@ public interface PathHandler {
      */
     void linetoVerticalAbs(float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a relative cubic bezier curve command has been parsed.
      * <p>Command : <b>c</b>
      * @param x1 the relative x coordinate for the first control point
@@ -130,7 +145,7 @@ public interface PathHandler {
                          float x, float y) throws BezierParseException;
 
 
-    /**
+   /**
      * Invoked when an absolute cubic bezier curve command has been parsed.
      * <p>Command : <b>C</b>
      * @param x1 the absolute x coordinate for the first control point
@@ -145,7 +160,7 @@ public interface PathHandler {
                          float x2, float y2, 
                          float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a relative smooth cubic bezier curve command has
      * been parsed. The first control point is assumed to be the
      * reflection of the second control point on the previous command
@@ -160,7 +175,7 @@ public interface PathHandler {
     void curvetoCubicSmoothRel(float x2, float y2, 
                                float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when an absolute smooth cubic bezier curve command has
      * been parsed. The first control point is assumed to be the
      * reflection of the second control point on the previous command
@@ -175,7 +190,7 @@ public interface PathHandler {
     void curvetoCubicSmoothAbs(float x2, float y2, 
                                float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a relative quadratic bezier curve command has been parsed.
      * <p>Command : <b>q</b>
      * @param x1 the relative x coordinate for the control point
@@ -187,7 +202,7 @@ public interface PathHandler {
     void curvetoQuadraticRel(float x1, float y1, 
                              float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when an absolute quadratic bezier curve command has been parsed.
      * <p>Command : <b>Q</b>
      * @param x1 the absolute x coordinate for the control point
@@ -199,7 +214,7 @@ public interface PathHandler {
     void curvetoQuadraticAbs(float x1, float y1, 
                              float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a relative smooth quadratic bezier curve command
      * has been parsed. The control point is assumed to be the
      * reflection of the control point on the previous command
@@ -211,7 +226,7 @@ public interface PathHandler {
      */
     void curvetoQuadraticSmoothRel(float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when an absolute smooth quadratic bezier curve command
      * has been parsed. The control point is assumed to be the
      * reflection of the control point on the previous command
@@ -223,7 +238,7 @@ public interface PathHandler {
      */
     void curvetoQuadraticSmoothAbs(float x, float y) throws BezierParseException;
 
-    /**
+   /**
      * Invoked when a relative elliptical arc command has been parsed. 
      * <p>Command : <b>a</b>
      * @param rx the X axis radius for the ellipse
@@ -242,7 +257,7 @@ public interface PathHandler {
                 float x, float y) throws BezierParseException;
 
 
-    /**
+   /**
      * Invoked when an absolute elliptical arc command has been parsed.
      * <p>Command : <b>A</b>
      * @param rx the X axis radius for the ellipse

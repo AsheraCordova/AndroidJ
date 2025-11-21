@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -101,31 +116,31 @@ import java.util.Map;
  */
 public class LayoutTransition {
 
-    /**
+   /**
      * A flag indicating the animation that runs on those items that are changing
      * due to a new item appearing in the container.
      */
     public static final int CHANGE_APPEARING = 0;
 
-    /**
+   /**
      * A flag indicating the animation that runs on those items that are changing
      * due to an item disappearing from the container.
      */
     public static final int CHANGE_DISAPPEARING = 1;
 
-    /**
+   /**
      * A flag indicating the animation that runs on those items that are appearing
      * in the container.
      */
     public static final int APPEARING = 2;
 
-    /**
+   /**
      * A flag indicating the animation that runs on those items that are disappearing
      * from the container.
      */
     public static final int DISAPPEARING = 3;
 
-    /**
+   /**
      * A flag indicating the animation that runs on those items that are changing
      * due to a layout change not caused by items being added to or removed
      * from the container. This transition type is not enabled by default; it can be
@@ -133,7 +148,7 @@ public class LayoutTransition {
      */
     public static final int CHANGING = 4;
 
-    /**
+   /**
      * Private bit fields used to set the collection of enabled transition types for
      * mTransitionTypes.
      */
@@ -143,7 +158,7 @@ public class LayoutTransition {
     private static final int FLAG_CHANGE_DISAPPEARING   = 0x08;
     private static final int FLAG_CHANGING              = 0x10;
 
-    /**
+   /**
      * These variables hold the animations that are currently used to run the transition effects.
      * These animations are set to defaults, but can be changed to custom animations by
      * calls to setAnimator().
@@ -154,7 +169,7 @@ public class LayoutTransition {
     private Animator mChangingDisappearingAnim = null;
     private Animator mChangingAnim = null;
 
-    /**
+   /**
      * These are the default animations, defined in the constructor, that will be used
      * unless the user specifies custom animations.
      */
@@ -164,12 +179,12 @@ public class LayoutTransition {
     private static ObjectAnimator defaultFadeIn;
     private static ObjectAnimator defaultFadeOut;
 
-    /**
+   /**
      * The default duration used by all animations.
      */
     private static long DEFAULT_DURATION = 300;
 
-    /**
+   /**
      * The durations of the different animations
      */
     private long mChangingAppearingDuration = DEFAULT_DURATION;
@@ -178,7 +193,7 @@ public class LayoutTransition {
     private long mAppearingDuration = DEFAULT_DURATION;
     private long mDisappearingDuration = DEFAULT_DURATION;
 
-    /**
+   /**
      * The start delays of the different animations. Note that the default behavior of
      * the appearing item is the default duration, since it should wait for the items to move
      * before fading it. Same for the changing animation when disappearing; it waits for the item
@@ -190,14 +205,14 @@ public class LayoutTransition {
     private long mChangingDisappearingDelay = DEFAULT_DURATION;
     private long mChangingDelay = 0;
 
-    /**
+   /**
      * The inter-animation delays used on the changing animations
      */
     private long mChangingAppearingStagger = 0;
     private long mChangingDisappearingStagger = 0;
     private long mChangingStagger = 0;
 
-    /**
+   /**
      * Static interpolators - these are stateless and can be shared across the instances
      */
     private static TimeInterpolator ACCEL_DECEL_INTERPOLATOR =
@@ -209,7 +224,7 @@ public class LayoutTransition {
     private static TimeInterpolator sChangingDisappearingInterpolator = DECEL_INTERPOLATOR;
     private static TimeInterpolator sChangingInterpolator = DECEL_INTERPOLATOR;
 
-    /**
+   /**
      * The default interpolators used for the animations
      */
     private TimeInterpolator mAppearingInterpolator = sAppearingInterpolator;
@@ -218,7 +233,7 @@ public class LayoutTransition {
     private TimeInterpolator mChangingDisappearingInterpolator = sChangingDisappearingInterpolator;
     private TimeInterpolator mChangingInterpolator = sChangingInterpolator;
 
-    /**
+   /**
      * These hashmaps are used to store the animations that are currently running as part of
      * the transition. The reason for this is that a further layout event should cause
      * existing animations to stop where they are prior to starting new animations. So
@@ -235,7 +250,7 @@ public class LayoutTransition {
     private final LinkedHashMap<View, Animator> currentDisappearingAnimations =
             new LinkedHashMap<View, Animator>();
 
-    /**
+   /**
      * This hashmap is used to track the listeners that have been added to the children of
      * a container. When a layout change occurs, an animation is created for each View, so that
      * the pre-layout values can be cached in that animation. Then a listener is added to the
@@ -247,27 +262,27 @@ public class LayoutTransition {
     private final HashMap<View, View.OnLayoutChangeListener> layoutChangeListenerMap =
             new HashMap<View, View.OnLayoutChangeListener>();
 
-    /**
+   /**
      * Used to track the current delay being assigned to successive animations as they are
      * started. This value is incremented for each new animation, then zeroed before the next
      * transition begins.
      */
     private long staggerDelay;
 
-    /**
+   /**
      * These are the types of transition animations that the LayoutTransition is reacting
      * to. By default, appearing/disappearing and the change animations related to them are
      * enabled (not CHANGING).
      */
     private int mTransitionTypes = FLAG_CHANGE_APPEARING | FLAG_CHANGE_DISAPPEARING |
             FLAG_APPEARING | FLAG_DISAPPEARING;
-    /**
+   /**
      * The set of listeners that should be notified when APPEARING/DISAPPEARING transitions
      * start and end.
      */
     private ArrayList<TransitionListener> mListeners;
 
-    /**
+   /**
      * Controls whether changing animations automatically animate the parent hierarchy as well.
      * This behavior prevents artifacts when wrap_content layouts snap to the end state as the
      * transition begins, causing visual glitches and clipping.
@@ -276,7 +291,7 @@ public class LayoutTransition {
     private boolean mAnimateParentHierarchy = true;
 
 
-    /**
+   /**
      * Constructs a LayoutTransition object. By default, the object will listen to layout
      * events on any ViewGroup that it is set on and will run default animations for each
      * type of layout event.
@@ -318,7 +333,7 @@ public class LayoutTransition {
         mDisappearingAnim = defaultFadeOut;
     }
 
-    /**
+   /**
      * Sets the duration to be used by all animations of this transition object. If you want to
      * set the duration of just one of the animations in particular, use the
      * {@link #setDuration(int, long)} method.
@@ -334,7 +349,7 @@ public class LayoutTransition {
         mDisappearingDuration = duration;
     }
 
-    /**
+   /**
      * Enables the specified transitionType for this LayoutTransition object.
      * By default, a LayoutTransition listens for changes in children being
      * added/remove/hidden/shown in the container, and runs the animations associated with
@@ -365,7 +380,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * Disables the specified transitionType for this LayoutTransition object.
      * By default, all transition types except {@link #CHANGING} are enabled.
      *
@@ -392,7 +407,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * Returns whether the specified transitionType is enabled for this LayoutTransition object.
      * By default, all transition types except {@link #CHANGING} are enabled.
      *
@@ -416,7 +431,7 @@ public class LayoutTransition {
         return false;
     }
 
-    /**
+   /**
      * Sets the start delay on one of the animation objects used by this transition. The
      * <code>transitionType</code> parameter determines the animation whose start delay
      * is being set.
@@ -447,7 +462,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * Gets the start delay on one of the animation objects used by this transition. The
      * <code>transitionType</code> parameter determines the animation whose start delay
      * is returned.
@@ -475,7 +490,7 @@ public class LayoutTransition {
         return 0;
     }
 
-    /**
+   /**
      * Sets the duration on one of the animation objects used by this transition. The
      * <code>transitionType</code> parameter determines the animation whose duration
      * is being set.
@@ -506,7 +521,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * Gets the duration on one of the animation objects used by this transition. The
      * <code>transitionType</code> parameter determines the animation whose duration
      * is returned.
@@ -534,7 +549,7 @@ public class LayoutTransition {
         return 0;
     }
 
-    /**
+   /**
      * Sets the length of time to delay between starting each animation during one of the
      * change animations.
      *
@@ -558,7 +573,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * Gets the length of time to delay between starting each animation during one of the
      * change animations.
      *
@@ -580,7 +595,7 @@ public class LayoutTransition {
         return 0;
     }
 
-    /**
+   /**
      * Sets the interpolator on one of the animation objects used by this transition. The
      * <code>transitionType</code> parameter determines the animation whose interpolator
      * is being set.
@@ -611,7 +626,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * Gets the interpolator on one of the animation objects used by this transition. The
      * <code>transitionType</code> parameter determines the animation whose interpolator
      * is returned.
@@ -639,7 +654,7 @@ public class LayoutTransition {
         return null;
     }
 
-    /**
+   /**
      * Sets the animation used during one of the transition types that may run. Any
      * Animator object can be used, but to be most useful in the context of layout
      * transitions, the animation should either be a ObjectAnimator or a AnimatorSet
@@ -689,7 +704,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * Gets the animation used during one of the transition types that may run.
      *
      * @param transitionType One of {@link #CHANGE_APPEARING}, {@link #CHANGE_DISAPPEARING},
@@ -715,7 +730,7 @@ public class LayoutTransition {
         return null;
     }
 
-    /**
+   /**
      * This function sets up animations on all of the views that change during layout.
      * For every child in the parent, we create a change animation of the appropriate
      * type (appearing, disappearing, or changing) and ask it to populate its start values from its
@@ -802,7 +817,7 @@ public class LayoutTransition {
         parent.addOnAttachStateChangeListener(callback);
     }
 
-    /**
+   /**
      * This flag controls whether CHANGE_APPEARING or CHANGE_DISAPPEARING animations will
      * cause the default changing animation to be run on the parent hierarchy as well. This allows
      * containers of transitioning views to also transition, which may be necessary in situations
@@ -823,7 +838,7 @@ public class LayoutTransition {
         mAnimateParentHierarchy = animateParentHierarchy;
     }
 
-    /**
+   /**
      * Utility function called by runChangingTransition for both the children and the parent
      * hierarchy.
      */
@@ -1002,7 +1017,7 @@ public class LayoutTransition {
         layoutChangeListenerMap.put(child, listener);
     }
 
-    /**
+   /**
      * Starts the animations set up for a CHANGING transition. We separate the setup of these
      * animations from actually starting them, to avoid side-effects that starting the animations
      * may have on the properties of the affected objects. After setup, we tell the affected parent
@@ -1023,7 +1038,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * Ends the animations that are set up for a CHANGING transition. This is a variant of
      * startChangingAnimations() which is called when the window the transition is playing in
      * is not visible. We need to make sure the animations put their targets in their end states
@@ -1042,7 +1057,7 @@ public class LayoutTransition {
         currentChangingAnimations.clear();
     }
 
-    /**
+   /**
      * Returns true if animations are running which animate layout-related properties. This
      * essentially means that either CHANGE_APPEARING or CHANGE_DISAPPEARING animations
      * are running, since these animations operate on layout-related properties.
@@ -1054,7 +1069,7 @@ public class LayoutTransition {
         return (currentChangingAnimations.size() > 0);
     }
 
-    /**
+   /**
      * Returns true if any of the animations in this transition are currently running.
      *
      * @return true if any animations in the transition are running.
@@ -1064,7 +1079,7 @@ public class LayoutTransition {
                 currentDisappearingAnimations.size() > 0);
     }
 
-    /**
+   /**
      * Cancels the currently running transition. Note that we cancel() the changing animations
      * but end() the visibility animations. This is because this method is currently called
      * in the context of starting a new transition, so we want to move things from their mid-
@@ -1100,7 +1115,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * Cancels the specified type of transition. Note that we cancel() the changing animations
      * but end() the visibility animations. This is because this method is currently called
      * in the context of starting a new transition, so we want to move things from their mid-
@@ -1146,7 +1161,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * This method runs the animation that makes an added item appear.
      *
      * @param parent The ViewGroup to which the View is being added.
@@ -1194,7 +1209,7 @@ public class LayoutTransition {
         anim.start();
     }
 
-    /**
+   /**
      * This method runs the animation that makes a removed item disappear.
      *
      * @param parent The ViewGroup from which the View is being removed.
@@ -1244,7 +1259,7 @@ public class LayoutTransition {
         anim.start();
     }
 
-    /**
+   /**
      * This method is called by ViewGroup when a child view is about to be added to the
      * container. This callback starts the process of a transition; we grab the starting
      * values, listen for changes to all of the children of the container, and start appropriate
@@ -1288,7 +1303,7 @@ public class LayoutTransition {
         return mListeners != null && mListeners.size() > 0;
     }
 
-    /**
+   /**
      * This method is called by ViewGroup when there is a call to layout() on the container
      * with this LayoutTransition. If the CHANGING transition is enabled and if there is no other
      * transition currently running on the container, then this call runs a CHANGING transition.
@@ -1313,7 +1328,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * This method is called by ViewGroup when a child view is about to be added to the
      * container. This callback starts the process of a transition; we grab the starting
      * values, listen for changes to all of the children of the container, and start appropriate
@@ -1326,7 +1341,7 @@ public class LayoutTransition {
         addChild(parent, child, true);
     }
 
-    /**
+   /**
      * @deprecated Use {@link #showChild(r.android.view.ViewGroup, r.android.view.View, int)}.
      */
     //@Deprecated
@@ -1334,7 +1349,7 @@ public class LayoutTransition {
         addChild(parent, child, true);
     }
 
-    /**
+   /**
      * This method is called by ViewGroup when a child view is about to be made visible in the
      * container. This callback starts the process of a transition; we grab the starting
      * values, listen for changes to all of the children of the container, and start appropriate
@@ -1349,7 +1364,7 @@ public class LayoutTransition {
         addChild(parent, child, oldVisibility == View.GONE);
     }
 
-    /**
+   /**
      * This method is called by ViewGroup when a child view is about to be removed from the
      * container. This callback starts the process of a transition; we grab the starting
      * values, listen for changes to all of the children of the container, and start appropriate
@@ -1391,7 +1406,7 @@ public class LayoutTransition {
         }
     }
 
-    /**
+   /**
      * This method is called by ViewGroup when a child view is about to be removed from the
      * container. This callback starts the process of a transition; we grab the starting
      * values, listen for changes to all of the children of the container, and start appropriate
@@ -1404,7 +1419,7 @@ public class LayoutTransition {
         removeChild(parent, child, true);
     }
 
-    /**
+   /**
      * @deprecated Use {@link #hideChild(r.android.view.ViewGroup, r.android.view.View, int)}.
      */
     //@Deprecated
@@ -1412,7 +1427,7 @@ public class LayoutTransition {
         removeChild(parent, child, true);
     }
 
-    /**
+   /**
      * This method is called by ViewGroup when a child view is about to be hidden in
      * container. This callback starts the process of a transition; we grab the starting
      * values, listen for changes to all of the children of the container, and start appropriate
@@ -1427,7 +1442,7 @@ public class LayoutTransition {
         removeChild(parent, child, newVisibility == View.GONE);
     }
 
-    /**
+   /**
      * Add a listener that will be called when the bounds of the view change due to
      * layout processing.
      *
@@ -1440,7 +1455,7 @@ public class LayoutTransition {
         mListeners.add(listener);
     }
 
-    /**
+   /**
      * Remove a listener for layout changes.
      *
      * @param listener The listener for layout bounds change.
@@ -1452,7 +1467,7 @@ public class LayoutTransition {
         mListeners.remove(listener);
     }
 
-    /**
+   /**
      * Gets the current list of listeners for layout changes.
      * @return
      */
@@ -1460,12 +1475,12 @@ public class LayoutTransition {
         return mListeners;
     }
 
-    /**
+   /**
      * This interface is used for listening to starting and ending events for transitions.
      */
     public interface TransitionListener {
 
-        /**
+       /**
          * This event is sent to listeners when any type of transition animation begins.
          *
          * @param transition The LayoutTransition sending out the event.
@@ -1480,7 +1495,7 @@ public class LayoutTransition {
         public void startTransition(LayoutTransition transition, ViewGroup container,
                 View view, int transitionType);
 
-        /**
+       /**
          * This event is sent to listeners when any type of transition animation ends.
          *
          * @param transition The LayoutTransition sending out the event.
@@ -1496,7 +1511,7 @@ public class LayoutTransition {
                 View view, int transitionType);
     }
 
-    /**
+   /**
      * Utility class to clean up listeners after animations are setup. Cleanup happens
      * when either the OnPreDrawListener method is called or when the parent is detached,
      * whichever comes first.

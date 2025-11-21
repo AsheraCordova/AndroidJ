@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2015 The Android Open Source Project
  *
@@ -32,7 +47,7 @@ public final class UriCodec {
 
     private UriCodec() {}
 
-    /**
+   /**
      * Interprets a char as hex digits, returning a number from -1 (invalid char) to 15 ('f').
      */
     private static int hexCharToValue(char c) {
@@ -65,7 +80,7 @@ public final class UriCodec {
         return uri.charAt(index);
     }
 
-    /**
+   /**
      * Decode a string according to the rules of this decoder.
      *
      * - if {@code convertPlus == true} all ‘+’ chars in the decoded output are converted to ‘ ‘
@@ -80,7 +95,7 @@ public final class UriCodec {
         return builder.toString();
     }
 
-    /**
+   /**
      * Character to be output when there's an error decoding an input.
      */
     private static final char INVALID_INPUT_CHARACTER = '\ufffd';
@@ -113,7 +128,7 @@ public final class UriCodec {
                     byte hexValue = 0;
                     for (int j = 0; j < 2; j++) {
                         try {
-                            c = getNextCharacter(s, i, s.length(), null /* name */);
+                            c = getNextCharacter(s, i, s.length(), null/* name */);
                         } catch (URISyntaxException e) {
                             // Unexpected end of input.
                             if (throwOnFailure) {
@@ -130,7 +145,7 @@ public final class UriCodec {
                         if (newDigit < 0) {
                             if (throwOnFailure) {
                                 throw new IllegalArgumentException(
-                                        unexpectedCharacterException(s, null /* name */, c, i - 1));
+                                        unexpectedCharacterException(s, null/* name */, c, i - 1));
                             } else {
                                 flushDecodingByteAccumulator(
                                         builder, decoder, byteBuffer, throwOnFailure);

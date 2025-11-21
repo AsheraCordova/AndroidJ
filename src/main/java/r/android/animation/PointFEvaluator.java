@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -22,13 +37,13 @@ import r.android.graphics.PointF;
  */
 public class PointFEvaluator implements TypeEvaluator<PointF> {
 
-    /**
+   /**
      * When null, a new PointF is returned on every evaluate call. When non-null,
      * mPoint will be modified and returned on every evaluate.
      */
     private PointF mPoint;
 
-    /**
+   /**
      * Construct a PointFEvaluator that returns a new PointF on every evaluate call.
      * To avoid creating an object for each evaluate call,
      * {@link PointFEvaluator#PointFEvaluator(r.android.graphics.PointF)} should be used
@@ -37,7 +52,7 @@ public class PointFEvaluator implements TypeEvaluator<PointF> {
     public PointFEvaluator() {
     }
 
-    /**
+   /**
      * Constructs a PointFEvaluator that modifies and returns <code>reuse</code>
      * in {@link #evaluate(float, r.android.graphics.PointF, r.android.graphics.PointF)} calls.
      * The value returned from
@@ -51,7 +66,7 @@ public class PointFEvaluator implements TypeEvaluator<PointF> {
         mPoint = reuse;
     }
 
-    /**
+   /**
      * This function returns the result of linearly interpolating the start and
      * end PointF values, with <code>fraction</code> representing the proportion
      * between the start and end values. The calculation is a simple parametric

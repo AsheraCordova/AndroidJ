@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2007 The Android Open Source Project
  *
@@ -24,22 +39,22 @@ import java.util.regex.Pattern;
  */
 public class MimeTypeMap {
 
-    /**
+   /**
      * Singleton MIME-type map instance:
      */
     private static MimeTypeMap sMimeTypeMap;
 
-    /**
+   /**
      * MIME-type to file extension mapping:
      */
     private HashMap<String, String> mMimeTypeToExtensionMap;
 
-    /**
+   /**
      * File extension to MIME type mapping:
      */
     private HashMap<String, String> mExtensionToMimeTypeMap;
 
-    /**
+   /**
      * Creates a new MIME-type map.
      */
     private MimeTypeMap() {
@@ -47,7 +62,7 @@ public class MimeTypeMap {
         mExtensionToMimeTypeMap = new HashMap<String, String>();
     }
 
-    /**
+   /**
      * Returns the file extension or an empty string iff there is no
      * extension. This method is a convenience method for obtaining the
      * extension of a url and has undefined results for other Strings.
@@ -78,7 +93,7 @@ public class MimeTypeMap {
         return "";
     }
 
-    /**
+   /**
      * Load an entry into the map. This does not check if the item already
      * exists, it trusts the caller!
      */
@@ -98,7 +113,7 @@ public class MimeTypeMap {
         mExtensionToMimeTypeMap.put(extension, mimeType);
     }
 
-    /**
+   /**
      * Return true if the given MIME type has an entry in the map.
      * @param mimeType A MIME type (i.e. text/plain)
      * @return True iff there is a mimeType entry in the map.
@@ -111,7 +126,7 @@ public class MimeTypeMap {
         return false;
     }
 
-    /**
+   /**
      * Return the MIME type for the given extension.
      * @param extension A file extension without the leading '.'
      * @return The MIME type for the given extension or null iff there is none.
@@ -129,7 +144,7 @@ public class MimeTypeMap {
         return getSingleton().getMimeTypeFromExtension(extension);
     }
 
-    /**
+   /**
      * Return true if the given extension has a registered MIME type.
      * @param extension A file extension without the leading '.'
      * @return True iff there is an extension entry in the map.
@@ -141,7 +156,7 @@ public class MimeTypeMap {
         return false;
     }
 
-    /**
+   /**
      * Return the registered extension for the given MIME type. Note that some
      * MIME types map to multiple extensions. This call will return the most
      * common extension for the given MIME type.
@@ -156,7 +171,7 @@ public class MimeTypeMap {
         return null;
     }
 
-    /**
+   /**
      * Get the singleton instance of MimeTypeMap.
      * @return The singleton instance of the MIME-type map.
      */

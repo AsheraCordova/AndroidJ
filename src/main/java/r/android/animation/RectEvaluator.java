@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -22,13 +37,13 @@ import r.android.graphics.Rect;
  */
 public class RectEvaluator implements TypeEvaluator<Rect> {
 
-    /**
+   /**
      * When null, a new Rect is returned on every evaluate call. When non-null,
      * mRect will be modified and returned on every evaluate.
      */
     private Rect mRect;
 
-    /**
+   /**
      * Construct a RectEvaluator that returns a new Rect on every evaluate call.
      * To avoid creating an object for each evaluate call,
      * {@link RectEvaluator#RectEvaluator(r.android.graphics.Rect)} should be used
@@ -37,7 +52,7 @@ public class RectEvaluator implements TypeEvaluator<Rect> {
     public RectEvaluator() {
     }
 
-    /**
+   /**
      * Constructs a RectEvaluator that modifies and returns <code>reuseRect</code>
      * in {@link #evaluate(float, r.android.graphics.Rect, r.android.graphics.Rect)} calls.
      * The value returned from
@@ -51,7 +66,7 @@ public class RectEvaluator implements TypeEvaluator<Rect> {
         mRect = reuseRect;
     }
 
-    /**
+   /**
      * This function returns the result of linearly interpolating the start and
      * end Rect values, with <code>fraction</code> representing the proportion
      * between the start and end values. The calculation is a simple parametric

@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -63,20 +78,20 @@ import java.util.function.Consumer;
 public final class AnimatorSet extends Animator implements AnimationHandler.AnimationFrameCallback {
 
     private static final String TAG = "AnimatorSet";
-    /**
+   /**
      * Internal variables
      * NOTE: This object implements the clone() method, making a deep copy of any referenced
      * objects. As other non-trivial fields are added to this class, make sure to add logic
      * to clone() to make deep copies of them.
      */
 
-    /**
+   /**
      * Tracks animations currently being played, so that we know what to
      * cancel or end when cancel() or end() is called on this AnimatorSet
      */
     private ArrayList<Node> mPlayingSet = new ArrayList<Node>();
 
-    /**
+   /**
      * Contains all nodes, mapped to their respective Animators. When new
      * dependency information is added for an Animator, we want to add it
      * to a single node representing that Animator, not create a new Node
@@ -84,25 +99,25 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
      */
     private ArrayMap<Animator, Node> mNodeMap = new ArrayMap<Animator, Node>();
 
-    /**
+   /**
      * Contains the start and end events of all the nodes. All these events are sorted in this list.
      */
     private ArrayList<AnimationEvent> mEvents = new ArrayList<>();
 
-    /**
+   /**
      * Set of all nodes created for this AnimatorSet. This list is used upon
      * starting the set, and the nodes are placed in sorted order into the
      * sortedNodes collection.
      */
     private ArrayList<Node> mNodes = new ArrayList<Node>();
 
-    /**
+   /**
      * Tracks whether any change has been made to the AnimatorSet, which is then used to
      * determine whether the dependency graph should be re-constructed.
      */
     private boolean mDependencyDirty = false;
 
-    /**
+   /**
      * Indicates whether an AnimatorSet has been start()'d, whether or
      * not there is a nonzero startDelay.
      */
@@ -177,14 +192,14 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
     // Indicates where children animators are all initialized with their start values captured.
     private boolean mChildrenInitialized = false;
 
-    /**
+   /**
      * Set on the next frame after pause() is called, used to calculate a new startTime
      * or delayStartTime which allows the animator set to continue from the point at which
      * it was paused. If negative, has not yet been set.
      */
     private long mPauseTime = -1;
 
-    /**
+   /**
      * The start and stop times of all descendant animators.
      */
     private long[] mChildStartAndStopTimes;
@@ -225,7 +240,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         mEndCanBeCalled = !isPreO;
     }
 
-    /**
+   /**
      * Sets up this AnimatorSet to play all of the supplied animations at the same time.
      * This is equivalent to calling {@link #play(Animator)} with the first animator in the
      * set and then {@link Builder#with(Animator)} with each of the other animators. Note that
@@ -245,7 +260,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * Sets up this AnimatorSet to play all of the supplied animations at the same time.
      *
      * @param items The animations that will be started simultaneously.
@@ -263,7 +278,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * Sets up this AnimatorSet to play each of the supplied animations when the
      * previous animation ends.
      *
@@ -281,7 +296,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * Sets up this AnimatorSet to play each of the supplied animations when the
      * previous animation ends.
      *
@@ -299,7 +314,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * Returns the current list of child Animator objects controlled by this
      * AnimatorSet. This is a copy of the internal list; modifications to the returned list
      * will not affect the AnimatorSet, although changes to the underlying Animator objects
@@ -319,7 +334,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return childList;
     }
 
-    /**
+   /**
      * Sets the target object for all current {@link #getChildAnimations() child animations}
      * of this AnimatorSet that take targets ({@link ObjectAnimator} and
      * AnimatorSet).
@@ -340,7 +355,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * @hide
      */
     @Override
@@ -353,7 +368,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return conf;
     }
 
-    /**
+   /**
      * Sets the TimeInterpolator for all current {@link #getChildAnimations() child animations}
      * of this AnimatorSet. The default value is null, which means that no interpolator
      * is set on this AnimatorSet. Setting the interpolator to any non-null value
@@ -372,7 +387,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return mInterpolator;
     }
 
-    /**
+   /**
      * This method creates a <code>Builder</code> object, which is used to
      * set up playing constraints. This initial <code>play()</code> method
      * tells the <code>Builder</code> the animation that is the dependency for
@@ -407,7 +422,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return null;
     }
 
-    /**
+   /**
      * {@inheritDoc}
      *
      * <p>Note that canceling a <code>AnimatorSet</code> also cancels all of the animations that it
@@ -427,7 +442,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * Calls consumer on every Animator of mPlayingSet.
      *
      * @param consumer The method to call on every Animator of mPlayingSet.
@@ -466,7 +481,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         endAnimation();
     }
 
-    /**
+   /**
      * {@inheritDoc}
      *
      * <p>Note that ending a <code>AnimatorSet</code> also ends all of the animations that it is
@@ -525,7 +540,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         endAnimation();
     }
 
-    /**
+   /**
      * Returns true if any of the child animations of this AnimatorSet have been started and have
      * not yet ended. Child animations will not be started until the AnimatorSet has gone past
      * its initial delay set through {@link #setStartDelay(long)}.
@@ -546,7 +561,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return mStarted;
     }
 
-    /**
+   /**
      * The amount of time, in milliseconds, to delay starting the animation after
      * {@link #start()} is called.
      *
@@ -557,7 +572,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return mStartDelay;
     }
 
-    /**
+   /**
      * The amount of time, in milliseconds, to delay starting the animation after
      * {@link #start()} is called. Note that the start delay should always be non-negative. Any
      * negative start delay will be clamped to 0 on N and above.
@@ -597,7 +612,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * Gets the length of each of the child animations of this AnimatorSet. This value may
      * be less than 0, which indicates that no duration has been set on this AnimatorSet
      * and each of the child animations will use their own duration.
@@ -610,7 +625,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return mDuration;
     }
 
-    /**
+   /**
      * Sets the length of each of the current child animations of this AnimatorSet. By default,
      * each child animation will use its own duration. If the duration is set on the AnimatorSet,
      * then each child animation inherits this duration.
@@ -679,7 +694,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * {@inheritDoc}
      *
      * <p>Starting this <code>AnimatorSet</code> will, in turn, start the animations for which
@@ -812,7 +827,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * Internal only.
      *
      * This method sets the animation values based on the play time. It also fast forward or
@@ -879,7 +894,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * Looks through startEndTimes for playTime. If it is in startEndTimes, the index after
      * is returned. Otherwise, it returns the index at which it would be placed if it were
      * to be inserted.
@@ -1047,7 +1062,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return mChildrenInitialized;
     }
 
-    /**
+   /**
      * Sets the position of the animation to the specified point in time. This time should
      * be between 0 and the total duration of the animation, including any repetition. If
      * the animation has not yet been started, then it will not advance forward after it is
@@ -1098,7 +1113,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         animateBasedOnPlayTime(playTime, lastPlayTime, mReversing);
     }
 
-    /**
+   /**
      * Returns the milliseconds elapsed since the start of the animation.
      *
      * <p>For ongoing animations, this method returns the current progress of the animation in
@@ -1132,7 +1147,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * @param frameTime The frame start time, in the {@link SystemClock#uptimeMillis()} time
      *                  base.
      * @return
@@ -1233,7 +1248,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return false;
     }
 
-    /**
+   /**
      * @hide
      */
     @Override
@@ -1246,7 +1261,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return doAnimationFrame(frameTime);
     }
 
-    /**
+   /**
      * When playing forward, we call start() at the animation's scheduled start time, and make sure
      * to pump a frame at the animation's scheduled end time.
      *
@@ -1300,7 +1315,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * This method pulses frames into child animations. It scales the input animation play time
      * with the duration scale and pass that to the child animation via pulseAnimationFrame(long).
      *
@@ -1465,7 +1480,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
     @Override
     public AnimatorSet clone() {
         final AnimatorSet anim = (AnimatorSet) super.clone();
-        /*
+       /*
          * The basic clone() operation copies all items. This doesn't work very well for
          * AnimatorSet, because it will copy references that need to be recreated and state
          * that may not apply. What we need to do now is put the clone in an uninitialized
@@ -1544,7 +1559,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
     }
 
 
-    /**
+   /**
      * AnimatorSet is only reversible when the set contains no sequential animation, and no child
      * animators have a start delay.
      * @hide
@@ -1554,7 +1569,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return getTotalDuration() != DURATION_INFINITE;
     }
 
-    /**
+   /**
      * Plays the AnimatorSet in reverse. If the animation has been seeked to a specific play time
      * using {@link #setCurrentPlayTime(long)}, it will play backwards from the point seeked when
      * reverse was called. Otherwise, then it will start from the end and play backwards. This
@@ -1792,7 +1807,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * Based on parent's start/end time, calculate children's start/end time. If cycle exists in
      * the graph, all the nodes on the cycle will be marked to start at {@link #DURATION_INFINITE},
      * meaning they will ever play.
@@ -1866,7 +1881,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * @hide
      * TODO: For animatorSet defined in XML, we can use a flag to indicate what the play order
      * if defined (i.e. sequential or together), then we can use the flag instead of calculating
@@ -1897,7 +1912,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         return node;
     }
 
-    /**
+   /**
      * A Node is an embodiment of both the Animator that it wraps as well as
      * any dependencies that are associated with that Animation. This includes
      * both dependencies upon other nodes (in the dependencies list) as
@@ -1906,32 +1921,32 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
     private static class Node implements Cloneable {
         Animator mAnimation;
 
-        /**
+       /**
          * Child nodes are the nodes associated with animations that will be played immediately
          * after current node.
          */
         ArrayList<Node> mChildNodes = null;
 
-        /**
+       /**
          * Flag indicating whether the animation in this node is finished. This flag
          * is used by AnimatorSet to check, as each animation ends, whether all child animations
          * are mEnded and it's time to send out an end event for the entire AnimatorSet.
          */
         boolean mEnded = false;
 
-        /**
+       /**
          * Nodes with animations that are defined to play simultaneously with the animation
          * associated with this current node.
          */
         ArrayList<Node> mSiblings;
 
-        /**
+       /**
          * Parent nodes are the nodes with animations preceding current node's animation. Parent
          * nodes here are derived from user defined animation sequence.
          */
         ArrayList<Node> mParents;
 
-        /**
+       /**
          * Latest parent is the parent node associated with a animation that finishes after all
          * the other parents' animations.
          */
@@ -1942,7 +1957,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         long mEndTime = 0;
         long mTotalDuration = 0;
 
-        /**
+       /**
          * Constructs the Node with the animation that it encapsulates. A Node has no
          * dependencies by default; dependencies are added via the addDependency()
          * method.
@@ -2015,7 +2030,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * This class is a wrapper around a node and an event for the animation corresponding to the
      * node. The 3 types of events represent the start of an animation, the end of a start delay of
      * an animation, and the end of an animation. When playing forward (i.e. in the non-reverse
@@ -2091,7 +2106,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
             return mPlayTime;
         }
 
-        /**
+       /**
          * Returns the playtime assuming the animation is forward playing
          */
         long getPlayTimeNormalized() {
@@ -2106,7 +2121,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
         }
     }
 
-    /**
+   /**
      * The <code>Builder</code> object is a utility class to facilitate adding animations to a
      * <code>AnimatorSet</code> along with the relationships between the various animations. The
      * intention of the <code>Builder</code> methods, along with the {@link
@@ -2160,13 +2175,13 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
      */
     public class Builder {
 
-        /**
+       /**
          * This tracks the current node being processed. It is supplied to the play() method
          * of AnimatorSet and passed into the constructor of Builder.
          */
         private Node mCurrentNode;
 
-        /**
+       /**
          * package-private constructor. Builders are only constructed by AnimatorSet, when the
          * play() method is called.
          *
@@ -2178,7 +2193,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
             mCurrentNode = getNodeForAnimation(anim);
         }
 
-        /**
+       /**
          * Sets up the given animation to play at the same time as the animation supplied in the
          * {@link AnimatorSet#play(Animator)} call that created this <code>Builder</code> object.
          *
@@ -2191,7 +2206,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
             return this;
         }
 
-        /**
+       /**
          * Sets up the given animation to play when the animation supplied in the
          * {@link AnimatorSet#play(Animator)} call that created this <code>Builder</code> object
          * ends.
@@ -2205,7 +2220,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
             return this;
         }
 
-        /**
+       /**
          * Sets up the given animation to play when the animation supplied in the
          * {@link AnimatorSet#play(Animator)} call that created this <code>Builder</code> object
          * to start when the animation supplied in this method call ends.
@@ -2219,7 +2234,7 @@ public final class AnimatorSet extends Animator implements AnimationHandler.Anim
             return this;
         }
 
-        /**
+       /**
          * Sets up the animation supplied in the
          * {@link AnimatorSet#play(Animator)} call that created this <code>Builder</code> object
          * to play when the given amount of time elapses.

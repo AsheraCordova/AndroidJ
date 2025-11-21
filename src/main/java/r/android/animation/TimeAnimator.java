@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -55,7 +70,7 @@ public class TimeAnimator extends ValueAnimator {
         animateBasedOnTime(currentTime);
     }
 
-    /**
+   /**
      * Sets a listener that is sent update events throughout the life of
      * an animation.
      *
@@ -75,7 +90,7 @@ public class TimeAnimator extends ValueAnimator {
         // noop
     }
 
-    /**
+   /**
      * Implementors of this interface can set themselves as update listeners
      * to a <code>TimeAnimator</code> instance to receive callbacks on every animation
      * frame to receive the total time since the animator started and the delta time
@@ -85,7 +100,7 @@ public class TimeAnimator extends ValueAnimator {
      * prior to starting.
      */
     public static interface TimeListener {
-        /**
+       /**
          * <p>Notifies listeners of the occurrence of another frame of the animation,
          * along with information about the elapsed time.</p>
          *

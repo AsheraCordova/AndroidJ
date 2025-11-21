@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
 
    Licensed to the Apache Software Foundation (ASF) under one or more
@@ -32,22 +47,22 @@ package r.android.graphics;
  */
 public class BezierParseException extends RuntimeException {
 
-    /**
+   /**
      * @serial The embedded exception if tunnelling, or null.
      */    
     protected Exception exception;
     
-    /**
+   /**
      * @serial The line number.
      */
     protected int lineNumber;
 
-    /**
+   /**
      * @serial The column number.
      */
     protected int columnNumber;
 
-    /**
+   /**
      * Creates a new ParseException.
      * @param message The error or warning message.
      * @param line The line of the last parsed character.
@@ -60,7 +75,7 @@ public class BezierParseException extends RuntimeException {
         columnNumber = column;
     }
     
-    /**
+   /**
      * Creates a new ParseException wrapping an existing exception.
      *
      * <p>The existing exception will be embedded in the new
@@ -74,7 +89,7 @@ public class BezierParseException extends RuntimeException {
         columnNumber = -1;
     }
     
-    /**
+   /**
      * Creates a new ParseException from an existing exception.
      *
      * <p>The existing exception will be embedded in the new
@@ -87,7 +102,7 @@ public class BezierParseException extends RuntimeException {
         this.exception = e;
     }
     
-    /**
+   /**
      * Return a detail message for this exception.
      *
      * <p>If there is a embedded exception, and if the ParseException
@@ -105,7 +120,7 @@ public class BezierParseException extends RuntimeException {
         }
     }
     
-    /**
+   /**
      * Return the embedded exception, if any.
      * @return The embedded exception, or null if there is none.
      */
@@ -113,14 +128,14 @@ public class BezierParseException extends RuntimeException {
         return exception;
     }
 
-    /**
+   /**
      * Returns the line of the last parsed character.
      */
     public int getLineNumber() {
         return lineNumber;
     }
 
-    /**
+   /**
      * Returns the column of the last parsed character.
      */
     public int getColumnNumber() {

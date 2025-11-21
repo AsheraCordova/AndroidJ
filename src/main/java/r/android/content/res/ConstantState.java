@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
 * Copyright (C) 2014 The Android Open Source Project
 *
@@ -31,19 +46,19 @@ import r.android.content.pm.ActivityInfo.Config;
  */
 abstract public class ConstantState<T> {
 
-    /**
+   /**
      * Return a bit mask of configuration changes that will impact
      * this resource (and thus require completely reloading it).
      */
     abstract public @Config int getChangingConfigurations();
 
-    /**
+   /**
      * Create a new instance without supplying resources the caller
      * is running in.
      */
     public abstract T newInstance();
 
-    /**
+   /**
      * Create a new instance from its constant state.  This
      * must be implemented for resources that change based on the target
      * density of their caller (that is depending on whether it is
@@ -53,7 +68,7 @@ abstract public class ConstantState<T> {
         return newInstance();
     }
 
-    /**
+   /**
      * Create a new instance from its constant state.  This must be
      * implemented for resources that can have a theme applied.
      */

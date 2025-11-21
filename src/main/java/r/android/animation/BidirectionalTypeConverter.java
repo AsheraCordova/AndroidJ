@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2014 The Android Open Source Project
  *
@@ -29,7 +44,7 @@ public abstract class BidirectionalTypeConverter<T, V> extends TypeConverter<T, 
         super(fromClass, toClass);
     }
 
-    /**
+   /**
      * Does a conversion from the target type back to the source type. The subclass
      * must implement this when a TypeConverter is used in animations and current
      * values will need to be read for an animation.
@@ -38,7 +53,7 @@ public abstract class BidirectionalTypeConverter<T, V> extends TypeConverter<T, 
      */
     public abstract T convertBack(V value);
 
-    /**
+   /**
      * Returns the inverse of this converter, where the from and to classes are reversed.
      * The inverted converter uses this convert to call {@link #convertBack(Object)} for
      * {@link #convert(Object)} calls and {@link #convert(Object)} for

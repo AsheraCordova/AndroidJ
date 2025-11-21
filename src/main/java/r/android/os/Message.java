@@ -1,3 +1,18 @@
+//start - license
+/*
+ * Copyright (c) 2025 Ashera Cordova
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+//end - license
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -34,7 +49,7 @@ import r.android.compat.annotation.UnsupportedAppUsage;
  * them from a pool of recycled objects.</p>
  */
 public final class Message /****/ {
-    /**
+   /**
      * User-defined message code so that the recipient can identify
      * what this message is about. Each {@link Handler} has its own name-space
      * for message codes, so you do not need to worry about yours conflicting
@@ -42,21 +57,21 @@ public final class Message /****/ {
      */
     public int what;
 
-    /**
+   /**
      * arg1 and arg2 are lower-cost alternatives to using
      * {@link #setData(Bundle) setData()} if you only need to store a
      * few integer values.
      */
     public int arg1;
 
-    /**
+   /**
      * arg1 and arg2 are lower-cost alternatives to using
      * {@link #setData(Bundle) setData()} if you only need to store a
      * few integer values.
      */
     public int arg2;
 
-    /**
+   /**
      * An arbitrary object to send to the recipient.  When using
      * {@link Messenger} to send the message across processes this can only
      * be non-null if it contains a Parcelable of a framework class (not one
@@ -68,35 +83,35 @@ public final class Message /****/ {
      */
     public Object obj;
 
-    /**
+   /**
      * Optional Messenger where replies to this message can be sent.  The
      * semantics of exactly how this is used are up to the sender and
      * receiver.
      */
     public Messenger replyTo;
 
-    /**
+   /**
      * Indicates that the uid is not set;
      *
      * @hide Only for use within the system server.
      */
     public static final int UID_NONE = -1;
 
-    /**
+   /**
      * Optional field indicating the uid that sent the message.  This is
      * only valid for messages posted by a {@link Messenger}; otherwise,
      * it will be -1.
      */
     public int sendingUid = UID_NONE;
 
-    /**
+   /**
      * Optional field indicating the uid that caused this message to be enqueued.
      *
      * @hide Only for use within the system server.
      */
     public int workSourceUid = UID_NONE;
 
-    /** If set message is in use.
+   /** If set message is in use.
      * This flag is set when the message is enqueued and remains set while it
      * is delivered and afterwards when it is recycled.  The flag is only cleared
      * when a new message is created or obtained since that is the only time that
@@ -104,18 +119,18 @@ public final class Message /****/ {
      *
      * It is an error to attempt to enqueue or recycle a message that is already in use.
      */
-    /*package*/ static final int FLAG_IN_USE = 1 << 0;
+   /*package*/ static final int FLAG_IN_USE = 1 << 0;
 
-    /** If set message is asynchronous */
-    /*package*/ static final int FLAG_ASYNCHRONOUS = 1 << 1;
+   /** If set message is asynchronous */
+   /*package*/ static final int FLAG_ASYNCHRONOUS = 1 << 1;
 
-    /** Flags to clear in the copyFrom method */
-    /*package*/ static final int FLAGS_TO_CLEAR_ON_COPY_FROM = FLAG_IN_USE;
+   /** Flags to clear in the copyFrom method */
+   /*package*/ static final int FLAGS_TO_CLEAR_ON_COPY_FROM = FLAG_IN_USE;
 
     @UnsupportedAppUsage
-    /*package*/ int flags;
+   /*package*/ int flags;
 
-    /**
+   /**
      * The targeted delivery time of this message. The time-base is
      * {@link SystemClock#uptimeMillis}.
      * @hide Only for use within the tests.
@@ -124,20 +139,20 @@ public final class Message /****/ {
     //@VisibleForTesting(visibility = VisibleForTesting.Visibility.PACKAGE)
     public long when;
 
-    /*package*/ Bundle data;
+   /*package*/ Bundle data;
 
     @UnsupportedAppUsage
-    /*package*/ Handler target;
+   /*package*/ Handler target;
 
     @UnsupportedAppUsage
-    /*package*/ Runnable callback;
+   /*package*/ Runnable callback;
 
     // sometimes we store linked lists of these things
     @UnsupportedAppUsage
-    /*package*/ Message next;
+   /*package*/ Message next;
 
 
-    /** @hide */
+   /** @hide */
     public static final Object sPoolSync = new Object();
     private static Message sPool;
     private static int sPoolSize = 0;
@@ -146,7 +161,7 @@ public final class Message /****/ {
 
     private static boolean gCheckRecycle = true;
 
-    /**
+   /**
      * Return a new Message instance from the global pool. Allows us to
      * avoid allocating new objects in many cases.
      */
@@ -164,7 +179,7 @@ public final class Message /****/ {
         return new Message();
     }
 
-    /**
+   /**
      * Same as {@link #obtain()}, but copies the values of an existing
      * message (including its target) into the new one.
      * @param orig Original message to copy.
@@ -188,7 +203,7 @@ public final class Message /****/ {
         return m;
     }
 
-    /**
+   /**
      * Same as {@link #obtain()}, but sets the value for the <em>target</em> member on the Message returned.
      * @param h  Handler to assign to the returned Message object's <em>target</em> member.
      * @return A Message object from the global pool.
@@ -200,7 +215,7 @@ public final class Message /****/ {
         return m;
     }
 
-    /**
+   /**
      * Same as {@link #obtain(Handler)}, but assigns a callback Runnable on
      * the Message that is returned.
      * @param h  Handler to assign to the returned Message object's <em>target</em> member.
@@ -215,7 +230,7 @@ public final class Message /****/ {
         return m;
     }
 
-    /**
+   /**
      * Same as {@link #obtain()}, but sets the values for both <em>target</em> and
      * <em>what</em> members on the Message.
      * @param h  Value to assign to the <em>target</em> member.
@@ -230,7 +245,7 @@ public final class Message /****/ {
         return m;
     }
 
-    /**
+   /**
      * Same as {@link #obtain()}, but sets the values of the <em>target</em>, <em>what</em>, and <em>obj</em>
      * members.
      * @param h  The <em>target</em> value to set.
@@ -247,7 +262,7 @@ public final class Message /****/ {
         return m;
     }
 
-    /**
+   /**
      * Same as {@link #obtain()}, but sets the values of the <em>target</em>, <em>what</em>,
      * <em>arg1</em>, and <em>arg2</em> members.
      *
@@ -267,7 +282,7 @@ public final class Message /****/ {
         return m;
     }
 
-    /**
+   /**
      * Same as {@link #obtain()}, but sets the values of the <em>target</em>, <em>what</em>,
      * <em>arg1</em>, <em>arg2</em>, and <em>obj</em> members.
      *
@@ -290,14 +305,14 @@ public final class Message /****/ {
         return m;
     }
 
-    /** @hide */
+   /** @hide */
     public static void updateCheckRecycle(int targetSdkVersion) {
         if (targetSdkVersion < Build.VERSION_CODES.LOLLIPOP) {
             gCheckRecycle = false;
         }
     }
 
-    /**
+   /**
      * Return a Message instance to the global pool.
      * <p>
      * You MUST NOT touch the Message after calling this function because it has
@@ -316,7 +331,7 @@ public final class Message /****/ {
         recycleUnchecked();
     }
 
-    /**
+   /**
      * Recycles a Message that may be in-use.
      * Used internally by the MessageQueue and Looper when disposing of queued Messages.
      */
@@ -346,7 +361,7 @@ public final class Message /****/ {
         }
     }
 
-    /**
+   /**
      * Make this message like o.  Performs a shallow copy of the data field.
      * Does not copy the linked list fields, nor the timestamp or
      * target/callback of the original message.
@@ -368,7 +383,7 @@ public final class Message /****/ {
         }
     }
 
-    /**
+   /**
      * Return the targeted delivery time of this message, in milliseconds.
      */
     public long getWhen() {
@@ -379,7 +394,7 @@ public final class Message /****/ {
         this.target = target;
     }
 
-    /**
+   /**
      * Retrieve the {@link r.android.os.Handler Handler} implementation that
      * will receive this message. The object must implement
      * {@link r.android.os.Handler#handleMessage(r.android.os.Message)
@@ -391,7 +406,7 @@ public final class Message /****/ {
         return target;
     }
 
-    /**
+   /**
      * Retrieve callback object that will execute when this message is handled.
      * This object must implement Runnable. This is called by
      * the <em>target</em> {@link Handler} that is receiving this Message to
@@ -403,14 +418,14 @@ public final class Message /****/ {
         return callback;
     }
 
-    /** @hide */
+   /** @hide */
     @UnsupportedAppUsage
     public Message setCallback(Runnable r) {
         callback = r;
         return this;
     }
 
-    /**
+   /**
      * Obtains a Bundle of arbitrary data associated with this
      * event, lazily creating it if necessary. Set this value by calling
      * {@link #setData(Bundle)}.  Note that when transferring data across
@@ -429,7 +444,7 @@ public final class Message /****/ {
         return data;
     }
 
-    /**
+   /**
      * Like getData(), but does not lazily create the Bundle.  A null
      * is returned if the Bundle does not already exist.  See
      * {@link #getData} for further information on this.
@@ -440,7 +455,7 @@ public final class Message /****/ {
         return data;
     }
 
-    /**
+   /**
      * Sets a Bundle of arbitrary data values. Use arg1 and arg2 members
      * as a lower cost way to send a few simple integer values, if you can.
      * @see #getData()
@@ -450,7 +465,7 @@ public final class Message /****/ {
         this.data = data;
     }
 
-    /**
+   /**
      * Chainable setter for {@link #what}
      *
      * @hide
@@ -460,7 +475,7 @@ public final class Message /****/ {
         return this;
     }
 
-    /**
+   /**
      * Sends this Message to the Handler specified by {@link #getTarget}.
      * Throws a null pointer exception if this field has not been set.
      */
@@ -468,7 +483,7 @@ public final class Message /****/ {
         target.sendMessage(this);
     }
 
-    /**
+   /**
      * Returns true if the message is asynchronous, meaning that it is not
      * subject to {@link Looper} synchronization barriers.
      *
@@ -480,7 +495,7 @@ public final class Message /****/ {
         return (flags & FLAG_ASYNCHRONOUS) != 0;
     }
 
-    /**
+   /**
      * Sets whether the message is asynchronous, meaning that it is not
      * subject to {@link Looper} synchronization barriers.
      * <p>
@@ -514,16 +529,16 @@ public final class Message /****/ {
         }
     }
 
-    /*package*/ boolean isInUse() {
+   /*package*/ boolean isInUse() {
         return ((flags & FLAG_IN_USE) == FLAG_IN_USE);
     }
 
     @UnsupportedAppUsage
-    /*package*/ void markInUse() {
+   /*package*/ void markInUse() {
         flags |= FLAG_IN_USE;
     }
 
-    /** Constructor (but the preferred way to get a Message is to call {@link #obtain() Message.obtain()}).
+   /** Constructor (but the preferred way to get a Message is to call {@link #obtain() Message.obtain()}).
     */
     public Message() {
     }

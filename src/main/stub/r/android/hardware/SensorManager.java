@@ -13,10 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 //end - license
-package r.android.compat.annotation;
+package r.android.hardware;
 
-public @interface UnsupportedAppUsage {
-	int maxTargetSdk() default 0;
+public class SensorManager {
 
-	int trackingBug() default 0;
+	public static final float GRAVITY_EARTH           = 9.80665f;
+
 }

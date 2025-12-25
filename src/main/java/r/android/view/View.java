@@ -2993,4 +2993,7 @@ return hasOnTouchEvent;
 public void setHasOnTouchEvent(boolean hasOnTouchEvent){
 this.hasOnTouchEvent=hasOnTouchEvent;
 }
+public void postOnAnimation(Runnable action){
+getRunQueue().post(action);
+}
 }

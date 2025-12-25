@@ -38,6 +38,7 @@ public class Build {
 		public static final int Q = 0;
 		public static final int N = 0;
 		public static final int P = 0;
+		public static final int R = 0;
 	}
 
 	public static final String MANUFACTURER = null;

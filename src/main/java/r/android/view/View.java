@@ -2961,6 +2961,13 @@ public boolean isOverlay(){
 return isOverlay;
 }
 public void setOverlay(boolean isOverlay){
+this.isOverlay=isOverlay;
+if (isOverlay) {
+setFlags(GONE,VISIBILITY_MASK);
+}
+ else {
+setFlags(VISIBLE,VISIBILITY_MASK);
+}
 }
 public boolean onTouchEvent(MotionEvent event){
 return false;

@@ -13,14 +13,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 //end - license
-package r.android.widget;
+package r.android.view.animation;
 
-import com.ashera.widget.IWidget;
+public class Transformation {
 
-import r.android.view.animation.Animation;
-
-public class ImageView extends com.ashera.view.BaseMeasurableImageView{
-	public ImageView(IWidget widget) {
-		super(widget);
-	}
 }

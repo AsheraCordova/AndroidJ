@@ -62,5 +62,20 @@ public class MotionEvent{
 	public int getEventTime() {
 		return 0;
 	}
+	public void offsetLocation(int i, int j) {
+		x += i;
+		y += j;
+	}
+	public static MotionEvent obtain(MotionEvent ev) {
+		MotionEvent m = new MotionEvent();
+		m.x = ev.x;
+		m.y = ev.y;
+		m.rawX = ev.rawX;
+		m.rawY = ev.rawY;
+		return m;
+	}
+	public void recycle() {
+		
+	}
 
 }

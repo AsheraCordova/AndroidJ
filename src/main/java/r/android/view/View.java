@@ -2996,4 +2996,21 @@ this.hasOnTouchEvent=hasOnTouchEvent;
 public void postOnAnimation(Runnable action){
 getRunQueue().post(action);
 }
+public void clearAnimation(){
+if (this.animation != null) {
+animation.reset();
+}
+}
+private r.android.view.animation.Animation animation;
+public void startAnimation(r.android.view.animation.Animation animation){
+this.animation=animation;
+animation.setTarget(this);
+animation.start();
+}
+public com.ashera.widget.IWidget getOuterWidget(){
+if (this instanceof com.ashera.widget.ILifeCycleDecorator) {
+return ((com.ashera.widget.ILifeCycleDecorator)this).getWidget();
+}
+throw new RuntimeException("view does not implement ILifeCycleDecorator.");
+}
 }

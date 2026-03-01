@@ -21,6 +21,11 @@ import java.util.List;
 public class StateListDrawable extends Drawable{
 	private int[][] mStateSets;
 	private Drawable[] mDrawables;
+	private @com.google.j2objc.annotations.Weak Object currentMutatedDrawble;
+	public void setCurrentMutatedDrawble(Object currentMutatedDrawble) {
+		this.currentMutatedDrawble = currentMutatedDrawble;
+	}
+
 	public List<Object> getAllDrawables() {
 		if (mDrawables == null) {
 			return null;
@@ -47,6 +52,9 @@ public class StateListDrawable extends Drawable{
     
     @Override
     public java.lang.Object getDrawable() {
+    	if (currentMutatedDrawble != null) {
+    		return currentMutatedDrawble;
+    	}
     	Drawable currentDrawable = getCurrentDrawable();
 		if (currentDrawable == null) {
     		return null;

@@ -38,6 +38,8 @@ public interface ViewParent {
   public void recomputeViewAttributes(  View child);
   public void focusableViewAvailable(  View v);
   public void childDrawableStateChanged(  View child);
+  public void requestDisallowInterceptTouchEvent(  boolean disallowIntercept);
+  public void childHasTransientStateChanged(  View child,  boolean hasTransientState);
   public boolean canResolveLayoutDirection();
   public boolean isLayoutDirectionResolved();
   public int getLayoutDirection();

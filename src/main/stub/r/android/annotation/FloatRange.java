@@ -16,5 +16,6 @@
 package r.android.annotation;
 
 public @interface FloatRange {
-	int from() default 0;
+	float from() default 0;
+	float to() default 0;
 }

@@ -399,6 +399,8 @@ private static class ForegroundInfo {
     private final Rect mSelfBounds=new Rect();
     private final Rect mOverlayBounds=new Rect();
   }
+  private float mLongClickX=Float.NaN;
+  private float mLongClickY=Float.NaN;
   protected Context mContext;
   private int[] mDrawableState=null;
   private int mNextFocusLeftId=View.NO_ID;
@@ -408,14 +410,20 @@ private static class ForegroundInfo {
   int mNextFocusForwardId=View.NO_ID;
   int mNextClusterForwardId=View.NO_ID;
   boolean mDefaultFocusHighlightEnabled=true;
+  private CheckForLongPress mPendingCheckForLongPress;
+  private CheckForTap mPendingCheckForTap=null;
+  private PerformClick mPerformClick;
+  private UnsetPressedState mUnsetPressedState;
   private boolean mHasPerformedLongPress;
   private boolean mInContextButtonPress;
   private boolean mIgnoreNextUpEvent;
   private int mMinHeight;
   private int mMinWidth;
+  private TouchDelegate mTouchDelegate=null;
   private int mDrawingCacheBackgroundColor=0;
   private ViewTreeObserver mFloatingTreeObserver;
   private int mTouchSlop;
+  private ViewPropertyAnimator mAnimator=null;
   public static final int DRAG_FLAG_GLOBAL=1 << 8;
   public static final int DRAG_FLAG_GLOBAL_URI_READ=Intent.FLAG_GRANT_READ_URI_PERMISSION;
   public static final int DRAG_FLAG_GLOBAL_URI_WRITE=Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
@@ -472,6 +480,66 @@ private static class ForegroundInfo {
       return;
     }
     li.mOnAttachStateChangeListeners.remove(listener);
+  }
+  private boolean performClickInternal(){
+    notifyAutofillManagerOnClick();
+    return performClick();
+  }
+  public boolean performClick(){
+    notifyAutofillManagerOnClick();
+    final boolean result;
+    final ListenerInfo li=mListenerInfo;
+    if (li != null && li.mOnClickListener != null) {
+      //playSoundEffect(SoundEffectConstants.CLICK);
+      li.mOnClickListener.onClick(this);
+      result=true;
+    }
+ else {
+      result=false;
+    }
+    sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
+    notifyEnterOrExitForAutoFillIfNeeded(true);
+    return result;
+  }
+  public boolean performLongClick(){
+    return performLongClickInternal(mLongClickX,mLongClickY);
+  }
+  public boolean performLongClick(  float x,  float y){
+    mLongClickX=x;
+    mLongClickY=y;
+    final boolean handled=performLongClick();
+    mLongClickX=Float.NaN;
+    mLongClickY=Float.NaN;
+    return handled;
+  }
+  private boolean performLongClickInternal(  float x,  float y){
+    sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
+    boolean handled=false;
+    final ListenerInfo li=mListenerInfo;
+    if (li != null && li.mOnLongClickListener != null) {
+      handled=li.mOnLongClickListener.onLongClick(View.this);
+    }
+    if (!handled) {
+      final boolean isAnchored=!Float.isNaN(x) && !Float.isNaN(y);
+      handled=isAnchored ? showContextMenu(x,y) : showContextMenu();
+    }
+    if ((mViewFlags & TOOLTIP) == TOOLTIP) {
+      if (!handled) {
+        handled=showLongClickTooltip((int)x,(int)y);
+      }
+    }
+    if (handled) {
+      //performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+    }
+    return handled;
+  }
+  protected boolean performButtonActionOnTouchDown(  MotionEvent event){
+    if (event.isFromSource(InputDevice.SOURCE_MOUSE) && (event.getButtonState() & MotionEvent.BUTTON_SECONDARY) != 0) {
+      showContextMenu(event.getX(),event.getY());
+      mPrivateFlags|=PFLAG_CANCEL_NEXT_UP_EVENT;
+      return true;
+    }
+    return false;
   }
   public void setOnKeyListener(  OnKeyListener l){
     getListenerInfo().mOnKeyListener=l;
@@ -548,6 +616,26 @@ private static class ForegroundInfo {
   public boolean isLayoutRtl(){
     return (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
   }
+  public void setHasTransientState(  boolean hasTransientState){
+    final boolean oldHasTransientState=hasTransientState();
+    mTransientStateCount=hasTransientState ? mTransientStateCount + 1 : mTransientStateCount - 1;
+    if (mTransientStateCount < 0) {
+      mTransientStateCount=0;
+      Log.e(VIEW_LOG_TAG,"hasTransientState decremented below 0: " + "unmatched pair of setHasTransientState calls");
+    }
+ else     if ((hasTransientState && mTransientStateCount == 1) || (!hasTransientState && mTransientStateCount == 0)) {
+      mPrivateFlags2=(mPrivateFlags2 & ~PFLAG2_HAS_TRANSIENT_STATE) | (hasTransientState ? PFLAG2_HAS_TRANSIENT_STATE : 0);
+      final boolean newHasTransientState=hasTransientState();
+      if (mParent != null && newHasTransientState != oldHasTransientState) {
+        try {
+          mParent.childHasTransientStateChanged(this,newHasTransientState);
+        }
+ catch (        AbstractMethodError e) {
+          Log.e(VIEW_LOG_TAG,mParent.getClass().getSimpleName() + " does not fully implement ViewParent",e);
+        }
+      }
+    }
+  }
   public boolean isAttachedToWindow(){
     return mAttachInfo != null;
   }
@@ -605,6 +693,41 @@ private static class ForegroundInfo {
       ((View)mParent).clearParentsWantFocus();
     }
   }
+  public boolean dispatchTouchEvent(  MotionEvent event){
+    if (event.isTargetAccessibilityFocus()) {
+      if (!isAccessibilityFocusedViewOrHost()) {
+        return false;
+      }
+      event.setTargetAccessibilityFocus(false);
+    }
+    boolean result=false;
+    if (false) {
+      //mInputEventConsistencyVerifier.onTouchEvent(event,0);
+    }
+    final int actionMasked=event.getActionMasked();
+    if (actionMasked == MotionEvent.ACTION_DOWN) {
+      stopNestedScroll();
+    }
+    if (onFilterTouchEventForSecurity(event)) {
+      if ((mViewFlags & ENABLED_MASK) == ENABLED && handleScrollBarDragging(event)) {
+        result=true;
+      }
+      ListenerInfo li=mListenerInfo;
+      if (li != null && li.mOnTouchListener != null && (mViewFlags & ENABLED_MASK) == ENABLED && li.mOnTouchListener.onTouch(this,event)) {
+        result=true;
+      }
+      if (!result && onTouchEvent(event)) {
+        result=true;
+      }
+    }
+    if (!result && false) {
+      //mInputEventConsistencyVerifier.onUnhandledEvent(event,0);
+    }
+    if (actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL || (actionMasked == MotionEvent.ACTION_DOWN && !result)) {
+      stopNestedScroll();
+    }
+    return result;
+  }
   protected void onVisibilityChanged(  View changedView,  int visibility){
   }
   public int getWindowVisibility(){
@@ -631,552 +754,699 @@ private static class ForegroundInfo {
   }
   public void onHoverChanged(  boolean hovered){
   }
-  private boolean hasSize(){
-    return (mBottom > mTop) && (mRight > mLeft);
+  public boolean onTouchEvent(  MotionEvent event){
+    final float x=event.getX();
+    final float y=event.getY();
+    final int viewFlags=mViewFlags;
+    final int action=event.getAction();
+    final boolean clickable=((viewFlags & CLICKABLE) == CLICKABLE || (viewFlags & LONG_CLICKABLE) == LONG_CLICKABLE) || (viewFlags & CONTEXT_CLICKABLE) == CONTEXT_CLICKABLE;
+    if ((viewFlags & ENABLED_MASK) == DISABLED) {
+      if (action == MotionEvent.ACTION_UP && (mPrivateFlags & PFLAG_PRESSED) != 0) {
+        setPressed(false);
+      }
+      mPrivateFlags3&=~PFLAG3_FINGER_DOWN;
+      return clickable;
+    }
+    if (mTouchDelegate != null) {
+      if (mTouchDelegate.onTouchEvent(event)) {
+        return true;
+      }
+    }
+    if (clickable || (viewFlags & TOOLTIP) == TOOLTIP) {
+switch (action) {
+case MotionEvent.ACTION_UP:
+        mPrivateFlags3&=~PFLAG3_FINGER_DOWN;
+      if ((viewFlags & TOOLTIP) == TOOLTIP) {
+        handleTooltipUp();
+      }
+    if (!clickable) {
+      removeTapCallback();
+      removeLongPressCallback();
+      mInContextButtonPress=false;
+      mHasPerformedLongPress=false;
+      mIgnoreNextUpEvent=false;
+      break;
+    }
+  boolean prepressed=(mPrivateFlags & PFLAG_PREPRESSED) != 0;
+if ((mPrivateFlags & PFLAG_PRESSED) != 0 || prepressed) {
+  boolean focusTaken=false;
+  if (isFocusable() && isFocusableInTouchMode() && !isFocused()) {
+    focusTaken=requestFocus();
   }
-  private boolean canTakeFocus(){
-    return ((mViewFlags & VISIBILITY_MASK) == VISIBLE) && ((mViewFlags & FOCUSABLE) == FOCUSABLE) && ((mViewFlags & ENABLED_MASK) == ENABLED)&& (sCanFocusZeroSized || !isLayoutValid() || hasSize());
+  if (prepressed) {
+    setPressed(true,x,y);
   }
+  if (!mHasPerformedLongPress && !mIgnoreNextUpEvent) {
+    removeLongPressCallback();
+    if (!focusTaken) {
+      if (mPerformClick == null) {
+        mPerformClick=new PerformClick();
+      }
+      if (!post(mPerformClick)) {
+        performClickInternal();
+      }
+    }
+  }
+  if (mUnsetPressedState == null) {
+    mUnsetPressedState=new UnsetPressedState();
+  }
+  if (prepressed) {
+    postDelayed(mUnsetPressedState,ViewConfiguration.getPressedStateDuration());
+  }
+ else   if (!post(mUnsetPressedState)) {
+    mUnsetPressedState.run();
+  }
+  removeTapCallback();
+}
+mIgnoreNextUpEvent=false;
+break;
+case MotionEvent.ACTION_DOWN:
+if (event.getSource() == InputDevice.SOURCE_TOUCHSCREEN) {
+mPrivateFlags3|=PFLAG3_FINGER_DOWN;
+}
+mHasPerformedLongPress=false;
+if (!clickable) {
+checkForLongClick(0,x,y);
+break;
+}
+if (performButtonActionOnTouchDown(event)) {
+break;
+}
+boolean isInScrollingContainer=isInScrollingContainer();
+if (isInScrollingContainer) {
+mPrivateFlags|=PFLAG_PREPRESSED;
+if (mPendingCheckForTap == null) {
+mPendingCheckForTap=new CheckForTap();
+}
+mPendingCheckForTap.x=event.getX();
+mPendingCheckForTap.y=event.getY();
+postDelayed(mPendingCheckForTap,ViewConfiguration.getTapTimeout());
+}
+ else {
+setPressed(true,x,y);
+checkForLongClick(0,x,y);
+}
+break;
+case MotionEvent.ACTION_CANCEL:
+if (clickable) {
+setPressed(false);
+}
+removeTapCallback();
+removeLongPressCallback();
+mInContextButtonPress=false;
+mHasPerformedLongPress=false;
+mIgnoreNextUpEvent=false;
+mPrivateFlags3&=~PFLAG3_FINGER_DOWN;
+break;
+case MotionEvent.ACTION_MOVE:
+if (clickable) {
+drawableHotspotChanged(x,y);
+}
+if (!pointInView(x,y,mTouchSlop)) {
+removeTapCallback();
+removeLongPressCallback();
+if ((mPrivateFlags & PFLAG_PRESSED) != 0) {
+setPressed(false);
+}
+mPrivateFlags3&=~PFLAG3_FINGER_DOWN;
+}
+break;
+}
+return true;
+}
+return false;
+}
+private void removeLongPressCallback(){
+if (mPendingCheckForLongPress != null) {
+removeCallbacks(mPendingCheckForLongPress);
+}
+}
+private void removeTapCallback(){
+if (mPendingCheckForTap != null) {
+mPrivateFlags&=~PFLAG_PREPRESSED;
+removeCallbacks(mPendingCheckForTap);
+}
+}
+private boolean hasSize(){
+return (mBottom > mTop) && (mRight > mLeft);
+}
+private boolean canTakeFocus(){
+return ((mViewFlags & VISIBILITY_MASK) == VISIBLE) && ((mViewFlags & FOCUSABLE) == FOCUSABLE) && ((mViewFlags & ENABLED_MASK) == ENABLED)&& (sCanFocusZeroSized || !isLayoutValid() || hasSize());
+}
 public interface OnScrollChangeListener {
-    void onScrollChange(    View v,    int scrollX,    int scrollY,    int oldScrollX,    int oldScrollY);
-  }
+void onScrollChange(View v,int scrollX,int scrollY,int oldScrollX,int oldScrollY);
+}
 public interface OnLayoutChangeListener {
-    void onLayoutChange(    View v,    int left,    int top,    int right,    int bottom,    int oldLeft,    int oldTop,    int oldRight,    int oldBottom);
-  }
-  protected void onSizeChanged(  int w,  int h,  int oldw,  int oldh){
-  }
-  public final ViewParent getParent(){
-    return mParent;
-  }
-  public final int getWidth(){
-    return mRight - mLeft;
-  }
-  public final int getHeight(){
-    return mBottom - mTop;
-  }
-  public final int getMeasuredWidth(){
-    return mMeasuredWidth & MEASURED_SIZE_MASK;
-  }
-  public final int getMeasuredWidthAndState(){
-    return mMeasuredWidth;
-  }
-  public final int getMeasuredHeight(){
-    return mMeasuredHeight & MEASURED_SIZE_MASK;
-  }
-  public final int getMeasuredState(){
-    return (mMeasuredWidth & MEASURED_STATE_MASK) | ((mMeasuredHeight >> MEASURED_HEIGHT_STATE_SHIFT) & (MEASURED_STATE_MASK >> MEASURED_HEIGHT_STATE_SHIFT));
-  }
-  public final int getTop(){
-    return mTop;
-  }
-  public final void setTop(  int top){
-    if (top != mTop) {
-      final boolean matrixIsIdentity=hasIdentityMatrix();
-      if (matrixIsIdentity) {
-        if (mAttachInfo != null) {
-          int minTop;
-          int yLoc;
-          if (top < mTop) {
-            minTop=top;
-            yLoc=top - mTop;
-          }
+void onLayoutChange(View v,int left,int top,int right,int bottom,int oldLeft,int oldTop,int oldRight,int oldBottom);
+}
+protected void onSizeChanged(int w,int h,int oldw,int oldh){
+}
+public final ViewParent getParent(){
+return mParent;
+}
+public final int getWidth(){
+return mRight - mLeft;
+}
+public final int getHeight(){
+return mBottom - mTop;
+}
+public final int getMeasuredWidth(){
+return mMeasuredWidth & MEASURED_SIZE_MASK;
+}
+public final int getMeasuredWidthAndState(){
+return mMeasuredWidth;
+}
+public final int getMeasuredHeight(){
+return mMeasuredHeight & MEASURED_SIZE_MASK;
+}
+public final int getMeasuredState(){
+return (mMeasuredWidth & MEASURED_STATE_MASK) | ((mMeasuredHeight >> MEASURED_HEIGHT_STATE_SHIFT) & (MEASURED_STATE_MASK >> MEASURED_HEIGHT_STATE_SHIFT));
+}
+public final int getTop(){
+return mTop;
+}
+public final void setTop(int top){
+if (top != mTop) {
+final boolean matrixIsIdentity=hasIdentityMatrix();
+if (matrixIsIdentity) {
+if (mAttachInfo != null) {
+int minTop;
+int yLoc;
+if (top < mTop) {
+minTop=top;
+yLoc=top - mTop;
+}
  else {
-            minTop=mTop;
-            yLoc=0;
-          }
-          invalidate(0,yLoc,mRight - mLeft,mBottom - minTop);
-        }
-      }
+minTop=mTop;
+yLoc=0;
+}
+invalidate(0,yLoc,mRight - mLeft,mBottom - minTop);
+}
+}
  else {
-        invalidate(true);
-      }
-      int width=mRight - mLeft;
-      int oldHeight=mBottom - mTop;
-      mTop=top;
-      mRenderNode.setTop(mTop);
-      sizeChange(width,mBottom - mTop,width,oldHeight);
-      if (!matrixIsIdentity) {
-        mPrivateFlags|=PFLAG_DRAWN;
-        invalidate(true);
-      }
-      mBackgroundSizeChanged=true;
-      mDefaultFocusHighlightSizeChanged=true;
-      if (mForegroundInfo != null) {
-        mForegroundInfo.mBoundsChanged=true;
-      }
-      invalidateParentIfNeeded();
-      if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
-        invalidateParentIfNeeded();
-      }
-    }
-  }
-  public final int getBottom(){
-    return mBottom;
-  }
-  public final void setBottom(  int bottom){
-    if (bottom != mBottom) {
-      final boolean matrixIsIdentity=hasIdentityMatrix();
-      if (matrixIsIdentity) {
-        if (mAttachInfo != null) {
-          int maxBottom;
-          if (bottom < mBottom) {
-            maxBottom=mBottom;
-          }
+invalidate(true);
+}
+int width=mRight - mLeft;
+int oldHeight=mBottom - mTop;
+mTop=top;
+mRenderNode.setTop(mTop);
+sizeChange(width,mBottom - mTop,width,oldHeight);
+if (!matrixIsIdentity) {
+mPrivateFlags|=PFLAG_DRAWN;
+invalidate(true);
+}
+mBackgroundSizeChanged=true;
+mDefaultFocusHighlightSizeChanged=true;
+if (mForegroundInfo != null) {
+mForegroundInfo.mBoundsChanged=true;
+}
+invalidateParentIfNeeded();
+if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
+invalidateParentIfNeeded();
+}
+}
+}
+public final int getBottom(){
+return mBottom;
+}
+public final void setBottom(int bottom){
+if (bottom != mBottom) {
+final boolean matrixIsIdentity=hasIdentityMatrix();
+if (matrixIsIdentity) {
+if (mAttachInfo != null) {
+int maxBottom;
+if (bottom < mBottom) {
+maxBottom=mBottom;
+}
  else {
-            maxBottom=bottom;
-          }
-          invalidate(0,0,mRight - mLeft,maxBottom - mTop);
-        }
-      }
+maxBottom=bottom;
+}
+invalidate(0,0,mRight - mLeft,maxBottom - mTop);
+}
+}
  else {
-        invalidate(true);
-      }
-      int width=mRight - mLeft;
-      int oldHeight=mBottom - mTop;
-      mBottom=bottom;
-      mRenderNode.setBottom(mBottom);
-      sizeChange(width,mBottom - mTop,width,oldHeight);
-      if (!matrixIsIdentity) {
-        mPrivateFlags|=PFLAG_DRAWN;
-        invalidate(true);
-      }
-      mBackgroundSizeChanged=true;
-      mDefaultFocusHighlightSizeChanged=true;
-      if (mForegroundInfo != null) {
-        mForegroundInfo.mBoundsChanged=true;
-      }
-      invalidateParentIfNeeded();
-      if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
-        invalidateParentIfNeeded();
-      }
-    }
-  }
-  public final int getLeft(){
-    return mLeft;
-  }
-  public final void setLeft(  int left){
-    if (left != mLeft) {
-      final boolean matrixIsIdentity=hasIdentityMatrix();
-      if (matrixIsIdentity) {
-        if (mAttachInfo != null) {
-          int minLeft;
-          int xLoc;
-          if (left < mLeft) {
-            minLeft=left;
-            xLoc=left - mLeft;
-          }
+invalidate(true);
+}
+int width=mRight - mLeft;
+int oldHeight=mBottom - mTop;
+mBottom=bottom;
+mRenderNode.setBottom(mBottom);
+sizeChange(width,mBottom - mTop,width,oldHeight);
+if (!matrixIsIdentity) {
+mPrivateFlags|=PFLAG_DRAWN;
+invalidate(true);
+}
+mBackgroundSizeChanged=true;
+mDefaultFocusHighlightSizeChanged=true;
+if (mForegroundInfo != null) {
+mForegroundInfo.mBoundsChanged=true;
+}
+invalidateParentIfNeeded();
+if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
+invalidateParentIfNeeded();
+}
+}
+}
+public final int getLeft(){
+return mLeft;
+}
+public final void setLeft(int left){
+if (left != mLeft) {
+final boolean matrixIsIdentity=hasIdentityMatrix();
+if (matrixIsIdentity) {
+if (mAttachInfo != null) {
+int minLeft;
+int xLoc;
+if (left < mLeft) {
+minLeft=left;
+xLoc=left - mLeft;
+}
  else {
-            minLeft=mLeft;
-            xLoc=0;
-          }
-          invalidate(xLoc,0,mRight - minLeft,mBottom - mTop);
-        }
-      }
+minLeft=mLeft;
+xLoc=0;
+}
+invalidate(xLoc,0,mRight - minLeft,mBottom - mTop);
+}
+}
  else {
-        invalidate(true);
-      }
-      int oldWidth=mRight - mLeft;
-      int height=mBottom - mTop;
-      mLeft=left;
-      mRenderNode.setLeft(left);
-      sizeChange(mRight - mLeft,height,oldWidth,height);
-      if (!matrixIsIdentity) {
-        mPrivateFlags|=PFLAG_DRAWN;
-        invalidate(true);
-      }
-      mBackgroundSizeChanged=true;
-      mDefaultFocusHighlightSizeChanged=true;
-      if (mForegroundInfo != null) {
-        mForegroundInfo.mBoundsChanged=true;
-      }
-      invalidateParentIfNeeded();
-      if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
-        invalidateParentIfNeeded();
-      }
-    }
-  }
-  public final int getRight(){
-    return mRight;
-  }
-  public final void setRight(  int right){
-    if (right != mRight) {
-      final boolean matrixIsIdentity=hasIdentityMatrix();
-      if (matrixIsIdentity) {
-        if (mAttachInfo != null) {
-          int maxRight;
-          if (right < mRight) {
-            maxRight=mRight;
-          }
+invalidate(true);
+}
+int oldWidth=mRight - mLeft;
+int height=mBottom - mTop;
+mLeft=left;
+mRenderNode.setLeft(left);
+sizeChange(mRight - mLeft,height,oldWidth,height);
+if (!matrixIsIdentity) {
+mPrivateFlags|=PFLAG_DRAWN;
+invalidate(true);
+}
+mBackgroundSizeChanged=true;
+mDefaultFocusHighlightSizeChanged=true;
+if (mForegroundInfo != null) {
+mForegroundInfo.mBoundsChanged=true;
+}
+invalidateParentIfNeeded();
+if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
+invalidateParentIfNeeded();
+}
+}
+}
+public final int getRight(){
+return mRight;
+}
+public final void setRight(int right){
+if (right != mRight) {
+final boolean matrixIsIdentity=hasIdentityMatrix();
+if (matrixIsIdentity) {
+if (mAttachInfo != null) {
+int maxRight;
+if (right < mRight) {
+maxRight=mRight;
+}
  else {
-            maxRight=right;
-          }
-          invalidate(0,0,maxRight - mLeft,mBottom - mTop);
-        }
-      }
+maxRight=right;
+}
+invalidate(0,0,maxRight - mLeft,mBottom - mTop);
+}
+}
  else {
-        invalidate(true);
-      }
-      int oldWidth=mRight - mLeft;
-      int height=mBottom - mTop;
-      mRight=right;
-      mRenderNode.setRight(mRight);
-      sizeChange(mRight - mLeft,height,oldWidth,height);
-      if (!matrixIsIdentity) {
-        mPrivateFlags|=PFLAG_DRAWN;
-        invalidate(true);
-      }
-      mBackgroundSizeChanged=true;
-      mDefaultFocusHighlightSizeChanged=true;
-      if (mForegroundInfo != null) {
-        mForegroundInfo.mBoundsChanged=true;
-      }
-      invalidateParentIfNeeded();
-      if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
-        invalidateParentIfNeeded();
-      }
-    }
-  }
-  private static final int PROVIDER_BACKGROUND=0;
-  private static final int PROVIDER_NONE=1;
-  private static final int PROVIDER_BOUNDS=2;
-  private static final int PROVIDER_PADDED_BOUNDS=3;
-  public void offsetTopAndBottom(  int offset){
-    if (offset != 0) {
-      final boolean matrixIsIdentity=hasIdentityMatrix();
-      if (matrixIsIdentity) {
-        if (isHardwareAccelerated()) {
-          invalidateViewProperty(false,false);
-        }
+invalidate(true);
+}
+int oldWidth=mRight - mLeft;
+int height=mBottom - mTop;
+mRight=right;
+mRenderNode.setRight(mRight);
+sizeChange(mRight - mLeft,height,oldWidth,height);
+if (!matrixIsIdentity) {
+mPrivateFlags|=PFLAG_DRAWN;
+invalidate(true);
+}
+mBackgroundSizeChanged=true;
+mDefaultFocusHighlightSizeChanged=true;
+if (mForegroundInfo != null) {
+mForegroundInfo.mBoundsChanged=true;
+}
+invalidateParentIfNeeded();
+if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) == PFLAG2_VIEW_QUICK_REJECTED) {
+invalidateParentIfNeeded();
+}
+}
+}
+private static final int PROVIDER_BACKGROUND=0;
+private static final int PROVIDER_NONE=1;
+private static final int PROVIDER_BOUNDS=2;
+private static final int PROVIDER_PADDED_BOUNDS=3;
+final boolean pointInView(float localX,float localY){
+return pointInView(localX,localY,0);
+}
+public boolean pointInView(float localX,float localY,float slop){
+return localX >= -slop && localY >= -slop && localX < ((mRight - mLeft) + slop) && localY < ((mBottom - mTop) + slop);
+}
+public void offsetTopAndBottom(int offset){
+if (offset != 0) {
+final boolean matrixIsIdentity=hasIdentityMatrix();
+if (matrixIsIdentity) {
+if (isHardwareAccelerated()) {
+invalidateViewProperty(false,false);
+}
  else {
-          final ViewParent p=mParent;
-          if (p != null && mAttachInfo != null) {
-            final Rect r=mAttachInfo.mTmpInvalRect;
-            int minTop;
-            int maxBottom;
-            int yLoc;
-            if (offset < 0) {
-              minTop=mTop + offset;
-              maxBottom=mBottom;
-              yLoc=offset;
-            }
+final ViewParent p=mParent;
+if (p != null && mAttachInfo != null) {
+final Rect r=mAttachInfo.mTmpInvalRect;
+int minTop;
+int maxBottom;
+int yLoc;
+if (offset < 0) {
+minTop=mTop + offset;
+maxBottom=mBottom;
+yLoc=offset;
+}
  else {
-              minTop=mTop;
-              maxBottom=mBottom + offset;
-              yLoc=0;
-            }
-            r.set(0,yLoc,mRight - mLeft,maxBottom - minTop);
-            p.invalidateChild(this,r);
-          }
-        }
-      }
+minTop=mTop;
+maxBottom=mBottom + offset;
+yLoc=0;
+}
+r.set(0,yLoc,mRight - mLeft,maxBottom - minTop);
+p.invalidateChild(this,r);
+}
+}
+}
  else {
-        invalidateViewProperty(false,false);
-      }
-      mTop+=offset;
-      mBottom+=offset;
-      mRenderNode.offsetTopAndBottom(offset);
-      if (isHardwareAccelerated()) {
-        invalidateViewProperty(false,false);
-        invalidateParentIfNeededAndWasQuickRejected();
-      }
+invalidateViewProperty(false,false);
+}
+mTop+=offset;
+mBottom+=offset;
+mRenderNode.offsetTopAndBottom(offset);
+if (isHardwareAccelerated()) {
+invalidateViewProperty(false,false);
+invalidateParentIfNeededAndWasQuickRejected();
+}
  else {
-        if (!matrixIsIdentity) {
-          invalidateViewProperty(false,true);
-        }
-        invalidateParentIfNeeded();
-      }
-      notifySubtreeAccessibilityStateChangedIfNeeded();
-    }
-  }
-  public void offsetLeftAndRight(  int offset){
-    if (offset != 0) {
-      final boolean matrixIsIdentity=hasIdentityMatrix();
-      if (matrixIsIdentity) {
-        if (isHardwareAccelerated()) {
-          invalidateViewProperty(false,false);
-        }
+if (!matrixIsIdentity) {
+invalidateViewProperty(false,true);
+}
+invalidateParentIfNeeded();
+}
+notifySubtreeAccessibilityStateChangedIfNeeded();
+}
+}
+public void offsetLeftAndRight(int offset){
+if (offset != 0) {
+final boolean matrixIsIdentity=hasIdentityMatrix();
+if (matrixIsIdentity) {
+if (isHardwareAccelerated()) {
+invalidateViewProperty(false,false);
+}
  else {
-          final ViewParent p=mParent;
-          if (p != null && mAttachInfo != null) {
-            final Rect r=mAttachInfo.mTmpInvalRect;
-            int minLeft;
-            int maxRight;
-            if (offset < 0) {
-              minLeft=mLeft + offset;
-              maxRight=mRight;
-            }
+final ViewParent p=mParent;
+if (p != null && mAttachInfo != null) {
+final Rect r=mAttachInfo.mTmpInvalRect;
+int minLeft;
+int maxRight;
+if (offset < 0) {
+minLeft=mLeft + offset;
+maxRight=mRight;
+}
  else {
-              minLeft=mLeft;
-              maxRight=mRight + offset;
-            }
-            r.set(0,0,maxRight - minLeft,mBottom - mTop);
-            p.invalidateChild(this,r);
-          }
-        }
-      }
+minLeft=mLeft;
+maxRight=mRight + offset;
+}
+r.set(0,0,maxRight - minLeft,mBottom - mTop);
+p.invalidateChild(this,r);
+}
+}
+}
  else {
-        invalidateViewProperty(false,false);
-      }
-      mLeft+=offset;
-      mRight+=offset;
-      mRenderNode.offsetLeftAndRight(offset);
-      if (isHardwareAccelerated()) {
-        invalidateViewProperty(false,false);
-        invalidateParentIfNeededAndWasQuickRejected();
-      }
+invalidateViewProperty(false,false);
+}
+mLeft+=offset;
+mRight+=offset;
+mRenderNode.offsetLeftAndRight(offset);
+if (isHardwareAccelerated()) {
+invalidateViewProperty(false,false);
+invalidateParentIfNeededAndWasQuickRejected();
+}
  else {
-        if (!matrixIsIdentity) {
-          invalidateViewProperty(false,true);
-        }
-        invalidateParentIfNeeded();
-      }
-      notifySubtreeAccessibilityStateChangedIfNeeded();
-    }
-  }
-  public ViewGroup.LayoutParams getLayoutParams(){
-    return mLayoutParams;
-  }
-  public void setLayoutParams(  ViewGroup.LayoutParams params){
-    if (params == null) {
-      throw new NullPointerException("Layout parameters cannot be null");
-    }
-    mLayoutParams=params;
-    resolveLayoutParams();
-    if (mParent instanceof ViewGroup) {
-      ((ViewGroup)mParent).onSetLayoutParams(this,params);
-    }
-    requestLayout();
-  }
-  public void resolveLayoutParams(){
-    if (mLayoutParams != null) {
-      mLayoutParams.resolveLayoutDirection(getLayoutDirection());
-    }
-  }
-  private boolean skipInvalidate(){
-    return (mViewFlags & VISIBILITY_MASK) != VISIBLE && mCurrentAnimation == null && (!(mParent instanceof ViewGroup) || !((ViewGroup)mParent).isViewTransitioning(this));
-  }
-  public void invalidate(  Rect dirty){
-    final int scrollX=mScrollX;
-    final int scrollY=mScrollY;
-    invalidateInternal(dirty.left - scrollX,dirty.top - scrollY,dirty.right - scrollX,dirty.bottom - scrollY,true,false);
-  }
-  public void invalidate(  int l,  int t,  int r,  int b){
-    final int scrollX=mScrollX;
-    final int scrollY=mScrollY;
-    invalidateInternal(l - scrollX,t - scrollY,r - scrollX,b - scrollY,true,false);
-  }
-  public void invalidate(){
-    invalidate(true);
-  }
-  public void invalidate(  boolean invalidateCache){
-    invalidateInternal(0,0,mRight - mLeft,mBottom - mTop,invalidateCache,true);
-  }
-  void invalidateInternal(  int l,  int t,  int r,  int b,  boolean invalidateCache,  boolean fullInvalidate){
-    if (mGhostView != null) {
-      mGhostView.invalidate(true);
-      return;
-    }
-    if (skipInvalidate()) {
-      return;
-    }
-    if ((mPrivateFlags & (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)) == (PFLAG_DRAWN | PFLAG_HAS_BOUNDS) || (invalidateCache && (mPrivateFlags & PFLAG_DRAWING_CACHE_VALID) == PFLAG_DRAWING_CACHE_VALID) || (mPrivateFlags & PFLAG_INVALIDATED) != PFLAG_INVALIDATED || (fullInvalidate && isOpaque() != mLastIsOpaque)) {
-      if (fullInvalidate) {
-        mLastIsOpaque=isOpaque();
-        mPrivateFlags&=~PFLAG_DRAWN;
-      }
-      mPrivateFlags|=PFLAG_DIRTY;
-      if (invalidateCache) {
-        mPrivateFlags|=PFLAG_INVALIDATED;
-        mPrivateFlags&=~PFLAG_DRAWING_CACHE_VALID;
-      }
-      final AttachInfo ai=mAttachInfo;
-      final ViewParent p=mParent;
-      if (p != null && ai != null && l < r && t < b) {
-        final Rect damage=ai.mTmpInvalRect;
-        damage.set(l,t,r,b);
-        p.invalidateChild(this,damage);
-      }
-      if (mBackground != null && mBackground.isProjected()) {
-        final View receiver=getProjectionReceiver();
-        if (receiver != null) {
-          receiver.damageInParent();
-        }
-      }
-    }
-  }
-  private View getProjectionReceiver(){
-    ViewParent p=getParent();
-    while (p != null && p instanceof View) {
-      final View v=(View)p;
-      if (v.isProjectionReceiver()) {
-        return v;
-      }
-      p=p.getParent();
-    }
-    return null;
-  }
-  private boolean isProjectionReceiver(){
-    return mBackground != null;
-  }
-  void invalidateViewProperty(  boolean invalidateParent,  boolean forceRedraw){
-    if (!isHardwareAccelerated() || !mRenderNode.isValid() || (mPrivateFlags & PFLAG_DRAW_ANIMATION) != 0) {
-      if (invalidateParent) {
-        invalidateParentCaches();
-      }
-      if (forceRedraw) {
-        mPrivateFlags|=PFLAG_DRAWN;
-      }
-      invalidate(false);
-    }
+if (!matrixIsIdentity) {
+invalidateViewProperty(false,true);
+}
+invalidateParentIfNeeded();
+}
+notifySubtreeAccessibilityStateChangedIfNeeded();
+}
+}
+public ViewGroup.LayoutParams getLayoutParams(){
+return mLayoutParams;
+}
+public void setLayoutParams(ViewGroup.LayoutParams params){
+if (params == null) {
+throw new NullPointerException("Layout parameters cannot be null");
+}
+mLayoutParams=params;
+resolveLayoutParams();
+if (mParent instanceof ViewGroup) {
+((ViewGroup)mParent).onSetLayoutParams(this,params);
+}
+requestLayout();
+}
+public void resolveLayoutParams(){
+if (mLayoutParams != null) {
+mLayoutParams.resolveLayoutDirection(getLayoutDirection());
+}
+}
+private boolean skipInvalidate(){
+return (mViewFlags & VISIBILITY_MASK) != VISIBLE && mCurrentAnimation == null && (!(mParent instanceof ViewGroup) || !((ViewGroup)mParent).isViewTransitioning(this));
+}
+public void invalidate(Rect dirty){
+final int scrollX=mScrollX;
+final int scrollY=mScrollY;
+invalidateInternal(dirty.left - scrollX,dirty.top - scrollY,dirty.right - scrollX,dirty.bottom - scrollY,true,false);
+}
+public void invalidate(int l,int t,int r,int b){
+final int scrollX=mScrollX;
+final int scrollY=mScrollY;
+invalidateInternal(l - scrollX,t - scrollY,r - scrollX,b - scrollY,true,false);
+}
+public void invalidate(){
+invalidate(true);
+}
+public void invalidate(boolean invalidateCache){
+invalidateInternal(0,0,mRight - mLeft,mBottom - mTop,invalidateCache,true);
+}
+void invalidateInternal(int l,int t,int r,int b,boolean invalidateCache,boolean fullInvalidate){
+if (mGhostView != null) {
+mGhostView.invalidate(true);
+return;
+}
+if (skipInvalidate()) {
+return;
+}
+if ((mPrivateFlags & (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)) == (PFLAG_DRAWN | PFLAG_HAS_BOUNDS) || (invalidateCache && (mPrivateFlags & PFLAG_DRAWING_CACHE_VALID) == PFLAG_DRAWING_CACHE_VALID) || (mPrivateFlags & PFLAG_INVALIDATED) != PFLAG_INVALIDATED || (fullInvalidate && isOpaque() != mLastIsOpaque)) {
+if (fullInvalidate) {
+mLastIsOpaque=isOpaque();
+mPrivateFlags&=~PFLAG_DRAWN;
+}
+mPrivateFlags|=PFLAG_DIRTY;
+if (invalidateCache) {
+mPrivateFlags|=PFLAG_INVALIDATED;
+mPrivateFlags&=~PFLAG_DRAWING_CACHE_VALID;
+}
+final AttachInfo ai=mAttachInfo;
+final ViewParent p=mParent;
+if (p != null && ai != null && l < r && t < b) {
+final Rect damage=ai.mTmpInvalRect;
+damage.set(l,t,r,b);
+p.invalidateChild(this,damage);
+}
+if (mBackground != null && mBackground.isProjected()) {
+final View receiver=getProjectionReceiver();
+if (receiver != null) {
+receiver.damageInParent();
+}
+}
+}
+}
+private View getProjectionReceiver(){
+ViewParent p=getParent();
+while (p != null && p instanceof View) {
+final View v=(View)p;
+if (v.isProjectionReceiver()) {
+return v;
+}
+p=p.getParent();
+}
+return null;
+}
+private boolean isProjectionReceiver(){
+return mBackground != null;
+}
+void invalidateViewProperty(boolean invalidateParent,boolean forceRedraw){
+if (!isHardwareAccelerated() || !mRenderNode.isValid() || (mPrivateFlags & PFLAG_DRAW_ANIMATION) != 0) {
+if (invalidateParent) {
+invalidateParentCaches();
+}
+if (forceRedraw) {
+mPrivateFlags|=PFLAG_DRAWN;
+}
+invalidate(false);
+}
  else {
-      damageInParent();
-    }
-  }
-  protected void invalidateParentCaches(){
-    if (mParent instanceof View) {
-      ((View)mParent).mPrivateFlags|=PFLAG_INVALIDATED;
-    }
-  }
-  protected void invalidateParentIfNeeded(){
-    if (isHardwareAccelerated() && mParent instanceof View) {
-      ((View)mParent).invalidate(true);
-    }
-  }
-  protected void invalidateParentIfNeededAndWasQuickRejected(){
-    if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) != 0) {
-      invalidateParentIfNeeded();
-    }
-  }
-  public boolean isOpaque(){
-    return (mPrivateFlags & PFLAG_OPAQUE_MASK) == PFLAG_OPAQUE_MASK && getFinalAlpha() >= 1.0f;
-  }
-  public ViewRootImpl getViewRootImpl(){
-    if (mAttachInfo != null) {
-      return mAttachInfo.mViewRootImpl;
-    }
-    return null;
-  }
-  public boolean post(  Runnable action){
-    final AttachInfo attachInfo=mAttachInfo;
-    if (attachInfo != null) {
-      return attachInfo.mHandler.post(action);
-    }
-    getRunQueue().post(action);
-    return true;
-  }
-  public boolean removeCallbacks(  Runnable action){
-    if (action != null) {
-      final AttachInfo attachInfo=mAttachInfo;
-      if (attachInfo != null) {
-        attachInfo.mHandler.removeCallbacks(action);
-        //attachInfo.mViewRootImpl.mChoreographer.removeCallbacks(Choreographer.CALLBACK_ANIMATION,action,null);
-      }
-      getRunQueue().removeCallbacks(action);
-    }
-    return true;
-  }
-  protected int computeHorizontalScrollRange(){
-    return getWidth();
-  }
-  protected int computeHorizontalScrollOffset(){
-    return mScrollX;
-  }
-  protected int computeHorizontalScrollExtent(){
-    return getWidth();
-  }
-  protected int computeVerticalScrollRange(){
-    return getHeight();
-  }
-  protected int computeVerticalScrollOffset(){
-    return mScrollY;
-  }
-  protected int computeVerticalScrollExtent(){
-    return getHeight();
-  }
-  public boolean canScrollHorizontally(  int direction){
-    final int offset=computeHorizontalScrollOffset();
-    final int range=computeHorizontalScrollRange() - computeHorizontalScrollExtent();
-    if (range == 0)     return false;
-    if (direction < 0) {
-      return offset > 0;
-    }
+damageInParent();
+}
+}
+protected void invalidateParentCaches(){
+if (mParent instanceof View) {
+((View)mParent).mPrivateFlags|=PFLAG_INVALIDATED;
+}
+}
+protected void invalidateParentIfNeeded(){
+if (isHardwareAccelerated() && mParent instanceof View) {
+((View)mParent).invalidate(true);
+}
+}
+protected void invalidateParentIfNeededAndWasQuickRejected(){
+if ((mPrivateFlags2 & PFLAG2_VIEW_QUICK_REJECTED) != 0) {
+invalidateParentIfNeeded();
+}
+}
+public boolean isOpaque(){
+return (mPrivateFlags & PFLAG_OPAQUE_MASK) == PFLAG_OPAQUE_MASK && getFinalAlpha() >= 1.0f;
+}
+public ViewRootImpl getViewRootImpl(){
+if (mAttachInfo != null) {
+return mAttachInfo.mViewRootImpl;
+}
+return null;
+}
+public boolean post(Runnable action){
+final AttachInfo attachInfo=mAttachInfo;
+if (attachInfo != null) {
+return attachInfo.mHandler.post(action);
+}
+getRunQueue().post(action);
+return true;
+}
+public boolean postDelayed(Runnable action,long delayMillis){
+final AttachInfo attachInfo=mAttachInfo;
+if (attachInfo != null) {
+return attachInfo.mHandler.postDelayed(action,delayMillis);
+}
+getRunQueue().postDelayed(action,delayMillis);
+return true;
+}
+public boolean removeCallbacks(Runnable action){
+if (action != null) {
+final AttachInfo attachInfo=mAttachInfo;
+if (attachInfo != null) {
+attachInfo.mHandler.removeCallbacks(action);
+//attachInfo.mViewRootImpl.mChoreographer.removeCallbacks(Choreographer.CALLBACK_ANIMATION,action,null);
+}
+getRunQueue().removeCallbacks(action);
+}
+return true;
+}
+protected int computeHorizontalScrollRange(){
+return getWidth();
+}
+protected int computeHorizontalScrollOffset(){
+return mScrollX;
+}
+protected int computeHorizontalScrollExtent(){
+return getWidth();
+}
+protected int computeVerticalScrollRange(){
+return getHeight();
+}
+protected int computeVerticalScrollOffset(){
+return mScrollY;
+}
+protected int computeVerticalScrollExtent(){
+return getHeight();
+}
+public boolean canScrollHorizontally(int direction){
+final int offset=computeHorizontalScrollOffset();
+final int range=computeHorizontalScrollRange() - computeHorizontalScrollExtent();
+if (range == 0) return false;
+if (direction < 0) {
+return offset > 0;
+}
  else {
-      return offset < range - 1;
-    }
-  }
-  public boolean canScrollVertically(  int direction){
-    final int offset=computeVerticalScrollOffset();
-    final int range=computeVerticalScrollRange() - computeVerticalScrollExtent();
-    if (range == 0)     return false;
-    if (direction < 0) {
-      return offset > 0;
-    }
+return offset < range - 1;
+}
+}
+public boolean canScrollVertically(int direction){
+final int offset=computeVerticalScrollOffset();
+final int range=computeVerticalScrollRange() - computeVerticalScrollExtent();
+if (range == 0) return false;
+if (direction < 0) {
+return offset > 0;
+}
  else {
-      return offset < range - 1;
-    }
-  }
-  void assignParent(  ViewParent parent){
-    if (mParent == null) {
-      mParent=parent;
-    }
- else     if (parent == null) {
-      mParent=null;
-    }
+return offset < range - 1;
+}
+}
+void assignParent(ViewParent parent){
+if (mParent == null) {
+mParent=parent;
+}
+ else if (parent == null) {
+mParent=null;
+}
  else {
-      throw new RuntimeException("view " + this + " being added, but"+ " it already has a parent");
-    }
-  }
-  public boolean resolveRtlPropertiesIfNeeded(){
-    if (!needRtlPropertiesResolution())     return false;
-    if (!isLayoutDirectionResolved()) {
-      resolveLayoutDirection();
-      resolveLayoutParams();
-    }
-    if (!isTextDirectionResolved()) {
-      resolveTextDirection();
-    }
-    if (!isTextAlignmentResolved()) {
-      resolveTextAlignment();
-    }
-    if (!areDrawablesResolved()) {
-      resolveDrawables();
-    }
-    if (!isPaddingResolved()) {
-      resolvePadding();
-    }
-    onRtlPropertiesChanged(getLayoutDirection());
-    return true;
-  }
-  public void resetRtlProperties(){
-    resetResolvedLayoutDirection();
-    resetResolvedTextDirection();
-    resetResolvedTextAlignment();
-    resetResolvedPadding();
-    resetResolvedDrawables();
-  }
-  private boolean needRtlPropertiesResolution(){
-    return (mPrivateFlags2 & ALL_RTL_PROPERTIES_RESOLVED) != ALL_RTL_PROPERTIES_RESOLVED;
-  }
-  public void onRtlPropertiesChanged(  int layoutDirection){
-  }
-  public boolean resolveLayoutDirection(){
-    mPrivateFlags2&=~PFLAG2_LAYOUT_DIRECTION_RESOLVED_MASK;
-    if (hasRtlSupport()) {
+throw new RuntimeException("view " + this + " being added, but"+ " it already has a parent");
+}
+}
+public boolean resolveRtlPropertiesIfNeeded(){
+if (!needRtlPropertiesResolution()) return false;
+if (!isLayoutDirectionResolved()) {
+resolveLayoutDirection();
+resolveLayoutParams();
+}
+if (!isTextDirectionResolved()) {
+resolveTextDirection();
+}
+if (!isTextAlignmentResolved()) {
+resolveTextAlignment();
+}
+if (!areDrawablesResolved()) {
+resolveDrawables();
+}
+if (!isPaddingResolved()) {
+resolvePadding();
+}
+onRtlPropertiesChanged(getLayoutDirection());
+return true;
+}
+public void resetRtlProperties(){
+resetResolvedLayoutDirection();
+resetResolvedTextDirection();
+resetResolvedTextAlignment();
+resetResolvedPadding();
+resetResolvedDrawables();
+}
+private boolean needRtlPropertiesResolution(){
+return (mPrivateFlags2 & ALL_RTL_PROPERTIES_RESOLVED) != ALL_RTL_PROPERTIES_RESOLVED;
+}
+public void onRtlPropertiesChanged(int layoutDirection){
+}
+public boolean resolveLayoutDirection(){
+mPrivateFlags2&=~PFLAG2_LAYOUT_DIRECTION_RESOLVED_MASK;
+if (hasRtlSupport()) {
 switch ((mPrivateFlags2 & PFLAG2_LAYOUT_DIRECTION_MASK) >> PFLAG2_LAYOUT_DIRECTION_MASK_SHIFT) {
 case LAYOUT_DIRECTION_INHERIT:
-        if (!canResolveLayoutDirection())         return false;
-      try {
-        if (!mParent.isLayoutDirectionResolved())         return false;
-        if (mParent.getLayoutDirection() == LAYOUT_DIRECTION_RTL) {
-          mPrivateFlags2|=PFLAG2_LAYOUT_DIRECTION_RESOLVED_RTL;
-        }
-      }
- catch (      AbstractMethodError e) {
-        Log.e(VIEW_LOG_TAG,mParent.getClass().getSimpleName() + " does not fully implement ViewParent",e);
-      }
-    break;
+if (!canResolveLayoutDirection()) return false;
+try {
+if (!mParent.isLayoutDirectionResolved()) return false;
+if (mParent.getLayoutDirection() == LAYOUT_DIRECTION_RTL) {
+mPrivateFlags2|=PFLAG2_LAYOUT_DIRECTION_RESOLVED_RTL;
+}
+}
+ catch (AbstractMethodError e) {
+Log.e(VIEW_LOG_TAG,mParent.getClass().getSimpleName() + " does not fully implement ViewParent",e);
+}
+break;
 case LAYOUT_DIRECTION_RTL:
-  mPrivateFlags2|=PFLAG2_LAYOUT_DIRECTION_RESOLVED_RTL;
+mPrivateFlags2|=PFLAG2_LAYOUT_DIRECTION_RESOLVED_RTL;
 break;
 case LAYOUT_DIRECTION_LOCALE:
 if ((LAYOUT_DIRECTION_RTL == TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()))) {
@@ -2036,6 +2306,18 @@ public void setMinimumWidth(int minWidth){
 mMinWidth=minWidth;
 requestLayout();
 }
+private void checkForLongClick(int delayOffset,float x,float y){
+if ((mViewFlags & LONG_CLICKABLE) == LONG_CLICKABLE || (mViewFlags & TOOLTIP) == TOOLTIP) {
+mHasPerformedLongPress=false;
+if (mPendingCheckForLongPress == null) {
+mPendingCheckForLongPress=new CheckForLongPress();
+}
+mPendingCheckForLongPress.setAnchor(x,y);
+mPendingCheckForLongPress.rememberWindowAttachCount();
+mPendingCheckForLongPress.rememberPressedState();
+postDelayed(mPendingCheckForLongPress,ViewConfiguration.getLongPressTimeout() - delayOffset);
+}
+}
 public boolean isNestedScrollingEnabled(){
 return (mPrivateFlags3 & PFLAG3_NESTED_SCROLLING_ENABLED) == PFLAG3_NESTED_SCROLLING_ENABLED;
 }
@@ -2368,6 +2650,49 @@ sb.append(size);
 return sb.toString();
 }
 }
+private final class CheckForLongPress implements Runnable {
+private int mOriginalWindowAttachCount;
+private float mX;
+private float mY;
+private boolean mOriginalPressedState;
+public void run(){
+if ((mOriginalPressedState == isPressed()) && (mParent != null) && mOriginalWindowAttachCount == mWindowAttachCount) {
+if (performLongClick(mX,mY)) {
+mHasPerformedLongPress=true;
+}
+}
+}
+public void setAnchor(float x,float y){
+mX=x;
+mY=y;
+}
+public void rememberWindowAttachCount(){
+mOriginalWindowAttachCount=mWindowAttachCount;
+}
+public void rememberPressedState(){
+mOriginalPressedState=isPressed();
+}
+}
+private final class CheckForTap implements Runnable {
+public float x;
+public float y;
+public void run(){
+mPrivateFlags&=~PFLAG_PREPRESSED;
+setPressed(true,x,y);
+checkForLongClick(ViewConfiguration.getTapTimeout(),x,y);
+}
+}
+private final class PerformClick implements Runnable {
+public void run(){
+performClickInternal();
+}
+}
+public ViewPropertyAnimator animate(){
+if (mAnimator == null) {
+mAnimator=new ViewPropertyAnimator(this);
+}
+return mAnimator;
+}
 public interface OnKeyListener {
 boolean onKey(View v,int keyCode,KeyEvent event);
 }
@@ -2396,6 +2721,11 @@ public interface OnAttachStateChangeListener {
 public void onViewAttachedToWindow(View v);
 public void onViewDetachedFromWindow(View v);
 }
+private final class UnsetPressedState implements Runnable {
+public void run(){
+setPressed(false);
+}
+}
 private Object mCurrentAnimation;
 private View mGhostView=null;
 protected RenderNode mRenderNode=new RenderNode();
@@ -2405,6 +2735,41 @@ public View(){
 mViewFlags=SOUND_EFFECTS_ENABLED | HAPTIC_FEEDBACK_ENABLED;
 mContext=new r.android.content.Context();
 mPrivateFlags2=(LAYOUT_DIRECTION_DEFAULT << PFLAG2_LAYOUT_DIRECTION_MASK_SHIFT) | (TEXT_DIRECTION_DEFAULT << PFLAG2_TEXT_DIRECTION_MASK_SHIFT) | (PFLAG2_TEXT_DIRECTION_RESOLVED_DEFAULT)| (TEXT_ALIGNMENT_DEFAULT << PFLAG2_TEXT_ALIGNMENT_MASK_SHIFT)| (PFLAG2_TEXT_ALIGNMENT_RESOLVED_DEFAULT)| (IMPORTANT_FOR_ACCESSIBILITY_DEFAULT << PFLAG2_IMPORTANT_FOR_ACCESSIBILITY_SHIFT);
+}
+private boolean showLongClickTooltip(int x,int y){
+return false;
+}
+private boolean showContextMenu(float x,float y){
+return false;
+}
+public boolean setAlphaNoInvalidation(float value){
+setAlpha(value);
+return true;
+}
+private boolean showContextMenu(){
+return false;
+}
+protected boolean isInScrollingContainer(){
+return false;
+}
+private void notifyAutofillManagerOnClick(){
+}
+private void handleTooltipUp(){
+}
+private boolean isFocusableInTouchMode(){
+return false;
+}
+public boolean isAccessibilityFocusedViewOrHost(){
+return false;
+}
+public View findChildWithAccessibilityFocus(){
+return null;
+}
+public boolean onFilterTouchEventForSecurity(MotionEvent e){
+return true;
+}
+private boolean handleScrollBarDragging(MotionEvent e){
+return false;
 }
 public int getX(){
 return mLeft;
@@ -2461,76 +2826,108 @@ return new r.android.content.res.Resources();
 public boolean isInEditMode(){
 return false;
 }
+private float alpha=1;
 public float getAlpha(){
-return 1;
+return this.alpha;
 }
+private float rotation;
 public float getRotation(){
-return 0;
+return rotation;
 }
+private float rotationZ;
+public float getRotationZ(){
+return rotationZ;
+}
+private float rotationX;
 public float getRotationX(){
-return 0;
+return rotationX;
 }
+private float rotationY;
 public float getRotationY(){
-return 0;
+return rotationY;
 }
+private float scaleX=1;
 public float getScaleX(){
-return 1;
+return scaleX;
 }
+private float scaleY=1;
 public float getScaleY(){
-return 1;
+return scaleY;
 }
+private float transformPivotX;
 public float getPivotX(){
-return 0;
+return transformPivotX;
 }
+private float transformPivotY;
 public float getPivotY(){
-return 0;
+return transformPivotY;
 }
+private float translationX;
 public float getTranslationX(){
-return 0;
+return translationX;
 }
+private float translationY;
 public float getTranslationY(){
-return 0;
+return translationY;
 }
+private float translationZ;
 public float getTranslationZ(){
-return 0;
+return translationZ;
 }
+private float elevation;
 public float getElevation(){
-return 0;
+return elevation;
 }
 public void setAlpha(float alpha){
+this.alpha=alpha;
 setMyAttribute("alpha",alpha);
 }
 public void setRotation(float rotation){
+this.rotation=rotation;
 setMyAttribute("rotation",rotation);
 }
 public void setRotationX(float rotationX){
+this.rotationX=rotationX;
 setMyAttribute("rotationX",rotationX);
 }
 public void setRotationY(float rotationY){
+this.rotationY=rotationY;
 setMyAttribute("rotationY",rotationY);
 }
+public void setRotationZ(float rotationZ){
+this.rotationZ=rotationZ;
+setMyAttribute("rotationZ",rotationZ);
+}
 public void setScaleX(float scaleX){
+this.scaleX=scaleX;
 setMyAttribute("scaleX",scaleX);
 }
 public void setScaleY(float scaleY){
+this.scaleY=scaleY;
 setMyAttribute("scaleY",scaleY);
 }
 public void setPivotX(float transformPivotX){
+this.transformPivotX=transformPivotX;
 setMyAttribute("transformPivotX",transformPivotX);
 }
 public void setPivotY(float transformPivotY){
+this.transformPivotY=transformPivotY;
 setMyAttribute("transformPivotY",transformPivotY);
 }
 public void setTranslationX(float translationX){
+this.translationX=translationX;
 setMyAttribute("translationX",translationX);
 }
 public void setTranslationY(float translationY){
+this.translationY=translationY;
 setMyAttribute("translationY",translationY);
 }
 public void setTranslationZ(float translationZ){
+this.translationZ=translationZ;
 setMyAttribute("translationZ",translationZ);
 }
 public void setElevation(float elevation){
+this.elevation=elevation;
 setMyAttribute("elevation",elevation);
 }
 public boolean hasUnhandledKeyListener(){
@@ -2659,6 +3056,9 @@ post(() -> transition.startChangingAnimations());
 }
 ListenerInfo mListenerInfo;
 class ListenerInfo {
+private OnTouchListener mOnTouchListener;
+protected OnClickListener mOnClickListener;
+protected OnLongClickListener mOnLongClickListener;
 public CopyOnWriteArrayList<OnAttachStateChangeListener> mOnAttachStateChangeListeners;
 ArrayList<OnLayoutChangeListener> mOnLayoutChangeListeners;
 OnKeyListener mOnKeyListener;
@@ -2889,7 +3289,7 @@ return mForegroundInfo.mOverlayBounds;
 }
 return null;
 }
-public void onAttachedToWindow(){
+protected void onAttachedToWindow(){
 }
 public class TintInfo {
 public boolean mHasTintList;
@@ -2969,29 +3369,32 @@ setFlags(GONE,VISIBILITY_MASK);
 setFlags(VISIBLE,VISIBILITY_MASK);
 }
 }
-public boolean onTouchEvent(MotionEvent event){
-return false;
+int action=0;
+long downTime=0;
+public void onTouchEventMove(int x,int y,int rawX,int rawY){
+if (action == 1) {
+MotionEvent me=MotionEvent.obtain(downTime,System.currentTimeMillis(),MotionEvent.ACTION_MOVE,x,y,0);
+me.setRawX(rawX);
+me.setRawY(rawY);
+dispatchTouchEvent(me);
 }
-private MotionEvent motionEvent;
-public void onTouchEventMove(int x,int y){
-initMotionEvent(x,y,MotionEvent.ACTION_MOVE);
-onTouchEvent(motionEvent);
 }
-private void initMotionEvent(int x,int y,int action){
-if (motionEvent == null) {
-motionEvent=new MotionEvent();
+public void onTouchEventDown(int x,int y,int rawX,int rawY){
+action=1;
+downTime=System.currentTimeMillis();
+MotionEvent me=MotionEvent.obtain(downTime,System.currentTimeMillis(),MotionEvent.ACTION_DOWN,x,y,0);
+me.setRawX(rawX);
+me.setRawY(rawY);
+dispatchTouchEvent(me);
 }
-motionEvent.setX(x);
-motionEvent.setX(y);
-motionEvent.setAction(action);
+public void onTouchEventUp(int x,int y,int rawX,int rawY){
+if (action == 1) {
+MotionEvent me=MotionEvent.obtain(downTime,System.currentTimeMillis(),MotionEvent.ACTION_UP,x,y,0);
+me.setRawX(rawX);
+me.setRawY(rawY);
+dispatchTouchEvent(me);
+action=0;
 }
-public void onTouchEventDown(int x,int y){
-initMotionEvent(x,y,MotionEvent.ACTION_DOWN);
-onTouchEvent(motionEvent);
-}
-public void onTouchEventUp(int x,int y){
-initMotionEvent(x,y,MotionEvent.ACTION_UP);
-onTouchEvent(motionEvent);
 }
 private boolean hasOnTouchEvent;
 public boolean hasOnTouchEvent(){
@@ -3002,6 +3405,9 @@ this.hasOnTouchEvent=hasOnTouchEvent;
 }
 public void postOnAnimation(Runnable action){
 getRunQueue().post(action);
+}
+public void postOnAnimationDelayed(Runnable action,long delayMillis){
+getRunQueue().postDelayed(action,delayMillis);
 }
 public void clearAnimation(){
 if (this.animation != null) {
@@ -3019,5 +3425,14 @@ if (this instanceof com.ashera.widget.ILifeCycleDecorator) {
 return ((com.ashera.widget.ILifeCycleDecorator)this).getWidget();
 }
 throw new RuntimeException("view does not implement ILifeCycleDecorator.");
+}
+class TouchDelegate {
+public boolean onTouchEvent(MotionEvent event){
+return false;
+}
+}
+class InputDevice {
+public static final int SOURCE_TOUCHSCREEN=1;
+public static final int SOURCE_MOUSE=2;
 }
 }

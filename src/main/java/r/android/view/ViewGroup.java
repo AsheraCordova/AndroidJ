@@ -31,11 +31,15 @@
 package r.android.view;
 import r.android.animation.LayoutTransition;
 import r.android.graphics.Insets;
+import r.android.graphics.PointF;
 import r.android.graphics.Rect;
+import r.android.os.SystemClock;
+import r.android.util.Log;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 public abstract class ViewGroup extends View implements ViewParent {
+  private static final String TAG="ViewGroup";
   private static final boolean DBG=false;
   protected ArrayList<View> mDisappearingChildren;
   protected OnHierarchyChangeListener mOnHierarchyChangeListener;
@@ -45,8 +49,12 @@ public abstract class ViewGroup extends View implements ViewParent {
   private DragEvent mCurrentDragStartEvent;
   private boolean mIsInterestedInDrag;
   private HashSet<View> mChildrenInterestedInDrag;
+  private float[] mTempPoint;
+  private TouchTarget mFirstTouchTarget;
   private long mLastTouchDownTime;
   private int mLastTouchDownIndex=-1;
+  private float mLastTouchDownX;
+  private float mLastTouchDownY;
   private boolean mHoveredSelf;
   private boolean mTooltipHoveredSelf;
   protected int mGroupFlags;
@@ -101,11 +109,30 @@ public abstract class ViewGroup extends View implements ViewParent {
   private LayoutTransition mTransition;
   private ArrayList<View> mTransitioningViews;
   private ArrayList<View> mVisibilityChangingChildren;
+  private ArrayList<View> mPreSortedChildren;
   private int mChildCountWithTransientState=0;
   private int mNestedScrollAxes;
   private List<Integer> mTransientIndices=null;
   private List<View> mTransientViews=null;
   int mChildUnhandledKeyListeners=0;
+  public void childHasTransientStateChanged(  View child,  boolean childHasTransientState){
+    final boolean oldHasTransientState=hasTransientState();
+    if (childHasTransientState) {
+      mChildCountWithTransientState++;
+    }
+ else {
+      mChildCountWithTransientState--;
+    }
+    final boolean newHasTransientState=hasTransientState();
+    if (mParent != null && oldHasTransientState != newHasTransientState) {
+      try {
+        mParent.childHasTransientStateChanged(this,newHasTransientState);
+      }
+ catch (      AbstractMethodError e) {
+        Log.e(TAG,mParent.getClass().getSimpleName() + " does not fully implement ViewParent",e);
+      }
+    }
+  }
   protected void onChildVisibilityChanged(  View child,  int oldVisibility,  int newVisibility){
     if (mTransition != null) {
       if (newVisibility == VISIBLE) {
@@ -128,6 +155,352 @@ public abstract class ViewGroup extends View implements ViewParent {
       }
     }
   }
+  private int getAndVerifyPreorderedIndex(  int childrenCount,  int i,  boolean customOrder){
+    final int childIndex;
+    if (customOrder) {
+      final int childIndex1=getChildDrawingOrder(childrenCount,i);
+      if (childIndex1 >= childrenCount) {
+        throw new IndexOutOfBoundsException("getChildDrawingOrder() " + "returned invalid index " + childIndex1 + " (child count is "+ childrenCount+ ")");
+      }
+      childIndex=childIndex1;
+    }
+ else {
+      childIndex=i;
+    }
+    return childIndex;
+  }
+  public boolean dispatchTouchEvent(  MotionEvent ev){
+    if (false) {
+      //mInputEventConsistencyVerifier.onTouchEvent(ev,1);
+    }
+    if (ev.isTargetAccessibilityFocus() && isAccessibilityFocusedViewOrHost()) {
+      ev.setTargetAccessibilityFocus(false);
+    }
+    boolean handled=false;
+    if (onFilterTouchEventForSecurity(ev)) {
+      final int action=ev.getAction();
+      final int actionMasked=action & MotionEvent.ACTION_MASK;
+      if (actionMasked == MotionEvent.ACTION_DOWN) {
+        cancelAndClearTouchTargets(ev);
+        resetTouchState();
+      }
+      final boolean intercepted;
+      if (actionMasked == MotionEvent.ACTION_DOWN || mFirstTouchTarget != null) {
+        final boolean disallowIntercept=(mGroupFlags & FLAG_DISALLOW_INTERCEPT) != 0;
+        if (!disallowIntercept) {
+          intercepted=onInterceptTouchEvent(ev);
+          ev.setAction(action);
+        }
+ else {
+          intercepted=false;
+        }
+      }
+ else {
+        intercepted=true;
+      }
+      if (intercepted || mFirstTouchTarget != null) {
+        ev.setTargetAccessibilityFocus(false);
+      }
+      final boolean canceled=resetCancelNextUpFlag(this) || actionMasked == MotionEvent.ACTION_CANCEL;
+      final boolean split=(mGroupFlags & FLAG_SPLIT_MOTION_EVENTS) != 0;
+      TouchTarget newTouchTarget=null;
+      boolean alreadyDispatchedToNewTouchTarget=false;
+      if (!canceled && !intercepted) {
+        View childWithAccessibilityFocus=ev.isTargetAccessibilityFocus() ? findChildWithAccessibilityFocus() : null;
+        if (actionMasked == MotionEvent.ACTION_DOWN || (split && actionMasked == MotionEvent.ACTION_POINTER_DOWN) || actionMasked == MotionEvent.ACTION_HOVER_MOVE) {
+          final int actionIndex=ev.getActionIndex();
+          final int idBitsToAssign=split ? 1 << ev.getPointerId(actionIndex) : TouchTarget.ALL_POINTER_IDS;
+          removePointersFromTouchTargets(idBitsToAssign);
+          final int childrenCount=mChildrenCount;
+          if (newTouchTarget == null && childrenCount != 0) {
+            final float x=ev.getX(actionIndex);
+            final float y=ev.getY(actionIndex);
+            final ArrayList<View> preorderedList=buildTouchDispatchChildList();
+            final boolean customOrder=preorderedList == null && isChildrenDrawingOrderEnabled();
+            final View[] children=mChildren;
+            for (int i=childrenCount - 1; i >= 0; i--) {
+              final int childIndex=getAndVerifyPreorderedIndex(childrenCount,i,customOrder);
+              final View child=getAndVerifyPreorderedView(preorderedList,children,childIndex);
+              if (childWithAccessibilityFocus != null) {
+                if (childWithAccessibilityFocus != child) {
+                  continue;
+                }
+                childWithAccessibilityFocus=null;
+                i=childrenCount - 1;
+              }
+              if (!canViewReceivePointerEvents(child) || !isTransformedTouchPointInView(x,y,child,null)) {
+                ev.setTargetAccessibilityFocus(false);
+                continue;
+              }
+              newTouchTarget=getTouchTarget(child);
+              if (newTouchTarget != null) {
+                newTouchTarget.pointerIdBits|=idBitsToAssign;
+                break;
+              }
+              resetCancelNextUpFlag(child);
+              if (dispatchTransformedTouchEvent(ev,false,child,idBitsToAssign)) {
+                mLastTouchDownTime=ev.getDownTime();
+                if (preorderedList != null) {
+                  for (int j=0; j < childrenCount; j++) {
+                    if (children[childIndex] == mChildren[j]) {
+                      mLastTouchDownIndex=j;
+                      break;
+                    }
+                  }
+                }
+ else {
+                  mLastTouchDownIndex=childIndex;
+                }
+                mLastTouchDownX=ev.getX();
+                mLastTouchDownY=ev.getY();
+                newTouchTarget=addTouchTarget(child,idBitsToAssign);
+                alreadyDispatchedToNewTouchTarget=true;
+                break;
+              }
+              ev.setTargetAccessibilityFocus(false);
+            }
+            if (preorderedList != null)             preorderedList.clear();
+          }
+          if (newTouchTarget == null && mFirstTouchTarget != null) {
+            newTouchTarget=mFirstTouchTarget;
+            while (newTouchTarget.next != null) {
+              newTouchTarget=newTouchTarget.next;
+            }
+            newTouchTarget.pointerIdBits|=idBitsToAssign;
+          }
+        }
+      }
+      if (mFirstTouchTarget == null) {
+        handled=dispatchTransformedTouchEvent(ev,canceled,null,TouchTarget.ALL_POINTER_IDS);
+      }
+ else {
+        TouchTarget predecessor=null;
+        TouchTarget target=mFirstTouchTarget;
+        while (target != null) {
+          final TouchTarget next=target.next;
+          if (alreadyDispatchedToNewTouchTarget && target == newTouchTarget) {
+            handled=true;
+          }
+ else {
+            final boolean cancelChild=resetCancelNextUpFlag(target.child) || intercepted;
+            if (dispatchTransformedTouchEvent(ev,cancelChild,target.child,target.pointerIdBits)) {
+              handled=true;
+            }
+            if (cancelChild) {
+              if (predecessor == null) {
+                mFirstTouchTarget=next;
+              }
+ else {
+                predecessor.next=next;
+              }
+              target.recycle();
+              target=next;
+              continue;
+            }
+          }
+          predecessor=target;
+          target=next;
+        }
+      }
+      if (canceled || actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_HOVER_MOVE) {
+        resetTouchState();
+      }
+ else       if (split && actionMasked == MotionEvent.ACTION_POINTER_UP) {
+        final int actionIndex=ev.getActionIndex();
+        final int idBitsToRemove=1 << ev.getPointerId(actionIndex);
+        removePointersFromTouchTargets(idBitsToRemove);
+      }
+    }
+    if (!handled && false) {
+      //mInputEventConsistencyVerifier.onUnhandledEvent(ev,1);
+    }
+    return handled;
+  }
+  public ArrayList<View> buildTouchDispatchChildList(){
+    return buildOrderedChildList();
+  }
+  private void resetTouchState(){
+    clearTouchTargets();
+    resetCancelNextUpFlag(this);
+    mGroupFlags&=~FLAG_DISALLOW_INTERCEPT;
+    mNestedScrollAxes=SCROLL_AXIS_NONE;
+  }
+  private static boolean resetCancelNextUpFlag(  View view){
+    if ((view.mPrivateFlags & PFLAG_CANCEL_NEXT_UP_EVENT) != 0) {
+      view.mPrivateFlags&=~PFLAG_CANCEL_NEXT_UP_EVENT;
+      return true;
+    }
+    return false;
+  }
+  private void clearTouchTargets(){
+    TouchTarget target=mFirstTouchTarget;
+    if (target != null) {
+      do {
+        TouchTarget next=target.next;
+        target.recycle();
+        target=next;
+      }
+ while (target != null);
+      mFirstTouchTarget=null;
+    }
+  }
+  private void cancelAndClearTouchTargets(  MotionEvent event){
+    if (mFirstTouchTarget != null) {
+      boolean syntheticEvent=false;
+      if (event == null) {
+        final long now=SystemClock.uptimeMillis();
+        event=MotionEvent.obtain(now,now,MotionEvent.ACTION_CANCEL,0.0f,0.0f,0);
+        event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+        syntheticEvent=true;
+      }
+      for (TouchTarget target=mFirstTouchTarget; target != null; target=target.next) {
+        resetCancelNextUpFlag(target.child);
+        dispatchTransformedTouchEvent(event,true,target.child,target.pointerIdBits);
+      }
+      clearTouchTargets();
+      if (syntheticEvent) {
+        event.recycle();
+      }
+    }
+  }
+  private TouchTarget getTouchTarget(  View child){
+    for (TouchTarget target=mFirstTouchTarget; target != null; target=target.next) {
+      if (target.child == child) {
+        return target;
+      }
+    }
+    return null;
+  }
+  private TouchTarget addTouchTarget(  View child,  int pointerIdBits){
+    final TouchTarget target=TouchTarget.obtain(child,pointerIdBits);
+    target.next=mFirstTouchTarget;
+    mFirstTouchTarget=target;
+    return target;
+  }
+  private void removePointersFromTouchTargets(  int pointerIdBits){
+    TouchTarget predecessor=null;
+    TouchTarget target=mFirstTouchTarget;
+    while (target != null) {
+      final TouchTarget next=target.next;
+      if ((target.pointerIdBits & pointerIdBits) != 0) {
+        target.pointerIdBits&=~pointerIdBits;
+        if (target.pointerIdBits == 0) {
+          if (predecessor == null) {
+            mFirstTouchTarget=next;
+          }
+ else {
+            predecessor.next=next;
+          }
+          target.recycle();
+          target=next;
+          continue;
+        }
+      }
+      predecessor=target;
+      target=next;
+    }
+  }
+  private static boolean canViewReceivePointerEvents(  View child){
+    return (child.mViewFlags & VISIBILITY_MASK) == VISIBLE || child.getAnimation() != null;
+  }
+  private float[] getTempPoint(){
+    if (mTempPoint == null) {
+      mTempPoint=new float[2];
+    }
+    return mTempPoint;
+  }
+  protected boolean isTransformedTouchPointInView(  float x,  float y,  View child,  PointF outLocalPoint){
+    final float[] point=getTempPoint();
+    point[0]=x;
+    point[1]=y;
+    transformPointToViewLocal(point,child);
+    final boolean isInView=child.pointInView(point[0],point[1]);
+    if (isInView && outLocalPoint != null) {
+      outLocalPoint.set(point[0],point[1]);
+    }
+    return isInView;
+  }
+  public void transformPointToViewLocal(  float[] point,  View child){
+    point[0]+=mScrollX - child.mLeft;
+    point[1]+=mScrollY - child.mTop;
+    if (!child.hasIdentityMatrix()) {
+      //child.getInverseMatrix().mapPoints(point);
+    }
+  }
+  private boolean dispatchTransformedTouchEvent(  MotionEvent event,  boolean cancel,  View child,  int desiredPointerIdBits){
+    final boolean handled;
+    final int oldAction=event.getAction();
+    if (cancel || oldAction == MotionEvent.ACTION_CANCEL) {
+      event.setAction(MotionEvent.ACTION_CANCEL);
+      if (child == null) {
+        handled=super.dispatchTouchEvent(event);
+      }
+ else {
+        handled=child.dispatchTouchEvent(event);
+      }
+      event.setAction(oldAction);
+      return handled;
+    }
+    final int oldPointerIdBits=event.getPointerIdBits();
+    final int newPointerIdBits=oldPointerIdBits & desiredPointerIdBits;
+    if (newPointerIdBits == 0) {
+      return false;
+    }
+    final MotionEvent transformedEvent;
+    if (newPointerIdBits == oldPointerIdBits) {
+      if (child == null || child.hasIdentityMatrix()) {
+        if (child == null) {
+          handled=super.dispatchTouchEvent(event);
+        }
+ else {
+          final float offsetX=mScrollX - child.mLeft;
+          final float offsetY=mScrollY - child.mTop;
+          event.offsetLocation(offsetX,offsetY);
+          handled=child.dispatchTouchEvent(event);
+          event.offsetLocation(-offsetX,-offsetY);
+        }
+        return handled;
+      }
+      transformedEvent=MotionEvent.obtain(event);
+    }
+ else {
+      transformedEvent=event.split(newPointerIdBits);
+    }
+    if (child == null) {
+      handled=super.dispatchTouchEvent(transformedEvent);
+    }
+ else {
+      final float offsetX=mScrollX - child.mLeft;
+      final float offsetY=mScrollY - child.mTop;
+      transformedEvent.offsetLocation(offsetX,offsetY);
+      if (!child.hasIdentityMatrix()) {
+        //transformedEvent.transform(//child.getInverseMatrix());
+      }
+      handled=child.dispatchTouchEvent(transformedEvent);
+    }
+    transformedEvent.recycle();
+    return handled;
+  }
+  public void requestDisallowInterceptTouchEvent(  boolean disallowIntercept){
+    if (disallowIntercept == ((mGroupFlags & FLAG_DISALLOW_INTERCEPT) != 0)) {
+      return;
+    }
+    if (disallowIntercept) {
+      mGroupFlags|=FLAG_DISALLOW_INTERCEPT;
+    }
+ else {
+      mGroupFlags&=~FLAG_DISALLOW_INTERCEPT;
+    }
+    if (mParent != null) {
+      mParent.requestDisallowInterceptTouchEvent(disallowIntercept);
+    }
+  }
+  public boolean onInterceptTouchEvent(  MotionEvent ev){
+    if (ev.isFromSource(InputDevice.SOURCE_MOUSE) && ev.getAction() == MotionEvent.ACTION_DOWN && ev.isButtonPressed(MotionEvent.BUTTON_PRIMARY) && isOnScrollbarThumb(ev.getX(),ev.getY())) {
+      return true;
+    }
+    return false;
+  }
   void dispatchAttachedToWindow(  AttachInfo info,  int visibility){
     mGroupFlags|=FLAG_PREVENT_DISPATCH_ATTACHED_TO_WINDOW;
     super.dispatchAttachedToWindow(info,visibility);
@@ -144,8 +517,53 @@ public abstract class ViewGroup extends View implements ViewParent {
       view.dispatchAttachedToWindow(info,combineVisibility(visibility,view.getVisibility()));
     }
   }
+  private static View getAndVerifyPreorderedView(  ArrayList<View> preorderedList,  View[] children,  int childIndex){
+    final View child;
+    if (preorderedList != null) {
+      child=preorderedList.get(childIndex);
+      if (child == null) {
+        throw new RuntimeException("Invalid preorderedList contained null child at index " + childIndex);
+      }
+    }
+ else {
+      child=children[childIndex];
+    }
+    return child;
+  }
   boolean isLayoutModeOptical(){
     return mLayoutMode == LAYOUT_MODE_OPTICAL_BOUNDS;
+  }
+  protected int getChildDrawingOrder(  int childCount,  int i){
+    return i;
+  }
+  private boolean hasChildWithZ(){
+    for (int i=0; i < mChildrenCount; i++) {
+      if (mChildren[i].getZ() != 0)       return true;
+    }
+    return false;
+  }
+  ArrayList<View> buildOrderedChildList(){
+    final int childrenCount=mChildrenCount;
+    if (childrenCount <= 1 || !hasChildWithZ())     return null;
+    if (mPreSortedChildren == null) {
+      mPreSortedChildren=new ArrayList<>(childrenCount);
+    }
+ else {
+      mPreSortedChildren.clear();
+      mPreSortedChildren.ensureCapacity(childrenCount);
+    }
+    final boolean customOrder=isChildrenDrawingOrderEnabled();
+    for (int i=0; i < childrenCount; i++) {
+      final int childIndex=getAndVerifyPreorderedIndex(childrenCount,i,customOrder);
+      final View nextChild=mChildren[childIndex];
+      final float currentZ=nextChild.getZ();
+      int insertIndex=i;
+      while (insertIndex > 0 && mPreSortedChildren.get(insertIndex - 1).getZ() > currentZ) {
+        insertIndex--;
+      }
+      mPreSortedChildren.add(insertIndex,nextChild);
+    }
+    return mPreSortedChildren;
   }
   public void setClipToPadding(  boolean clipToPadding){
     if (hasBooleanFlag(FLAG_CLIP_TO_PADDING) != clipToPadding) {
@@ -556,6 +974,33 @@ public interface OnHierarchyChangeListener {
         notifyGlobalFocusCleared(focused);
       }
     }
+  }
+  protected void removeDetachedView(  View child,  boolean animate){
+    if (mTransition != null) {
+      mTransition.removeChild(this,child);
+    }
+    if (child == mFocused) {
+      child.clearFocus();
+    }
+    if (child == mDefaultFocus) {
+      clearDefaultFocus(child);
+    }
+    if (child == mFocusedInCluster) {
+      clearFocusedInCluster(child);
+    }
+    child.clearAccessibilityFocus();
+    cancelTouchTarget(child);
+    cancelHoverTarget(child);
+    if ((animate && child.getAnimation() != null) || (mTransitioningViews != null && mTransitioningViews.contains(child))) {
+      addDisappearingView(child);
+    }
+ else     if (child.mAttachInfo != null) {
+      child.dispatchDetachedFromWindow();
+    }
+    if (child.hasTransientState()) {
+      childHasTransientStateChanged(child,false);
+    }
+    dispatchViewRemoved(child);
   }
   protected void attachViewToParent(  View child,  int index,  LayoutParams params){
     child.mLayoutParams=params;
@@ -1068,8 +1513,62 @@ public boolean isLayoutRtl(){
 return ((mMarginFlags & LAYOUT_DIRECTION_MASK) == View.LAYOUT_DIRECTION_RTL);
 }
 }
+private static final class TouchTarget {
+private static final int MAX_RECYCLED=32;
+private static final Object sRecycleLock=new Object[0];
+private static TouchTarget sRecycleBin;
+private static int sRecycledCount;
+public static final int ALL_POINTER_IDS=-1;
+public View child;
+public int pointerIdBits;
+public TouchTarget next;
+private TouchTarget(){
+}
+public static TouchTarget obtain(View child,int pointerIdBits){
+if (child == null) {
+throw new IllegalArgumentException("child must be non-null");
+}
+final TouchTarget target;
+synchronized (sRecycleLock) {
+if (sRecycleBin == null) {
+target=new TouchTarget();
+}
+ else {
+target=sRecycleBin;
+sRecycleBin=target.next;
+sRecycledCount--;
+target.next=null;
+}
+}
+target.child=child;
+target.pointerIdBits=pointerIdBits;
+return target;
+}
+public void recycle(){
+if (child == null) {
+throw new IllegalStateException("already recycled once");
+}
+synchronized (sRecycleLock) {
+if (sRecycledCount < MAX_RECYCLED) {
+next=sRecycleBin;
+sRecycleBin=this;
+sRecycledCount+=1;
+}
+ else {
+next=null;
+}
+child=null;
+}
+}
+}
 private View[] mChildren=new View[ARRAY_INITIAL_CAPACITY];
 boolean isViewTransitioning(View view){
+return false;
+}
+protected boolean isOnScrollbarThumb(int x,int y){
+return false;
+}
+public boolean isChildrenDrawingOrderEnabled(){
 return false;
 }
 public Rect getPaddingMaskBounds(){
@@ -1098,8 +1597,6 @@ protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p){
 return p;
 }
 private void requestChildFocus(View child,Object findFocus){
-}
-private void childHasTransientStateChanged(View child,boolean b){
 }
 private void notifyGlobalFocusCleared(Object viewGroup){
 }

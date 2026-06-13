@@ -65,6 +65,16 @@ public class Resources {
 	public CharSequence getString(int titleRes) {
 		return null;
 	}
+
+
+	public float getDimension(String string) {
+		return 0;
+	}
+
+
+	public int getDimensionPixelSize(String string) {
+		return 0;
+	}
 	
 
 }

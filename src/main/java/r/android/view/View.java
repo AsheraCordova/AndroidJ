@@ -3371,30 +3371,35 @@ setFlags(VISIBLE,VISIBILITY_MASK);
 }
 int action=0;
 long downTime=0;
-public void onTouchEventMove(int x,int y,int rawX,int rawY){
+public MotionEvent onTouchEventMove(int x,int y,int rawX,int rawY){
 if (action == 1) {
 MotionEvent me=MotionEvent.obtain(downTime,System.currentTimeMillis(),MotionEvent.ACTION_MOVE,x,y,0);
 me.setRawX(rawX);
 me.setRawY(rawY);
 dispatchTouchEvent(me);
+return me;
 }
+return null;
 }
-public void onTouchEventDown(int x,int y,int rawX,int rawY){
+public MotionEvent onTouchEventDown(int x,int y,int rawX,int rawY){
 action=1;
 downTime=System.currentTimeMillis();
 MotionEvent me=MotionEvent.obtain(downTime,System.currentTimeMillis(),MotionEvent.ACTION_DOWN,x,y,0);
 me.setRawX(rawX);
 me.setRawY(rawY);
 dispatchTouchEvent(me);
+return me;
 }
-public void onTouchEventUp(int x,int y,int rawX,int rawY){
+public MotionEvent onTouchEventUp(int x,int y,int rawX,int rawY){
 if (action == 1) {
 MotionEvent me=MotionEvent.obtain(downTime,System.currentTimeMillis(),MotionEvent.ACTION_UP,x,y,0);
 me.setRawX(rawX);
 me.setRawY(rawY);
 dispatchTouchEvent(me);
 action=0;
+return me;
 }
+return null;
 }
 private boolean hasOnTouchEvent;
 public boolean hasOnTouchEvent(){

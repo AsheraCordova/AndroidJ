@@ -461,4 +461,12 @@ public abstract class BaseMeasurableImageView extends View {
 		this.imageDrawable = imageDrawable;
 	}
 
+	public int getDrawableWidth() {
+		return mDrawableWidth;
+	}
+
+	public int getDrawableHeight() {
+		return mDrawableHeight;
+	}
+
 }
